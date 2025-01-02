@@ -1,0 +1,64 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.13'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.qrystal'
+version = '1.0.0'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Starters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Jasypt
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    // MyBatis
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.1'
+
+    // Database
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // JSP
+    implementation 'javax.servlet:jstl'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // ELK Stack
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
+
+    // Redis 로그백 어펜더 - Redis 서버로 로그 전송용 라이브러리
+    implementation 'com.cwbase:logback-redis-appender:1.1.5'
+
+    // Redis 자바 클라이언트 - Redis 서버 통신용
+    implementation 'redis.clients:jedis:2.5.2'
+
+    // Apache Commons Pool - Redis 연결 풀 관리용
+    implementation 'org.apache.commons:commons-pool2:2.11.1'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+    useJUnitPlatform()
+}
