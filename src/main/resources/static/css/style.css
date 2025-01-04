@@ -452,3 +452,105 @@ header {
 .form-group input:invalid:not(:placeholder-shown) {
     border-color: #dc2626;
 }
+
+/* 프로필 페이지 스타일 */
+.profile-container {
+    max-width: 800px;
+    margin: 120px auto 60px;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-container h2 {
+    text-align: center;
+    color: #1a1a1a;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-content {
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 0.5rem;
+}
+
+.profile-info {
+    margin-bottom: 2rem;
+}
+
+.profile-info p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    margin: 0;
+}
+
+.profile-info p:last-child {
+    border-bottom: none;
+}
+
+.profile-info strong {
+    color: #4b5563;
+    font-weight: 600;
+}
+
+.profile-info span {
+    color: #1f2937;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-edit {
+    background-color: #6366f1;
+    color: white;
+}
+
+.btn-password {
+    background-color: #4b5563;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #dc2626;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #4f46e5;
+}
+
+.btn-password:hover {
+    background-color: #374151;
+}
+
+.btn-delete:hover {
+    background-color: #b91c1c;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .profile-container {
+        margin: 100px 1rem 2rem;
+        padding: 1.5rem;
+    }
+
+    .profile-content {
+        padding: 1rem;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .profile-actions .btn {
+        width: 100%;
+    }
+}

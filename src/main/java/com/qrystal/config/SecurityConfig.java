@@ -1,8 +1,11 @@
 package com.qrystal.config;
 
+import com.qrystal.app.user.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final AuthService authService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -21,18 +26,31 @@ public class SecurityConfig {
             .headers().frameOptions().sameOrigin()
             .and()
             .authorizeRequests()
-                .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**").permitAll()
+                .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**", "/favicon.ico").permitAll()
                 .anyRequest().authenticated()
+
             .and()
                 .formLogin()
                 .loginPage("/auth/login")
-                .defaultSuccessUrl("/")
+                .loginProcessingUrl("/auth/login")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/auth/login?error=true")
+
             .and()
                 .logout()
+                .logoutUrl("/auth/logout")
                 .logoutSuccessUrl("/")
-                .invalidateHttpSession(true);
-        
+                .invalidateHttpSession(true)
+                .clearAuthentication(true);
+
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
