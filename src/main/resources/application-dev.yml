@@ -17,6 +17,10 @@ spring:
     view:
       prefix: /WEB-INF/views/
       suffix: .jsp
+    static-path-pattern: /**
+  web:
+    resources:
+      static-locations: classpath:/static/
 
   redis:
     host: ${REDIS_SERVER_URL}
