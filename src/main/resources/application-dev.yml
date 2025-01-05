@@ -12,7 +12,6 @@ spring:
     url: ENC(KgM8OzzgPpdhF9G5XzzNIMR7xmVAERFPrphxa3X/MvX5TO4AHY6GsVFw2Cs9U1NQjTnNIHkjcAU8eWdz9C0HrbIEhL65fqU6)
     username: ENC(6R/c31GTSL0h+tEDEJr8pA==)
     password: ENC(qZRj27Us+5WqWEaxLwBuZ2by25Mpwf+eF2TsEMIdTys=)
-
   mvc:
     view:
       prefix: /WEB-INF/views/
@@ -21,11 +20,22 @@ spring:
   web:
     resources:
       static-locations: classpath:/static/
-
   redis:
     host: ${REDIS_SERVER_URL}
     port: 6379
     password: ${REDIS_PASSWORD}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ENC(aJXkjRnsjBd1oufOMb6g6ym/WMkhfVcineV1rQmBUXE=)
+    password: ENC(nNbCejUSACUyBVRTVIe4FtMbjnafJu3tKrbRyYln9HU=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        debug: true
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml

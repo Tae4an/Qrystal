@@ -554,3 +554,47 @@ header {
         width: 100%;
     }
 }
+
+/* 이메일 */
+.email-group {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.email-input {
+    flex: 1;
+}
+
+.verification-area {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.status-message {
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: block;
+}
+
+.status-message.error {
+    color: #dc3545;
+}
+
+.status-message.success {
+    color: #28a745;
+}
+
+.timer {
+    color: #666;
+    min-width: 50px;
+}
+
+.guide-message {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+    display: block;
+}
