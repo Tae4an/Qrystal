@@ -2,8 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qrystal.app.user.mapper.UserMapper">
     <insert id="save" parameterType="com.qrystal.app.user.domain.User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users (email, password, name, status, created_at, updated_at)
-        VALUES (#{email}, #{password}, #{name}, #{status}, NOW(), NOW())
+        INSERT INTO users (
+            email,
+            password,
+            name,
+            status,
+            created_at,
+            updated_at
+        ) VALUES (
+                     #{email},
+                     #{password},
+                     #{name},
+                     #{status, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+                     NOW(),
+                     NOW()
+                 )
     </insert>
 
     <select id="findById" resultType="com.qrystal.app.user.domain.User">
@@ -16,9 +29,11 @@
 
     <update id="update" parameterType="com.qrystal.app.user.domain.User">
         UPDATE users
-        SET email = #{email},
+        SET
+            email = #{email},
             password = #{password},
             name = #{name},
+            status = #{status, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
             updated_at = NOW()
         WHERE id = #{id}
     </update>

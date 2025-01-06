@@ -5,7 +5,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@ToString
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -17,6 +18,11 @@ public class User {
     private UserStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
     public void activate() {
         this.status = UserStatus.ACTIVE;
     }

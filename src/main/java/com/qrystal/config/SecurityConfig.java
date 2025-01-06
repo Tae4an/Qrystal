@@ -11,39 +11,36 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AuthService authService;
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthService authService) throws Exception {
         http
-            .csrf().disable()
-            .headers().frameOptions().sameOrigin()
-            .and()
-            .authorizeRequests()
-                .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**", "/favicon.ico").permitAll()
-                .anyRequest().authenticated()
+                .csrf().disable()
+                .headers().frameOptions().sameOrigin()
+                .and()
+                .authorizeRequests()
+                    .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**", "/favicon.ico").permitAll()
+                    .anyRequest().authenticated()
+                .and()
+                    .formLogin()
+                    .loginPage("/auth/login")
+                    .loginProcessingUrl("/auth/login")
+                    .usernameParameter("email")
+                    .passwordParameter("password")
+                    .defaultSuccessUrl("/", true)
+                    .failureUrl("/auth/login?error=true")
+                .and()
+                    .logout()
+                    .logoutUrl("/auth/logout")
+                    .logoutSuccessUrl("/")
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true);
 
-            .and()
-                .formLogin()
-                .loginPage("/auth/login")
-                .loginProcessingUrl("/auth/login")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/auth/login?error=true")
-
-            .and()
-                .logout()
-                .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true);
+        http.userDetailsService(authService);  // 여기서 AuthService 설정
 
         return http.build();
     }

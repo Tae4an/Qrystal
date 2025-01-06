@@ -1,16 +1,15 @@
 package com.qrystal.app.user.dto;
 
 import com.qrystal.app.user.domain.User;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.qrystal.app.user.domain.UserStatus;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class UserSignupRequest {
     @NotBlank(message = "이메일은 필수입니다")
@@ -30,6 +29,7 @@ public class UserSignupRequest {
                 .email(email)
                 .password(password)
                 .name(name)
+                .status(UserStatus.ACTIVE)
                 .build();
     }
 }

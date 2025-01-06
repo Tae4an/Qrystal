@@ -11,8 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 @Controller
 @RequestMapping("/auth")
@@ -31,12 +29,14 @@ public class AuthController {
     @PostMapping("/signup")
     public String signup(@Valid @ModelAttribute("userSignupRequest") UserSignupRequest request,
                          BindingResult bindingResult,
-                         HttpServletRequest servletRequest) {
+                         RedirectAttributes attributes) {
         if (bindingResult.hasErrors()) {
             return "auth/signup";
         }
-        userService.signup(request, servletRequest);
-        return "redirect:/";
+
+        userService.signup(request);
+        attributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
+        return "redirect:/auth/login";
     }
 
     @GetMapping("/verify")

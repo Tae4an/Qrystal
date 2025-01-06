@@ -6,6 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <title>회원가입 - Qrystal</title>
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/signup.css'/>">
     <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
 </head>
 <body>
@@ -18,10 +19,9 @@
             <div class="email-group">
                 <form:input path="email" type="email" id="email" class="email-input"/>
                 <button type="button" id="verifyEmailBtn" class="btn btn-secondary">이메일 인증</button>
-                <form:errors path="email" cssClass="error-message" />
-                <span id="emailStatus" class="status-message"></span>
             </div>
-            <!-- 이메일 인증코드 입력 영역 (처음에는 숨김) -->
+            <span id="emailValidation" class="error-message" style="display: none"></span>
+            <span id="emailStatus" class="status-message"></span>
             <div id="verificationArea" class="verification-area" style="display: none;">
                 <input type="text" id="verificationCode" placeholder="인증코드 6자리 입력" maxlength="6"/>
                 <span id="verificationTimer" class="timer"></span>
@@ -50,11 +50,12 @@
         </div>
 
         <div class="button-group">
-            <button type="submit" class="btn btn-primary" id="signupBtn" disabled>가입하기</button>
+            <button type="submit" class="btn btn-primary" id="signupBtn">가입하기</button>
             <a href="/auth/login" class="btn btn-secondary">로그인으로 돌아가기</a>
         </div>
     </form:form>
 </main>
 <jsp:include page="../common/footer.jsp" />
-<script src="<c:url value='/js/main.js'/>"></script>
-</main>
+<script src="<c:url value='/js/signup.js'/>"></script>
+</body>
+</html>

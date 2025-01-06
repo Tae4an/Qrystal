@@ -9,16 +9,11 @@ import com.qrystal.exception.CustomException;
 import com.qrystal.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,34 +22,22 @@ import java.util.UUID;
 public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
     private final EmailVerificationService emailVerificationService;
 
     @Transactional
-    public Long signup(UserSignupRequest request, HttpServletRequest servletRequest) {
+    public Long signup(UserSignupRequest request) {
         // 이메일 중복 검사
         validateDuplicateUser(request);
 
-        // PENDING 상태로 사용자 생성
+        // 사용자 생성
         User user = request.toEntity();
-        user.setStatus(UserStatus.PENDING);  // 초기 상태를 PENDING으로 설정
+        user.setStatus(UserStatus.ACTIVE);
         user.encodePassword(passwordEncoder);
         userMapper.save(user);
 
-        // 인증 토큰 생성 및 저장
-        String verificationToken = UUID.randomUUID().toString();
-        emailVerificationService.saveVerificationToken(request.getEmail(), verificationToken);
-
-        try {
-            // 인증 메일 발송
-            emailVerificationService.sendVerificationEmail(request.getEmail(), verificationToken);
-        } catch (Exception e) {
-            log.error("인증 메일 발송 실패", e);
-            throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
-        }
-
         return user.getId();
     }
+
     @Transactional
     public void verifyEmail(String token) {
         // 토큰으로 이메일 가져오기
