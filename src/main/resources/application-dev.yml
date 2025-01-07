@@ -47,6 +47,12 @@ spring:
             scope:
               - email
               - profile
+          github:
+            client-id: ENC(lc8/CuA09F9qPFY527byag6IqKHI/6IYbhVnrLF1Dts=)
+            client-secret: ENC(FfWgdnhn8cOC2Tkg+lktEmRUhpqJCWDVb5Zr0ZEjuOqf6C7/nYQKr9xTCCrg8Loe4p1Pwxt6ymk=)
+            scope:
+              - read:user
+              - user:email
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml

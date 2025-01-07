@@ -34,6 +34,9 @@
             <a href="/oauth2/authorization/google">
                 <img src="<c:url value='/img/google.png'/>" alt="Google 로그인" class="social-login-btn">
             </a>
+            <a href="/oauth2/authorization/github">
+                <img src="<c:url value='/img/github.png'/>" alt="GitHub 로그인" class="social-login-btn">
+            </a>
         </div>
     </div>
 
