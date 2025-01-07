@@ -28,6 +28,15 @@
             <button type="submit" class="btn btn-primary">로그인</button>
         </div>
     </form>
+
+    <div class="social-login">
+        <div class="social-buttons">
+            <a href="/oauth2/authorization/google">
+                <img src="<c:url value='/img/google.png'/>" alt="Google 로그인" class="social-login-btn">
+            </a>
+        </div>
+    </div>
+
     <div class="signup-link">
         <p>계정이 없으신가요? <a href="/auth/signup">회원가입</a></p>
     </div>

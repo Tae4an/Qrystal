@@ -1,6 +1,7 @@
 package com.qrystal.config;
 
 import com.qrystal.app.user.service.AuthService;
+import com.qrystal.app.user.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +12,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthService authService) throws Exception {
@@ -23,8 +26,9 @@ public class SecurityConfig {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .authorizeRequests()
-                    .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**", "/favicon.ico").permitAll()
+                    .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/img/**", "/favicon.ico").permitAll()
                     .anyRequest().authenticated()
+
                 .and()
                     .formLogin()
                     .loginPage("/auth/login")
@@ -33,6 +37,16 @@ public class SecurityConfig {
                     .passwordParameter("password")
                     .defaultSuccessUrl("/", true)
                     .failureUrl("/auth/login?error=true")
+
+                .and()
+                    .oauth2Login()
+                    .loginPage("/auth/login")
+                    .defaultSuccessUrl("/", true)
+                    .failureUrl("/auth/login?error=true")
+                    .userInfoEndpoint()
+                    .userService(customOAuth2UserService)
+                .and()
+
                 .and()
                     .logout()
                     .logoutUrl("/auth/logout")
@@ -40,7 +54,7 @@ public class SecurityConfig {
                     .invalidateHttpSession(true)
                     .clearAuthentication(true);
 
-        http.userDetailsService(authService);  // 여기서 AuthService 설정
+        http.userDetailsService(authService);
 
         return http.build();
     }
@@ -48,10 +62,5 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

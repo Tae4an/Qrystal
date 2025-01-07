@@ -16,6 +16,8 @@ public class User {
     private String password;
     private String name;
     private UserStatus status;
+    private String provider;        // GOOGLE, KAKAO 등 소셜 로그인 제공자
+    private String providerId;      // 소셜 로그인 식별자
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

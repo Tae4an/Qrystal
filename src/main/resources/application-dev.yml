@@ -37,6 +37,17 @@ spring:
             enable: true
         debug: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ENC(HLsxmwnKpVf/4v3pYCG7sSL2xSCWz+BqIiQVsb7SjGG5Ksvu/LtEdH0zOSDmz+73agjjId6hCLxukEJpdIMyu5iWCqIF+qen+Q6dWGuu/XIAZhqOauDZ/g==)
+            client-secret: ENC(WSLzpXuolZOfzgTf+qjrr6Gf4RSkryMKPPJ4Le60XGoORSEepi3YEFXHEBIX97Gj)
+            scope:
+              - email
+              - profile
+
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
