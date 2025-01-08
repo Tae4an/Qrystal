@@ -37,6 +37,9 @@
             <a href="/oauth2/authorization/github">
                 <img src="<c:url value='/img/github.png'/>" alt="GitHub 로그인" class="social-login-btn">
             </a>
+            <a href="/oauth2/authorization/naver">
+                <img src="<c:url value='/img/naver.png'/>" alt="Naver 로그인" class="social-login-btn">
+            </a>
         </div>
     </div>
 

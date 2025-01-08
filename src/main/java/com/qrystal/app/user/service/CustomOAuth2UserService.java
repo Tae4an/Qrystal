@@ -69,6 +69,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             }
             // GitHub의 경우 ID가 숫자로 오므로 String으로 변환
             providerId = attributes.get(userNameAttributeName).toString();
+        } else if ("naver".equals(registrationId)) {
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+            email = (String) response.get("email");
+            name = (String) response.get("name");
+            providerId = (String) response.get("id");
         } else {
             throw new OAuth2AuthenticationException("지원하지 않는 소셜 로그인입니다: " + registrationId);
         }
