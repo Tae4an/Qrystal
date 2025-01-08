@@ -40,6 +40,9 @@
             <a href="/oauth2/authorization/naver">
                 <img src="<c:url value='/img/naver.png'/>" alt="Naver 로그인" class="social-login-btn">
             </a>
+<%--            <a href="/oauth2/authorization/kakao">--%>
+<%--                <img src="<c:url value='/img/kakao.png'/>" alt="Kakao 로그인" class="social-login-btn">--%>
+<%--            </a>--%>
         </div>
     </div>
 

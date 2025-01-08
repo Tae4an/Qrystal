@@ -74,6 +74,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             email = (String) response.get("email");
             name = (String) response.get("name");
             providerId = (String) response.get("id");
+//        } else if ("kakao".equals(registrationId)) {
+//            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+//            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+//
+//            email = (String) kakaoAccount.get("email");
+//            name = (String) profile.get("nickname");
+//            providerId = String.valueOf(attributes.get("id")); // Long -> String 변환
         } else {
             throw new OAuth2AuthenticationException("지원하지 않는 소셜 로그인입니다: " + registrationId);
         }
