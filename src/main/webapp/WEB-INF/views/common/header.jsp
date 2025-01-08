@@ -8,6 +8,29 @@
             <a href="/">Qrystal</a>
         </div>
         <ul class="nav-links">
+            <sec:authorize access="isAuthenticated()">
+                <li class="user-info">
+                    <sec:authentication property="principal" var="principal"/>
+                    <c:choose>
+                        <c:when test="${not empty principal.attributes}">
+                            <c:choose>
+                                <c:when test="${not empty principal.attributes.name}">
+                                    <span>${principal.attributes.name} 님</span>
+                                </c:when>
+                                <c:when test="${not empty principal.attributes.response}">
+                                    <span>${principal.attributes.response.name} 님</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span>${principal.attributes.login} 님</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:when>
+                        <c:otherwise>
+                            <span>${principal.username} 님</span>
+                        </c:otherwise>
+                    </c:choose>
+                </li>
+            </sec:authorize>
             <li><a href="/exam/list">모의고사</a></li>
             <sec:authorize access="isAuthenticated()">
                 <li><a href="/user/profile">프로필</a></li>
