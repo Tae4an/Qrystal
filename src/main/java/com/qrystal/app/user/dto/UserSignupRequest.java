@@ -1,6 +1,6 @@
 package com.qrystal.app.user.dto;
 
-import com.qrystal.app.user.domain.User;
+import com.qrystal.app.user.model.User;
 import com.qrystal.app.user.domain.UserStatus;
 import lombok.*;
 

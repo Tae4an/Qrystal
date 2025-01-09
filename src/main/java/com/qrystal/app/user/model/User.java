@@ -1,11 +1,12 @@
-package com.qrystal.app.user.domain;
+package com.qrystal.app.user.model;
 
+import com.qrystal.app.user.domain.UserStatus;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
-@Getter
+@Data
 @ToString
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

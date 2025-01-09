@@ -1,6 +1,6 @@
 package com.qrystal.app.user.mapper;
 
-import com.qrystal.app.user.domain.User;
+import com.qrystal.app.user.model.User;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Optional;

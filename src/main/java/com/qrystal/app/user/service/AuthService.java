@@ -1,16 +1,14 @@
 package com.qrystal.app.user.service;
 
-import com.qrystal.app.user.domain.User;
+import com.qrystal.app.user.model.User;
 import com.qrystal.app.user.mapper.UserMapper;
-import com.qrystal.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.qrystal.exception.ErrorCode;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

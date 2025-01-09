@@ -1,6 +1,6 @@
 package com.qrystal.app.user.service;
 
-import com.qrystal.app.user.domain.User;
+import com.qrystal.app.user.model.User;
 import com.qrystal.app.user.domain.UserStatus;
 import com.qrystal.app.user.mapper.UserMapper;
 import com.qrystal.exception.CustomException;
