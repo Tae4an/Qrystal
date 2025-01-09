@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
-@Getter
+@Data
 @ToString
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
