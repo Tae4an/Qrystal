@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qrystal.app.exam.mapper.CategoryMapper">
+    <insert id="save" parameterType="com.qrystal.app.exam.model.Category"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO category (
+            name,
+            parent_id,
+            depth
+        ) VALUES (
+                     #{name},
+                     #{parentId},
+                     #{depth}
+                 )
+    </insert>
+
+    <select id="findById" resultType="com.qrystal.app.exam.model.Category">
+        SELECT * FROM category WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="com.qrystal.app.exam.model.Category">
+        SELECT * FROM category ORDER BY depth, parent_id, name
+    </select>
+
+    <select id="findByParentId" resultType="com.qrystal.app.exam.model.Category">
+        SELECT * FROM category WHERE parent_id = #{parentId} ORDER BY name
+    </select>
+
+    <update id="update" parameterType="com.qrystal.app.exam.model.Category">
+        UPDATE category
+        SET name = #{name},
+            parent_id = #{parentId},
+            depth = #{depth},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM category WHERE id = #{id}
+    </delete>
+</mapper>
