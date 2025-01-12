@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qrystal.app.admin.mapper.AdminMapper">
+
+    <insert id="save" parameterType="com.qrystal.app.admin.model.Admin"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO admins (
+            admin_id,
+            password,
+            name,
+            role,
+            status,
+            created_at,
+            updated_at
+        ) VALUES (
+                     #{adminId},
+                     #{password},
+                     #{name},
+                     #{role},
+                     #{status},
+                     NOW(),
+                     NOW()
+                 )
+    </insert>
+
+    <select id="findById" resultType="com.qrystal.app.admin.model.Admin">
+        SELECT * FROM admins WHERE id = #{id}
+    </select>
+
+    <select id="findByAdminId" resultType="com.qrystal.app.admin.model.Admin">
+        SELECT * FROM admins WHERE admin_id = #{adminId}
+    </select>
+
+    <update id="updateLastLogin">
+        UPDATE admins
+        SET last_login_at = #{lastLoginAt}
+        WHERE id = #{id}
+    </update>
+
+    <update id="update" parameterType="com.qrystal.app.admin.model.Admin">
+        UPDATE admins
+        SET
+            password = #{password},
+            name = #{name},
+            role = #{role},
+            status = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findAll" resultType="com.qrystal.app.admin.model.Admin">
+        SELECT * FROM admins ORDER BY created_at DESC
+    </select>
+</mapper>
