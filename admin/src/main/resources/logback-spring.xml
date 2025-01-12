@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty scope="context" name="REDIS_SERVER_URL" source="REDIS_SERVER_URL"/>
+
+    <!-- 콘솔 로그 설정 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 파일 로그 설정 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/qrystal-admin.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/qrystal-admin.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Redis 로그 전송 설정 -->
+    <appender name="REDIS" class="com.cwbase.logback.RedisAppender">
+        <host>${REDIS_SERVER_URL}</host>
+        <port>6379</port>
+        <password>${REDIS_PASSWORD}</password>
+        <key>logstash</key>
+        <type>redis</type>
+        <layout class="net.logstash.logback.layout.LogstashLayout">
+            <customFields>{"application":"qrystal-admin"}</customFields>
+        </layout>
+    </appender>
+
+    <!-- Redis 비동기 처리 설정 -->
+    <appender name="ASYNC_REDIS" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="REDIS" />
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+
+    <!-- 전체 로그 레벨 설정 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="ASYNC_REDIS" />
+    </root>
+
+    <!-- Qrystal Admin 프로젝트 패키지 로그 설정 -->
+    <logger name="com.qrystal.admin" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="ASYNC_REDIS" />
+    </logger>
+</configuration>
