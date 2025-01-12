@@ -30,6 +30,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         adminMapper.updateLastLogin(admin.getId(), LocalDateTime.now());
         log.info("관리자 로그인 성공: {}", admin.getAdminId());
 
-        response.sendRedirect("/dashboard");
+        response.sendRedirect("/");
     }
 }
