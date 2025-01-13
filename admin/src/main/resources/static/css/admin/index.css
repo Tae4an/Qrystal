@@ -1,0 +1,196 @@
+:root {
+    --sidebar-width: 250px;
+    --header-height: 60px;
+
+    /* 다크 테마 색상 */
+    --bg-dark: #1a1c23;          /* 배경색 */
+    --sidebar-dark: #24262d;     /* 사이드바 배경 */
+    --header-dark: #24262d;      /* 헤더 배경 */
+    --text-primary: #e3e5e8;     /* 주요 텍스트 */
+    --text-secondary: #9ca3af;   /* 보조 텍스트 */
+    --border-dark: #4b4b4b;      /* 경계선 */
+    --highlight: #b2cefc;        /* 강조색 (파란색) */
+    --hover-bg: #2d303a;         /* 호버 배경 */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-dark);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    border-right: 1px solid var(--border-dark);
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-dark);
+}
+
+.sidebar-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--highlight);
+    font-weight: 600;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    border-bottom: 1px solid var(--border-dark);
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    gap: 0.75rem;
+}
+
+.sidebar-menu a:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+.sidebar-menu a.active {
+    background: var(--highlight);
+    color: white;
+}
+
+/* 메인 컨텐츠 영역 */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+}
+
+/* 헤더 스타일 */
+.header {
+    height: var(--header-height);
+    background: var(--header-dark);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border-dark);
+}
+
+.header-left .sidebar-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 1.25rem;
+    transition: color 0.3s ease;
+}
+
+.header-left .sidebar-toggle:hover {
+    color: var(--text-primary);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.admin-info {
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-info i {
+    color: var(--highlight);
+}
+
+.btn-logout {
+    color: #ef4444;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+}
+
+.btn-logout:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* 컨텐츠 영역 */
+.content {
+    padding: 1.5rem;
+    background: var(--bg-dark);
+}
+
+/* footer 스타일 */
+.footer {
+    background: var(--header-dark);
+    border-top: 1px solid var(--border-dark);
+    padding: 1rem 1.5rem;
+    margin-top: auto;  /* 컨텐츠가 적을 때도 footer가 하단에 위치하도록 */
+}
+
+.footer-content {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* main-content에 flex 속성 추가하여 footer 위치 조정 */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* content 영역 flex 조정 */
+.content {
+    flex: 1;
+    padding: 1.5rem;
+    background: var(--bg-dark);
+}
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
