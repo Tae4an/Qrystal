@@ -1,4 +1,4 @@
-package com.qrystal.controller;
+package com.qrystal.app.admin.controller;
 
 import com.qrystal.app.admin.security.AdminDetails;
 import lombok.RequiredArgsConstructor;
