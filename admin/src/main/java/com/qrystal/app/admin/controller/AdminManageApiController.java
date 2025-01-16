@@ -29,7 +29,16 @@ public class AdminManageApiController {
             throw e;
         }
     }
-
+    @GetMapping("/{id}")
+    public ResponseEntity<AdminResponse> getAdmin(@PathVariable Long id) {
+        try {
+            AdminResponse admin = adminService.getAdmin(id);
+            return ResponseEntity.ok(admin);
+        } catch (Exception e) {
+            log.error("관리자 조회 실패", e);
+            throw e;
+        }
+    }
     @PostMapping
     public ResponseEntity<Void> createAdmin(@Valid @RequestBody AdminCreateRequest request) {
         try {

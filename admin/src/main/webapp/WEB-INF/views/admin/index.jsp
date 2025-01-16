@@ -17,11 +17,14 @@
             <h1>Qrystal Admin</h1>
         </div>
         <ul class="sidebar-menu">
-            <li data-page="dashboard">
-                <a href="#dashboard"><i class="fas fa-home"></i> 대시보드</a>
+            <li>
+                <a href="/"><i class="fas fa-home"></i> 대시보드</a>
             </li>
-            <li data-page="users">
-                <a href="#users"><i class="fas fa-users"></i> 사용자 관리</a>
+            <li>
+                <a href="/admins"><i class="fas fa-user-shield"></i> 관리자 관리</a>
+            </li>
+            <li>
+                <a href="/users"><i class="fas fa-users"></i> 사용자 관리</a>
             </li>
         </ul>
     </nav>
@@ -29,12 +32,17 @@
     <!-- 메인 컨텐츠 -->
     <div class="main-content">
         <jsp:include page="common/header.jsp" />
-
         <!-- 동적 컨텐츠 영역 -->
         <main id="content" class="content">
-            <!-- 여기에 동적으로 컨텐츠가 로드됨 -->
+            <c:choose>
+                <c:when test="${content == null}">
+                    <jsp:include page="dashboard.jsp"/>
+                </c:when>
+                <c:otherwise>
+                    <jsp:include page="${content}.jsp"/>
+                </c:otherwise>
+            </c:choose>
         </main>
-
         <jsp:include page="common/footer.jsp" />
     </div>
 </div>

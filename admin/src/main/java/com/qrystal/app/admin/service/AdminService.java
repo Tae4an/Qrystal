@@ -32,7 +32,11 @@ public class AdminService {
                 .map(AdminResponse::of)
                 .collect(Collectors.toList());
     }
-
+    public AdminResponse getAdmin(Long id) {
+        Admin admin = adminMapper.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
+        return AdminResponse.of(admin);
+    }
     @Transactional
     public void createAdmin(AdminCreateRequest request) {
         // 관리자 ID 중복 검사

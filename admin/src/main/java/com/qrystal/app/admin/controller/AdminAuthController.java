@@ -23,10 +23,4 @@ public class AdminAuthController {
        }
        return "admin/auth/login";
    }
-
-    @GetMapping("/")
-    public String index(@AuthenticationPrincipal AdminDetails adminDetails, Model model) {
-        model.addAttribute("admin", adminDetails.getAdmin());
-        return "admin/index";
-    }
 }
