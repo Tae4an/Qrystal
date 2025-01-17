@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qrystal.app.user.mapper.UserMapper">
+
+    <select id="findAllWithCondition" resultType="com.qrystal.app.user.model.User">
+        SELECT * FROM users
+        <where>
+            <if test="condition.search != null and condition.search != ''">
+                AND (
+                email LIKE CONCAT('%', #{condition.search}, '%')
+                OR name LIKE CONCAT('%', #{condition.search}, '%')
+                )
+            </if>
+            <if test="condition.status != null">
+                AND status = #{condition.status}
+            </if>
+            <if test="condition.type == 'DEFAULT'">
+                AND provider IS NULL
+            </if>
+            <if test="condition.type == 'SOCIAL'">
+                AND provider IS NOT NULL
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countByCondition" resultType="int">
+        SELECT COUNT(*) FROM users
+        <where>
+            <if test="condition.search != null and condition.search != ''">
+                AND (
+                email LIKE CONCAT('%', #{condition.search}, '%')
+                OR name LIKE CONCAT('%', #{condition.search}, '%')
+                )
+            </if>
+            <if test="condition.status != null">
+                AND status = #{condition.status}
+            </if>
+            <if test="condition.type == 'DEFAULT'">
+                AND provider IS NULL
+            </if>
+            <if test="condition.type == 'SOCIAL'">
+                AND provider IS NOT NULL
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultType="com.qrystal.app.user.model.User">
+        SELECT * FROM users WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="com.qrystal.app.user.model.User">
+        UPDATE users
+        SET status = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+</mapper>

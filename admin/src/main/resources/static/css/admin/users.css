@@ -1,0 +1,234 @@
+/* users.css */
+.users {
+    padding: 1.5rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.users-header {
+    margin-bottom: 2rem;
+}
+
+.users-header h2 {
+    color: var(--text-primary);
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.users-filters {
+    background: var(--header-dark);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-dark);
+}
+
+.filter-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filter-group select.form-control {
+    width: 150px;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+.search-box {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.search-box .form-control {
+    flex: 1;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+.search-box .form-control::placeholder {
+    color: var(--text-secondary);
+}
+
+.search-box .form-control:focus {
+    outline: none;
+    border-color: var(--highlight);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.btn-icon {
+    padding: 0 1rem;
+    background: var(--highlight);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+    background: #2563EB;
+    transform: translateY(-1px);
+}
+
+/* 테이블 스타일 */
+.users-content {
+    margin-top: 1.5rem;
+    background: var(--header-dark);
+    border-radius: 12px;
+    border: 1px solid var(--border-dark);
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table th {
+    padding: 1rem 1.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-align: left;
+    border-bottom: 1px solid var(--border-dark);
+    background: var(--bg-dark);
+}
+
+.table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-dark);
+}
+
+.table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* 배지 스타일 */
+.badge {
+    display: inline-flex;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-default {
+    background: #4B5563;
+    color: white;
+}
+
+.badge-social {
+    background: #8B5CF6;
+    color: white;
+}
+
+.badge-success {
+    background: #10B981;
+    color: white;
+}
+
+.badge-danger {
+    background: #EF4444;
+    color: white;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.pagination .btn {
+    padding: 0.5rem 1rem;
+    min-width: 40px;
+    text-align: center;
+    background: var(--header-dark);
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.pagination .btn:hover {
+    background: var(--highlight);
+    color: white;
+    border-color: var(--highlight);
+}
+
+.pagination .btn.active {
+    background: var(--highlight);
+    color: white;
+    border-color: var(--highlight);
+}
+.btn-outline-danger {
+    color: #EF4444;
+    border: 1px solid #EF4444;
+    background: transparent;
+}
+
+.btn-outline-danger:hover {
+    color: white;
+    background: #EF4444;
+}
+
+.btn-outline-success {
+    color: #10B981;
+    border: 1px solid #10B981;
+    background: transparent;
+}
+
+.btn-outline-success:hover {
+    color: white;
+    background: #10B981;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .filter-group {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .filter-group select.form-control {
+        width: 100%;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
