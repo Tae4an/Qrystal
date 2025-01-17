@@ -6,17 +6,21 @@
             email,
             password,
             name,
+            provider,
+            provider_id,
             status,
             created_at,
             updated_at
         ) VALUES (
-                     #{email},
-                     #{password},
-                     #{name},
-                     #{status, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
-                     NOW(),
-                     NOW()
-                 )
+                    #{email},
+                    #{password},
+                    #{name},
+                    #{provider},
+                    #{providerId},
+                    #{status, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+                    NOW(),
+                    NOW()
+                    )
     </insert>
 
     <select id="findById" resultType="com.qrystal.app.user.model.User">
@@ -33,6 +37,8 @@
             email = #{email},
             password = #{password},
             name = #{name},
+            provider = #{provider},
+            provider_id = #{providerId},
             status = #{status, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
             updated_at = NOW()
         WHERE id = #{id}
