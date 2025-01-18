@@ -26,6 +26,9 @@
             <li>
                 <a href="/users"><i class="fas fa-users"></i> 사용자 관리</a>
             </li>
+            <li>
+                <a href="/category"><i class="fas fa-folder"></i> 카테고리 관리</a>
+            </li>
         </ul>
     </nav>
 

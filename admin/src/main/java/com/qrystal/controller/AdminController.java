@@ -64,4 +64,10 @@ public class AdminController {
 
         return "admin/index";
     }
+
+    @GetMapping("/category")
+    public String categoryList(Model model) {
+        model.addAttribute("content", "category/list");
+        return "admin/index";
+    }
 }
