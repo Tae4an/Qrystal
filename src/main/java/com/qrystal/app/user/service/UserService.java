@@ -42,29 +42,6 @@ public class UserService {
         return user.getId();
     }
 
-    @Transactional
-    public void verifyEmail(String token) {
-        // 토큰으로 이메일 가져오기
-        String email = emailVerificationService.getEmailByToken(token)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_VERIFICATION_TOKEN));
-
-        // 사용자 찾기
-        User user = userMapper.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        // 이미 인증된 사용자인지 확인
-        if (user.getStatus() == UserStatus.ACTIVE) {
-            throw new CustomException(ErrorCode.ALREADY_VERIFIED);
-        }
-
-        // 사용자 상태를 ACTIVE로 변경
-        user.setStatus(UserStatus.ACTIVE);
-        userMapper.update(user);
-
-        // 사용된 토큰 삭제
-        emailVerificationService.deleteVerificationToken(token);
-    }
-
     private void validateDuplicateUser(UserSignupRequest request) {
         if (userMapper.findByEmail(request.getEmail()).isPresent()) {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
@@ -146,10 +123,16 @@ public class UserService {
         userMapper.update(user);
     }
     public String extractEmail(Object principal) {
-        if (principal instanceof UserDetails) {
+        log.info("Principal type: {}", principal != null ? principal.getClass().getName() : "null");
+        log.info("Principal value: {}", principal);
+
+        if (principal instanceof String) {
+            return (String) principal;
+        } else if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
         } else if (principal instanceof DefaultOAuth2User) {
             Map<String, Object> attributes = ((DefaultOAuth2User) principal).getAttributes();
+            log.info("OAuth2User attributes: {}", attributes);
 
             if (attributes.containsKey("email")) {
                 return (String) attributes.get("email");
@@ -161,6 +144,14 @@ public class UserService {
                 return (String) kakaoAccount.get("email");
             }
         }
+
+        log.error("Principal type not supported: {}", principal != null ? principal.getClass().getName() : "null");
         throw new CustomException(ErrorCode.USER_NOT_FOUND);
     }
+    // 이메일로 사용자 찾기
+    public User getUserByEmail(String email) {
+        return userMapper.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
 }
