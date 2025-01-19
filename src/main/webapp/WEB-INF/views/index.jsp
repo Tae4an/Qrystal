@@ -4,25 +4,31 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qrystal - 모의고사 플랫폼</title>
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/index.css'/>">
 </head>
 <body>
-<jsp:include page="common/header.jsp" />
+<div class="container">
+    <!-- 헤더 포함 -->
+    <jsp:include page="common/header.jsp" />
 
-<main>
-    <section class="main-banner">
-        <h1>Qrystal 모의고사 플랫폼</h1>
-        <p>자격증 취득을 위한 최적의 학습 파트너</p>
-        <div class="main-buttons">
-            <a href="/exam/list" class="main-btn">문제 은행</a>
-            <a href="/exam/mock" class="main-btn">모의고사</a>
-            <a href="/exam/analysis" class="main-btn">성적 분석</a>
-        </div>
-    </section>
-</main>
+    <!-- 메인 컨텐츠 -->
+    <main class="main-content">
+        <c:choose>
+            <c:when test="${content == null}">
+                <jsp:include page="home.jsp"/>
+            </c:when>
+            <c:otherwise>
+                <jsp:include page="${content}.jsp"/>
+            </c:otherwise>
+        </c:choose>
+    </main>
 
-<jsp:include page="common/footer.jsp" />
-<script src="<c:url value='/js/main.js'/>"></script>
+    <!-- 푸터 포함 -->
+    <jsp:include page="common/footer.jsp" />
+</div>
+
+<script src="<c:url value='/js/index.js'/>"></script>
 </body>
 </html>

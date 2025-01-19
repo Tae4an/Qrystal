@@ -1,16 +1,8 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>로그인 - Qrystal</title>
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/login.css'/>">
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-</head>
-<body>
-<jsp:include page="../common/header.jsp" />
+<link rel="stylesheet" type="text/css" href="<c:url value='/css/login.css'/>">
+
 <main class="login-container">
     <h2>로그인</h2>
     <form action="/auth/login" method="post" id="loginForm">
@@ -28,7 +20,6 @@
             <button type="submit" class="btn btn-primary">로그인</button>
         </div>
     </form>
-
     <div class="social-login">
         <div class="social-buttons">
             <a href="/oauth2/authorization/google">
@@ -40,17 +31,14 @@
             <a href="/oauth2/authorization/naver">
                 <img src="<c:url value='/img/naver.png'/>" alt="Naver 로그인" class="social-login-btn">
             </a>
-<%--            <a href="/oauth2/authorization/kakao">--%>
-<%--                <img src="<c:url value='/img/kakao.png'/>" alt="Kakao 로그인" class="social-login-btn">--%>
-<%--            </a>--%>
+            <%-- <a href="/oauth2/authorization/kakao">--%>
+            <%-- <img src="<c:url value='/img/kakao.png'/>" alt="Kakao 로그인" class="social-login-btn">--%>
+            <%-- </a>--%>
         </div>
     </div>
-
     <div class="signup-link">
         <p>계정이 없으신가요? <a href="/auth/signup">회원가입</a></p>
     </div>
 </main>
-<jsp:include page="../common/footer.jsp" />
+
 <script src="<c:url value='/js/login.js'/>"></script>
-</body>
-</html>

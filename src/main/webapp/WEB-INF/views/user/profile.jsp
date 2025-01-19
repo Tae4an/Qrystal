@@ -2,18 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="javatime" uri="http://sargue.net/jsptags/time" %>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로필 - Qrystal</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/profile.css'/>">
-</head>
-<body>
-<jsp:include page="../common/header.jsp" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="<c:url value='/css/profile.css'/>">
 
 <main class="profile-container">
     <div class="profile-header">
@@ -60,7 +51,7 @@
         <h3>회원 탈퇴</h3>
         <p>정말 탈퇴하시겠습니까?</p>
         <form action="/user/deactivate" method="post">
-            <c:if test="${user.provider == null}">
+            <c:if test="${user.isLocalUser}">
                 <div class="form-group">
                     <label for="password">비밀번호를 입력하세요</label>
                     <input type="password" id="password" name="password" required>
@@ -73,8 +64,6 @@
         </form>
     </div>
 </div>
-
-<jsp:include page="../common/footer.jsp" />
 
 <script>
     function confirmDelete() {
@@ -93,5 +82,3 @@
         }
     }
 </script>
-</body>
-</html>

@@ -17,13 +17,18 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
-    private final AuthService authService;
     private final UserService userService;
+    @GetMapping("/login")
+    public String loginForm(Model model) {
+        model.addAttribute("content", "auth/login");
+        return "index";
+    }
 
     @GetMapping("/signup")
     public String signupForm(Model model) {
+        model.addAttribute("content", "auth/signup");
         model.addAttribute("userSignupRequest", new UserSignupRequest());
-        return "auth/signup";
+        return "index";
     }
 
     @PostMapping("/signup")
@@ -31,30 +36,11 @@ public class AuthController {
                          BindingResult bindingResult,
                          RedirectAttributes attributes) {
         if (bindingResult.hasErrors()) {
-            return "auth/signup";
+            return "redirect:/auth/signup";
         }
 
         userService.signup(request);
         attributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
         return "redirect:/auth/login";
-    }
-
-    @GetMapping("/verify")
-    public String verifyEmail(@RequestParam String token, RedirectAttributes attributes) {
-        try {
-            userService.verifyEmail(token);
-            attributes.addFlashAttribute("message", "이메일 인증이 완료되었습니다. 로그인해주세요.");
-            return "redirect:/auth/login";
-        } catch (CustomException e) {
-            attributes.addFlashAttribute("error", "유효하지 않은 인증 링크입니다.");
-            return "redirect:/auth/login";
-        }
-    }
-
-
-
-    @GetMapping("/login")
-    public String loginForm() {
-        return "auth/login";
     }
 }

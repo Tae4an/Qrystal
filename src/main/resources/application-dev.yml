@@ -5,6 +5,7 @@ server:
     encoding:
       charset: UTF-8
       force: true
+      enabled: true
 
 spring:
   datasource:
@@ -93,7 +94,9 @@ logging:
   config: classpath:logback-spring.xml
   level:
     com.qrystal: DEBUG
-
+  charset:
+    console: UTF-8
+    file: UTF-8
 jasypt:
   encryptor:
     password: ${JASYPT_ENCRYPTOR_PASSWORD}
