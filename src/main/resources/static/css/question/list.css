@@ -1,0 +1,261 @@
+/* list.css */
+.question-container {
+    display: flex;
+    gap: 24px;
+    min-height: calc(100vh - 78px); /* 헤더 높이 78px 반영 */
+    padding: 24px;
+    background-color: #f8f9fa;
+}
+
+/* 카테고리 사이드바 */
+.category-sidebar {
+    width: 300px;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 16px;
+}
+
+.sidebar-header h3 {
+    color: #1f2937;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* 메인 컨텐츠 영역 */
+.question-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 검색 및 필터 영역 */
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-filters {
+    display: flex;
+    gap: 12px;
+}
+
+.search-input {
+    width: 300px;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    color: #1f2937;
+    transition: all 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    color: #1f2937;
+    min-width: 120px;
+    transition: all 0.2s;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* 문제 목록 테이블 */
+.question-table-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.question-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.question-table th,
+.question-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.question-table th {
+    font-weight: 600;
+    color: #4b5563;
+    font-size: 14px;
+    background: #f8fafc;
+}
+
+.question-table tr:hover {
+    background: #f8fafc;
+}
+
+.question-title {
+    color: #6366f1;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.question-title:hover {
+    color: #4f46e5;
+}
+
+/* 버튼 스타일 */
+.btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #6366f1;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+}
+
+/* 상태 뱃지 */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #059669;
+}
+
+.status-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.status-reported {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* 난이도 표시 */
+.difficulty {
+    color: #f59e0b;
+    font-size: 14px;
+}
+
+/* 액션 버튼 그룹 */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-buttons .btn {
+    padding: 6px 8px;
+    font-size: 14px;
+}
+
+/* 카테고리 트리 */
+.category-item {
+    list-style: none;
+}
+
+.category-content {
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.category-content:hover {
+    background: #f8fafc;
+}
+
+.category-content.selected {
+    background: #e0e7ff;
+    color: #4f46e5;
+}
+
+.category-content i {
+    color: #6366f1;
+    font-size: 16px;
+}
+
+.category-children {
+    margin-left: 20px;
+    border-left: 1px solid #e5e7eb;
+    padding-left: 12px;
+}
+
+/* 토스트 메시지 */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 16px 24px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.success {
+    border-left: 4px solid #059669;
+}
+
+.toast.error {
+    border-left: 4px solid #dc2626;
+}
