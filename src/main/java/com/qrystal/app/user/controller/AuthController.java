@@ -11,6 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 @Controller
 @RequestMapping("/auth")
@@ -19,7 +22,18 @@ import javax.validation.Valid;
 public class AuthController {
     private final UserService userService;
     @GetMapping("/login")
-    public String loginForm(Model model) {
+    public String loginForm(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            String loginMessage = (String) session.getAttribute("loginMessage");
+            if (loginMessage != null) {
+                model.addAttribute("loginMessage", loginMessage);
+                session.removeAttribute("loginMessage");
+                session.removeAttribute("targetUrl");
+            }
+        }
+
         model.addAttribute("content", "auth/login");
         return "index";
     }

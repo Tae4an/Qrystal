@@ -1,6 +1,7 @@
 package com.qrystal.config;
 
 import com.qrystal.app.user.service.AuthService;
+import com.qrystal.app.user.service.CustomAuthenticationEntryPoint;
 import com.qrystal.app.user.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthService authService) throws Exception {
@@ -26,9 +28,11 @@ public class SecurityConfig {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .authorizeRequests()
-                    .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/img/**", "/favicon.ico").permitAll()
+                .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/img/**", "/favicon.ico").permitAll()
                     .anyRequest().authenticated()
-
+                .and()
+                    .exceptionHandling()
+                    .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                     .formLogin()
                     .loginPage("/auth/login")
@@ -37,7 +41,6 @@ public class SecurityConfig {
                     .passwordParameter("password")
                     .defaultSuccessUrl("/", true)
                     .failureUrl("/auth/login?error=true")
-
                 .and()
                     .oauth2Login()
                     .loginPage("/auth/login")
@@ -46,7 +49,6 @@ public class SecurityConfig {
                     .userInfoEndpoint()
                     .userService(customOAuth2UserService)
                 .and()
-
                 .and()
                     .logout()
                     .logoutUrl("/auth/logout")
@@ -55,7 +57,6 @@ public class SecurityConfig {
                     .clearAuthentication(true);
 
         http.userDetailsService(authService);
-
         return http.build();
     }
 

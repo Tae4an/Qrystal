@@ -5,6 +5,8 @@
 
 <main class="login-container">
     <h2>로그인</h2>
+    <input type="hidden" id="loginMessage" value="${loginMessage}">
+
     <form action="/auth/login" method="post" id="loginForm">
         <div class="form-group">
             <label for="email">이메일</label>
@@ -20,6 +22,7 @@
             <button type="submit" class="btn btn-primary">로그인</button>
         </div>
     </form>
+
     <div class="social-login">
         <div class="social-buttons">
             <a href="/oauth2/authorization/google">
@@ -36,6 +39,7 @@
             <%-- </a>--%>
         </div>
     </div>
+
     <div class="signup-link">
         <p>계정이 없으신가요? <a href="/auth/signup">회원가입</a></p>
     </div>
