@@ -1,4 +1,4 @@
-/* style.css */
+/* index.css */
 /* 기본 초기화 및 폰트 설정 */
 * {
     margin: 0;
@@ -11,6 +11,123 @@ body {
     line-height: 1.6;
     color: #333;
     background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    margin-top: 78px;
+    flex: 1;
+}
+
+/* 헤더 스타일 */
+header {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 78px;  /* 헤더 높이 고정 */
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #6366f1;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: inline-block;  /* 로고 정렬 개선 */
+    line-height: 1;  /* 로고 수직 정렬 개선 */
+}
+
+.logo a:hover {
+    color: #4f46e5;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;  /* nav 높이에 맞춤 */
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #4b5563;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+    line-height: 1.5;  /* 텍스트 수직 정렬 개선 */
+    display: inline-flex;  /* 정렬 개선 */
+    align-items: center;  /* 수직 중앙 정렬 */
+}
+
+.nav-links a:hover {
+    background-color: #f3f4f6;
+    color: #6366f1;
+}
+
+.user-info {
+    display: inline-flex;  /* 정렬 개선 */
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #f8fafc;
+    border-radius: 0.5rem;
+    margin-right: 0.5rem;
+    height: 38px;  /* 높이 고정 */
+}
+
+.user-info span {
+    color: #4b5563;
+    font-weight: 600;
+    margin-right: 1rem;
+    line-height: 1;  /* 텍스트 수직 정렬 개선 */
+}
+
+.nav-links form {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;  /* 정렬 개선 */
+    align-items: center;
+}
+
+.nav-links button {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: inherit;
+    line-height: 1.5;  /* 텍스트 수직 정렬 개선 */
+    height: 38px;  /* 높이 고정 */
+}
+
+.nav-links button:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
 }
 
 /* 메인 배너 섹션 */
@@ -28,8 +145,20 @@ body {
     padding: 2rem;
 }
 
-.main-banner {
-    background: linear-gradient(45deg, #6366f1, #8b5cf6);
+.main-banner h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.main-banner p {
+    font-size: 1.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease forwards 0.2s;
 }
 
 /* 주요 기능 버튼 스타일 */
@@ -60,21 +189,6 @@ body {
     color: #6366f1;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.main-banner h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.8s ease forwards;
-}
-
-.main-banner p {
-    font-size: 1.5rem;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.8s ease forwards 0.2s;
 }
 
 /* 기능 소개 섹션 */
@@ -124,116 +238,11 @@ body {
     line-height: 1.6;
 }
 
-/* 애니메이션 키프레임 */
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes moveBackground {
-    from {
-        background-position: 0 0;
-    }
-    to {
-        background-position: 100% 100%;
-    }
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    .main-banner {
-        height: 400px;
-        padding: 2rem;
-    }
-
-    .main-banner h1 {
-        font-size: 2.5rem;
-    }
-
-    .main-banner p {
-        font-size: 1.2rem;
-    }
-
-    .features {
-        padding: 4rem 1rem;
-    }
-
-    .feature-list {
-        grid-template-columns: 1fr;
-    }
-}
-/* 헤더 스타일 */
-header {
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-}
-
-nav {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo a {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #6366f1;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.logo a:hover {
-    color: #4f46e5;
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    list-style: none;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: #4b5563;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.nav-links a:hover {
-    color: #6366f1;
-}
-
-.nav-links button {
-    background: none;
-    border: none;
-    color: #4b5563;
-    font-weight: 500;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    padding: 0.5rem 1rem;
-}
-
-.nav-links button:hover {
-    color: #dc2626;
-}
-
 /* 푸터 스타일 */
 footer {
     background-color: #1f2937;
     color: #f3f4f6;
     padding: 4rem 0;
-    margin-top: 4rem;
 }
 
 .footer-content {
@@ -276,6 +285,23 @@ footer {
     font-size: 0.875rem;
 }
 
+/* 애니메이션 키프레임 */
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes moveBackground {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 100% 100%;
+    }
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     nav {
@@ -284,6 +310,27 @@ footer {
 
     .nav-links {
         gap: 1rem;
+    }
+
+    .main-banner {
+        height: 400px;
+        padding: 2rem;
+    }
+
+    .main-banner h1 {
+        font-size: 2.5rem;
+    }
+
+    .main-banner p {
+        font-size: 1.2rem;
+    }
+
+    .features {
+        padding: 4rem 1rem;
+    }
+
+    .feature-list {
+        grid-template-columns: 1fr;
     }
 
     .footer-content {
@@ -301,85 +348,4 @@ footer {
     .footer-links li {
         margin-bottom: 0;
     }
-}
-
-/* 애니메이션 */
-@keyframes slideDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-header {
-    animation: slideDown 0.5s ease-out;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-}
-
-.user-info span {
-    color: #4b5563;
-    font-weight: 500;
-    margin-right: 1rem;
-}
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    list-style: none;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: #4b5563;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    transition: all 0.2s;
-}
-
-.nav-links a:hover {
-    background-color: #f3f4f6;
-    color: #6366f1;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    background-color: #f8fafc;
-    border-radius: 0.5rem;
-    margin-right: 0.5rem;
-}
-
-.user-info span {
-    color: #4b5563;
-    font-weight: 600;
-}
-
-.nav-links form {
-    margin: 0;
-}
-
-.nav-links button {
-    background: none;
-    border: none;
-    color: #ef4444;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.nav-links button:hover {
-    background-color: #fee2e2;
-    color: #dc2626;
 }

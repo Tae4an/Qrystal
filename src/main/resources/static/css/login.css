@@ -1,9 +1,8 @@
 /* login.css */
-
 .login-container {
     max-width: 500px;
-    margin: 120px auto 60px;
-    padding: 2.5rem;
+    margin: 78px auto 0;
+    padding: 4rem;
     background: white;
     border-radius: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -108,33 +107,6 @@
     transform: translateY(-1px);
 }
 
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    .login-container {
-        margin: 100px 1rem 2rem;
-        padding: 1.5rem;
-    }
-
-    .button-group {
-        flex-direction: column;
-    }
-
-    .btn {
-        width: 100%;
-    }
-}
-
-/* 애니메이션 */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 .signup-link {
     text-align: center;
     margin-top: 2rem;
@@ -156,14 +128,6 @@
 
 .signup-link a:hover {
     text-decoration: underline;
-}
-
-.button-group {
-    margin-top: 2rem;
-}
-
-.button-group .btn {
-    width: 100%;
 }
 
 .social-login {
@@ -198,4 +162,32 @@
 .social-login-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .login-container {
+        margin: 78px 1rem 0;
+        padding: 2.5rem;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
 }
