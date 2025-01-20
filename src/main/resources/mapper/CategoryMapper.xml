@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qrystal.app.category.mapper.CategoryMapper">
+
+    <resultMap id="CategoryResultMap" type="com.qrystal.app.category.model.Category">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="level" column="level"/>
+        <result property="ordering" column="ordering"/>
+        <result property="status" column="status" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="parentName" column="parent_name"/>
+        <collection property="children" column="id" select="findByParentId"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="CategoryResultMap">
+        SELECT
+            c.*,
+            p.name as parent_name
+        FROM categories c
+                 LEFT JOIN categories p ON c.parent_id = p.id
+        WHERE c.parent_id IS NULL
+        ORDER BY c.ordering
+    </select>
+
+    <select id="findAllActive" resultMap="CategoryResultMap">
+        SELECT
+            c.*,
+            p.name as parent_name
+        FROM categories c
+                 LEFT JOIN categories p ON c.parent_id = p.id
+        WHERE c.status = 'ACTIVE'
+          AND c.parent_id IS NULL
+        ORDER BY c.ordering
+    </select>
+
+    <select id="findById" resultMap="CategoryResultMap">
+        SELECT
+            c.*,
+            p.name as parent_name
+        FROM categories c
+                 LEFT JOIN categories p ON c.parent_id = p.id
+        WHERE c.id = #{id}
+    </select>
+
+    <select id="findByParentId" resultMap="CategoryResultMap">
+        SELECT
+            c.*,
+            p.name as parent_name
+        FROM categories c
+                 LEFT JOIN categories p ON c.parent_id = p.id
+        WHERE c.parent_id = #{parentId}
+        ORDER BY c.ordering
+    </select>
+
+    <select id="findByLevel" resultMap="CategoryResultMap">
+        SELECT
+            c.*,
+            p.name as parent_name
+        FROM categories c
+                 LEFT JOIN categories p ON c.parent_id = p.id
+        WHERE c.level = #{level}
+        ORDER BY c.ordering
+    </select>
+
+    <select id="findActiveByLevel" resultMap="CategoryResultMap">
+        SELECT
+            c.*,
+            p.name as parent_name
+        FROM categories c
+                 LEFT JOIN categories p ON c.parent_id = p.id
+        WHERE c.level = #{level}
+          AND c.status = 'ACTIVE'
+        ORDER BY c.ordering
+    </select>
+</mapper>
