@@ -1,6 +1,7 @@
 package com.qrystal.app.question.controller;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.qrystal.app.question.domain.QuestionStatus;
@@ -10,6 +11,7 @@ import com.qrystal.app.question.dto.QuestionSearchCondition;
 import com.qrystal.app.question.dto.QuestionUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import com.qrystal.app.question.model.Question;
@@ -54,6 +56,8 @@ public class QuestionController {
     public ResponseEntity<QuestionResponse> createQuestion(
             @RequestBody @Valid QuestionCreateRequest request,
             Principal principal) {
+        log.info("Principal: {}", principal);  // principal 정보 확인
+        log.info("Principal name: {}", principal.getName());  // 이메일 정보 확인
         Long userId = getCurrentUserId(principal);
 
         Question question = Question.builder()
@@ -151,6 +155,13 @@ public class QuestionController {
 
     // Principal에서 사용자 ID를 가져오는 헬퍼 메서드
     private Long getCurrentUserId(Principal principal) {
+        if (principal instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+            Map<String, Object> attributes = oauthToken.getPrincipal().getAttributes();
+            String email = (String) attributes.get("email");
+            return userService.getUserByEmail(email).getId();
+        }
+        // 일반 로그인의 경우
         return userService.getUserByEmail(principal.getName()).getId();
     }
 }

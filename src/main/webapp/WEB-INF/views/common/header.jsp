@@ -31,7 +31,7 @@
                     </c:choose>
                 </li>
             </sec:authorize>
-            <li><a href="/exam/list">모의고사</a></li>
+            <li><a href="/questions">문제 은행</a></li>
             <sec:authorize access="isAuthenticated()">
                 <li><a href="/user/profile">프로필</a></li>
                 <li>

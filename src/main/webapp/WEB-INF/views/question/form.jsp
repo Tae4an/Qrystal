@@ -1,0 +1,129 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<link rel="stylesheet" href="<c:url value='/css/question/form.css'/>">
+
+<div class="question-form-container">
+    <!-- 상단 헤더 -->
+    <div class="form-header">
+        <h2 id="formTitle">새 문제 등록</h2>
+    </div>
+
+    <!-- 문제 작성 폼 -->
+    <form id="questionForm" class="question-form">
+        <input type="hidden" id="questionId" value="${questionId}">
+
+        <!-- 기본 정보 -->
+        <div class="form-section">
+            <div class="form-group">
+                <label for="categoryId">카테고리</label>
+                <select id="categoryId" class="form-control" required>
+                    <option value="">카테고리 선택</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="typeId">문제 유형</label>
+                <select id="typeId" class="form-control" required>
+                    <option value="">유형 선택</option>
+                    <option value="1">객관식</option>
+                    <option value="2">주관식</option>
+                    <option value="3">서술형</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 제목 및 문제 내용 -->
+        <div class="form-section">
+            <div class="form-group">
+                <label for="title">제목</label>
+                <input type="text" id="title" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="content">문제 내용</label>
+                <div id="editor"></div>
+            </div>
+        </div>
+
+        <!-- 객관식 보기 (문제 유형이 객관식일 때만 표시) -->
+        <div id="choicesSection" class="form-section" style="display: none;">
+            <div class="form-group">
+                <label>보기</label>
+                <div id="choicesList">
+                    <!-- JavaScript로 동적 생성 -->
+                </div>
+                <button type="button" class="btn btn-outline" onclick="addChoice()">
+                    <i class="fas fa-plus"></i> 보기 추가
+                </button>
+            </div>
+        </div>
+
+        <!-- 정답 및 해설 -->
+        <div class="form-section">
+            <div class="form-group" id="answerContainer">
+                <label for="answer">정답</label>
+                <input type="text" id="answer" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="explanation">해설</label>
+                <div id="explanationEditor"></div>
+            </div>
+        </div>
+
+        <!-- 부가 설정 -->
+        <div class="form-section">
+            <div class="form-group">
+                <label for="difficulty">난이도</label>
+                <div class="difficulty-select">
+                    <input type="radio" name="difficulty" id="diff5" value="5">
+                    <label for="diff5">★</label>
+                    <input type="radio" name="difficulty" id="diff4" value="4">
+                    <label for="diff4">★</label>
+                    <input type="radio" name="difficulty" id="diff3" value="3">
+                    <label for="diff3">★</label>
+                    <input type="radio" name="difficulty" id="diff2" value="2">
+                    <label for="diff2">★</label>
+                    <input type="radio" name="difficulty" id="diff1" value="1">
+                    <label for="diff1">★</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">태그</label>
+                <div class="tags-input">
+                    <div id="tagsList" class="tags-list"></div>
+                    <input type="text" id="tagInput" class="form-control" placeholder="태그 입력 후 Enter">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="isPublic" checked>
+                    <span>공개</span>
+                </label>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-primary" onclick="validateAndSave(event)">저장</button>
+                <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 미리보기 모달 -->
+<div id="previewModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>미리보기</h3>
+            <button type="button" class="close-button" onclick="closePreviewModal()">×</button>
+        </div>
+        <div id="previewContent" class="modal-body">
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="<c:url value='/js/question/form.js'/>"></script>
