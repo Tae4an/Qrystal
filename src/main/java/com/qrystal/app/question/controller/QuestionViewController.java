@@ -18,6 +18,12 @@ public class QuestionViewController {
         return "index";  // 메인 레이아웃 템플릿
     }
 
+    @GetMapping("/my")
+    public String myQuestions(Model model) {
+        model.addAttribute("content", "question/my-questions");
+        return "index";
+    }
+
     @GetMapping("/new")
     public String questionForm(Model model) {
         model.addAttribute("content", "question/form");

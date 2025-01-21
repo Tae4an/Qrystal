@@ -335,3 +335,18 @@
 .toast.error {
     border-left: 4px solid #dc2626;
 }
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-secondary {
+    background: #4b5563;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #374151;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(75, 85, 99, 0.2);
+}

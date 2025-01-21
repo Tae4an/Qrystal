@@ -51,6 +51,8 @@ function initializeEditors() {
     });
 }
 
+let currentQuestionData = null;
+
 // 카테고리 로드
 async function loadCategories() {
     try {
@@ -58,11 +60,17 @@ async function loadCategories() {
         if (!response.ok) throw new Error('카테고리 로드 실패');
         const categories = await response.json();
         renderCategoryOptions(categories);
+
+        // 수정 모드일 경우 카테고리 설정
+        if (currentQuestionData) {
+            document.getElementById('categoryId').value = currentQuestionData.categoryId;
+        }
     } catch (error) {
         console.error('카테고리 로드 실패:', error);
         showToast('카테고리 목록을 불러오는데 실패했습니다.', 'error');
     }
 }
+
 
 // 카테고리 옵션 렌더링
 function renderCategoryOptions(categories, parentElement = document.getElementById('categoryId'), level = 0) {
@@ -400,28 +408,38 @@ async function loadQuestionData(questionId) {
     try {
         const response = await fetch(`/api/questions/${questionId}`);
         if (!response.ok) throw new Error('문제 로드 실패');
-        const data = await response.json();
+        const question = await response.json();
 
-        // 폼 데이터 설정
-        document.getElementById('categoryId').value = data.categoryId;
-        document.getElementById('typeId').value = data.typeId;
-        document.getElementById('title').value = data.title;
-        editor.root.innerHTML = data.content;
-        document.getElementById('answer').value = data.answer;
-        explanationEditor.root.innerHTML = data.explanation;
-        document.querySelector(`input[name="difficulty"][value="${data.difficulty}"]`).checked = true;
-        document.getElementById('isPublic').checked = data.isPublic;
+        currentQuestionData = question;
 
-        // 태그 설정
-        tags = new Set(data.tags);
-        renderTags();
+        // 카테고리 옵션이 이미 로드되어 있다면 바로 설정
+        if (document.getElementById('categoryId').options.length > 1) {
+            document.getElementById('categoryId').value = question.categoryId;
+        }
+        console.log("로드된 문제 데이터:", question);
 
-        // 객관식인 경우 보기 설정
-        if (data.typeId === '1' && data.choices) {
-            document.getElementById('choicesSection').style.display = 'block';
+        // 기본 정보 설정
+        document.getElementById('categoryId').value = question.categoryId;
+        document.getElementById('title').value = question.title;
+        editor.root.innerHTML = question.content;
+        document.getElementById('answer').value = question.answer;
+        explanationEditor.root.innerHTML = question.explanation || '';
+        document.querySelector(`input[name="difficulty"][value="${question.difficulty}"]`).checked = true;
+        document.getElementById('isPublic').checked = question.isPublic;
+
+        // 문제 유형 설정 및 객관식 보기 처리
+        const typeSelect = document.getElementById('typeId');
+        typeSelect.value = question.typeId;
+
+        // 객관식인 경우 보기 추가
+        if (question.typeId === 1 && question.choices) {
+            const choicesSection = document.getElementById('choicesSection');
             const choicesList = document.getElementById('choicesList');
-            choicesList.innerHTML = '';
-            data.choices.forEach(choice => {
+
+            choicesSection.style.display = 'block';
+            choicesList.innerHTML = '';  // 기존 보기 초기화
+
+            question.choices.forEach(choice => {
                 const choiceItem = document.createElement('div');
                 choiceItem.className = 'choice-item';
                 choiceItem.innerHTML = `
@@ -433,6 +451,12 @@ async function loadQuestionData(questionId) {
                `;
                 choicesList.appendChild(choiceItem);
             });
+        }
+
+        // 태그 설정
+        if (question.tags) {
+            tags = new Set(question.tags);
+            renderTags();
         }
     } catch (error) {
         console.error('문제 로드 실패:', error);

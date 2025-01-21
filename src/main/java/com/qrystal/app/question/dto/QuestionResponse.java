@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class QuestionResponse {
     private Long id;
     private String title;
+    private Long categoryId;
     private String categoryName;
     private Long typeId;
     private String typeName;
@@ -37,6 +38,7 @@ public class QuestionResponse {
         return QuestionResponse.builder()
                 .id(question.getId())
                 .title(question.getTitle())
+                .categoryId(question.getCategoryId())
                 .categoryName(question.getCategoryName())
                 .typeId(question.getTypeId())
                 .typeName(question.getTypeName())

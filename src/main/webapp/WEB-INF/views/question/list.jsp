@@ -35,9 +35,14 @@
                     <option value="5">★★★★★</option>
                 </select>
             </div>
-            <button type="button" class="btn btn-primary" onclick="location.href='/questions/new'">
-                <i class="fas fa-plus"></i> 새 문제
-            </button>
+            <div class="header-actions">
+                <button type="button" class="btn btn-secondary" onclick="location.href='/questions/my'">
+                    <i class="fas fa-list"></i> 내 문제
+                </button>
+                <button type="button" class="btn btn-primary" onclick="location.href='/questions/new'">
+                    <i class="fas fa-plus"></i> 새 문제
+                </button>
+            </div>
         </div>
 
         <!-- 문제 목록 -->
