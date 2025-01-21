@@ -6,6 +6,7 @@ import com.qrystal.app.user.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,8 +29,13 @@ public class SecurityConfig {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/img/**", "/favicon.ico").permitAll()
-                    .anyRequest().authenticated()
+                    // 정적 리소스 및 기본 페이지
+                    .antMatchers("/", "/auth/**", "/js/**", "/css/**", "/img/**", "/favicon.ico").permitAll()
+                    // 문제 조회/풀이 관련 (누구나 접근 가능)
+                    .antMatchers(HttpMethod.GET, "/questions", "/api/questions/**").permitAll()
+                    .antMatchers("/api/categories").permitAll()
+                    // 그 외 모든 요청은 인증 필요
+                   .anyRequest().authenticated()
                 .and()
                     .exceptionHandling()
                     .authenticationEntryPoint(authenticationEntryPoint)
