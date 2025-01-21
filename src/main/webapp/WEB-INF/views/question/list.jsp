@@ -2,8 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <link rel="stylesheet" href="<c:url value='/css/question/list.css'/>">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
-
 
 <div class="question-container">
     <!-- 좌측: 카테고리 트리 -->
@@ -18,17 +16,17 @@
 
     <!-- 우측: 문제 목록 -->
     <div class="question-content">
-        <!-- 상단: 검색 및 필터 -->
+        <!-- 검색 및 필터 영역 -->
         <div class="content-header">
             <div class="search-filters">
-                <input type="text" id="searchInput" placeholder="문제 검색..." class="search-input">
-                <select id="typeFilter" class="filter-select">
+                <input type="text" id="searchInput" class="form-control" placeholder="문제 검색...">
+                <select id="typeFilter" class="form-control">
                     <option value="">유형 선택</option>
                     <option value="1">객관식</option>
                     <option value="2">주관식</option>
                     <option value="3">서술형</option>
                 </select>
-                <select id="difficultyFilter" class="filter-select">
+                <select id="difficultyFilter" class="form-control">
                     <option value="">난이도 선택</option>
                     <option value="1">★</option>
                     <option value="2">★★</option>
@@ -42,24 +40,9 @@
             </button>
         </div>
 
-        <!-- 문제 목록 테이블 -->
-        <div class="question-table-container">
-            <table class="question-table">
-                <thead>
-                <tr>
-                    <th>제목</th>
-                    <th>유형</th>
-                    <th>난이도</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                    <th>상태</th>
-                    <th>관리</th>
-                </tr>
-                </thead>
-                <tbody id="questionList">
-                <!-- JavaScript로 문제 목록 렌더링 -->
-                </tbody>
-            </table>
+        <!-- 문제 목록 -->
+        <div class="questions-list" id="questionsList">
+            <!-- JavaScript로 문제 목록 렌더링 -->
         </div>
     </div>
 </div>

@@ -19,6 +19,7 @@ public class QuestionResponse {
     private Long id;
     private String title;
     private String categoryName;
+    private Long typeId;
     private String typeName;
     private String userName;
     private Integer difficulty;
@@ -26,8 +27,6 @@ public class QuestionResponse {
     private QuestionStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    // 상세 정보
     private String content;
     private String answer;
     private String explanation;
@@ -39,6 +38,7 @@ public class QuestionResponse {
                 .id(question.getId())
                 .title(question.getTitle())
                 .categoryName(question.getCategoryName())
+                .typeId(question.getTypeId())
                 .typeName(question.getTypeName())
                 .userName(question.getUserName())
                 .difficulty(question.getDifficulty())

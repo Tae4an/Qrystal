@@ -24,13 +24,6 @@ public class QuestionViewController {
         return "index";
     }
 
-    @GetMapping("/{id}")
-    public String questionDetail(@PathVariable Long id, Model model) {
-        model.addAttribute("content", "question/detail");
-        model.addAttribute("questionId", id);
-        return "index";
-    }
-
     @GetMapping("/{id}/edit")
     public String questionEdit(@PathVariable Long id, Model model) {
         model.addAttribute("content", "question/form");
