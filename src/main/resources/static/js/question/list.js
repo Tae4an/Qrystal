@@ -1,7 +1,7 @@
 // list.js
-document.addEventListener('DOMContentLoaded', function() {
-    loadCategories();
-    loadQuestions();
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadCategories();
+    await loadQuestions();
 
     // 검색 및 필터링 이벤트 리스너
     document.getElementById('searchInput').addEventListener('input', filterQuestions);
