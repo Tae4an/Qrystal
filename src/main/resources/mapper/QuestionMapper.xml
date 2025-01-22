@@ -24,7 +24,25 @@
     </resultMap>
 
     <select id="findAll" resultMap="QuestionResultMap">
-        SELECT
+        WITH RECURSIVE CategoryHierarchy AS (
+        /* 시작 카테고리 */
+        SELECT id, parent_id, level
+        FROM categories
+        <if test="categoryId != null">
+            WHERE id = #{categoryId}
+        </if>
+        <if test="categoryId == null">
+            WHERE parent_id IS NULL
+        </if>
+
+        UNION ALL
+
+        /* 하위 카테고리들 */
+        SELECT c.id, c.parent_id, c.level
+        FROM categories c
+        INNER JOIN CategoryHierarchy ch ON c.parent_id = ch.id
+        )
+        SELECT DISTINCT
         q.*,
         c.name as category_name,
         u.name as user_name,
@@ -35,7 +53,7 @@
         LEFT JOIN question_types t ON q.type_id = t.id
         <where>
             <if test="categoryId != null">
-                AND q.category_id = #{categoryId}
+                AND q.category_id IN (SELECT id FROM CategoryHierarchy)
             </if>
             <if test="userId != null">
                 AND q.user_id = #{userId}

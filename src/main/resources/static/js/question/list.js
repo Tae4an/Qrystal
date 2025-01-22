@@ -27,30 +27,122 @@ async function loadCategories() {
 }
 
 // 카테고리 트리 렌더링
-function renderCategoryTree(categories, parentElement = document.getElementById('categoryTree')) {
+function renderCategoryTree(categories, parentElement = document.getElementById('categoryTree'), level = 0) {
     parentElement.innerHTML = '';
 
     categories.forEach(category => {
         const li = document.createElement('li');
         li.className = 'category-item';
         li.setAttribute('data-id', category.id);
+        li.setAttribute('data-level', level);
+
+        const hasChildren = category.children && category.children.length > 0;
 
         li.innerHTML = `
-            <div class="category-content ${selectedCategoryId === category.id ? 'selected' : ''}" 
-                 onclick="selectCategory(${category.id})">
-                <i class="fas fa-folder"></i>
-                <span>${category.name}</span>
+            <div class="category-content ${selectedCategoryId === category.id ? 'selected' : ''}">
+                ${hasChildren ?
+            '<i class="fas fa-chevron-right category-toggle"></i>' :
+            '<i class="fas fa-folder category-icon"></i>'
+        }
+                <span class="category-name">${category.name}</span>
             </div>
+            ${hasChildren ? '<ul class="category-children" style="display: none; height: 0;"</ul>' : ''}
         `;
 
-        if (category.children && category.children.length > 0) {
-            const ul = document.createElement('ul');
-            ul.className = 'category-children';
-            renderCategoryTree(category.children, ul);
-            li.appendChild(ul);
-        }
-
         parentElement.appendChild(li);
+
+        if (hasChildren) {
+            const childrenContainer = li.querySelector('.category-children');
+            renderCategoryTree(category.children, childrenContainer, level + 1);
+        }
+    });
+}
+
+// 카테고리 클릭 이벤트 처리
+document.addEventListener('click', function(e) {
+    // 토글 버튼(화살표) 클릭
+    if (e.target.classList.contains('category-toggle')) {
+        e.stopPropagation();
+        const categoryItem = e.target.closest('.category-item');
+        toggleCategory(categoryItem);
+    }
+    else if (e.target.closest('.category-content')) {
+        const categoryItem = e.target.closest('.category-item');
+        const categoryId = categoryItem.getAttribute('data-id');
+        selectCategory(parseInt(categoryId));
+    }
+});
+
+// 카테고리 토글 함수
+function toggleCategory(categoryItem) {
+    const toggle = categoryItem.querySelector('.category-toggle');
+    const childrenContainer = categoryItem.querySelector('.category-children');
+    const isExpanded = childrenContainer.style.display !== 'none';
+
+    if (isExpanded) {
+        // 접을 때: 모든 하위 카테고리도 재귀적으로 접기
+        collapseCategory(categoryItem);
+    } else {
+        // 펼칠 때: 직계 하위 카테고리만 펼치기
+        expandCategory(categoryItem);
+    }
+}
+
+// 카테고리 펼치기
+function expandCategory(categoryItem) {
+    const toggle = categoryItem.querySelector('.category-toggle');
+    const childrenContainer = categoryItem.querySelector('.category-children');
+
+    // 애니메이션을 위한 준비
+    childrenContainer.style.display = 'block';
+    const targetHeight = childrenContainer.scrollHeight;
+    childrenContainer.style.height = '0';
+
+    // 트랜지션 시작
+    requestAnimationFrame(() => {
+        toggle.classList.add('rotated');
+        childrenContainer.style.height = targetHeight + 'px';
+    });
+
+    // 트랜지션 완료 후 처리
+    childrenContainer.addEventListener('transitionend', function handler() {
+        childrenContainer.style.height = 'auto';
+        childrenContainer.removeEventListener('transitionend', handler);
+    });
+}
+
+// 카테고리 접기 (재귀적)
+function collapseCategory(categoryItem) {
+    const toggle = categoryItem.querySelector('.category-toggle');
+    const childrenContainer = categoryItem.querySelector('.category-children');
+
+    // 현재 카테고리 접기
+    toggle.classList.remove('rotated');
+    childrenContainer.style.height = childrenContainer.scrollHeight + 'px';
+
+    // 강제 리플로우
+    childrenContainer.offsetHeight;
+
+    // 애니메이션 시작
+    childrenContainer.style.height = '0';
+
+    // 하위 카테고리들도 모두 접기
+    const childCategories = childrenContainer.querySelectorAll('.category-item');
+    childCategories.forEach(child => {
+        const childToggle = child.querySelector('.category-toggle');
+        const childContainer = child.querySelector('.category-children');
+
+        if (childToggle && childContainer) {
+            childToggle.classList.remove('rotated');
+            childContainer.style.height = '0';
+            childContainer.style.display = 'none';
+        }
+    });
+
+    // 트랜지션 완료 후 처리
+    childrenContainer.addEventListener('transitionend', function handler() {
+        childrenContainer.style.display = 'none';
+        childrenContainer.removeEventListener('transitionend', handler);
     });
 }
 
@@ -63,7 +155,10 @@ function selectCategory(categoryId) {
     document.querySelectorAll('.category-content').forEach(el => {
         el.classList.remove('selected');
     });
-    document.querySelector(`[data-id="${categoryId}"] .category-content`).classList.add('selected');
+    const selectedElement = document.querySelector(`[data-id="${categoryId}"] .category-content`);
+    if (selectedElement) {
+        selectedElement.classList.add('selected');
+    }
 }
 
 // 문제 목록 로드
@@ -107,7 +202,6 @@ function renderQuestions(questionsToRender = questions) {
 
 // 문제 유형별 렌더링
 function renderQuestionContent(question) {
-    console.log('Question type:', question.typeId, typeof question.typeId);  // typeId 값과 타입 확인
     let content = `
         <div class="question-content">
             ${question.content}
@@ -115,12 +209,10 @@ function renderQuestionContent(question) {
     `;
 
     const typeId = parseInt(question.typeId);
-    console.log('Parsed typeId:', typeId);  // 파싱된 typeId 확인
 
     // 문제 유형별 입력 영역
     switch(typeId) {
         case 1: // 객관식
-            console.log('Entering case 1');  // switch문 진입 확인
             content += renderMultipleChoice(question);
             break;
         case 2: // 주관식
@@ -149,7 +241,6 @@ function renderQuestionContent(question) {
 
 // 객관식 문제 렌더링
 function renderMultipleChoice(question) {
-    console.log('Rendering choices:', question.choices);
     return `
         <div class="multiple-choice-list">
             ${question.choices.sort((a, b) => a.choiceNumber - b.choiceNumber)
