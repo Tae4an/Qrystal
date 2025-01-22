@@ -341,6 +341,18 @@
     justify-content: center;
 }
 
+.category-divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 8px 0;
+    list-style: none;
+}
+
+.category-item:first-child .category-content {
+    color: #4f46e5;
+    font-weight: 500;
+}
+
 .category-toggle.rotated {
     transform: rotate(90deg);
 }

@@ -44,6 +44,24 @@ function buildCategoriesMap(categories, parentPath = '') {
 function renderCategoryTree(categories, parentElement = document.getElementById('categoryTree'), level = 0) {
     parentElement.innerHTML = '';
 
+    // 전체 카테고리 버튼
+    if (level === 0) {
+        const allCategoryLi = document.createElement('li');
+        allCategoryLi.className = 'category-item';
+        allCategoryLi.innerHTML = `
+            <div class="category-content ${selectedCategoryId === null ? 'selected' : ''}">
+                <i class="fas fa-list category-icon"></i>
+                <span class="category-name">전체</span>
+            </div>
+        `;
+        parentElement.appendChild(allCategoryLi);
+
+        // 구분선
+        const divider = document.createElement('li');
+        divider.className = 'category-divider';
+        parentElement.appendChild(divider);
+    }
+
     categories.forEach(category => {
         const li = document.createElement('li');
         li.className = 'category-item';
@@ -72,6 +90,7 @@ function renderCategoryTree(categories, parentElement = document.getElementById(
     });
 }
 
+
 // 카테고리 클릭 이벤트 처리
 document.addEventListener('click', function(e) {
     // 토글 버튼(화살표) 클릭
@@ -83,7 +102,8 @@ document.addEventListener('click', function(e) {
     else if (e.target.closest('.category-content')) {
         const categoryItem = e.target.closest('.category-item');
         const categoryId = categoryItem.getAttribute('data-id');
-        selectCategory(parseInt(categoryId));
+        // data-id가 없는 경우(전체 버튼)는 null을 전달
+        selectCategory(categoryId ? parseInt(categoryId) : null);
     }
 });
 
