@@ -120,6 +120,41 @@
     gap: 16px;
     color: #6b7280;
     font-size: 14px;
+    align-items: center;
+}
+
+.question-meta > span {
+    padding: 4px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13px;
+}
+
+.question-meta .category-path {
+    color: #6366f1;
+    background-color: #e0e7ff;
+    border: 1px solid #c7d2fe;
+    max-width: 300px;
+}
+
+.question-meta .question-type {
+    color: #0891b2;
+    background-color: #e0faff;
+    border: 1px solid #bae6fd;
+}
+
+.question-meta .question-difficulty {
+    color: #ea580c;
+    background-color: #ffedd5;
+    border: 1px solid #fed7aa;
+}
+
+
+.question-meta .question-difficulty:hover {
+    background-color: #fed7aa;
+    transition: background-color 0.2s ease;
 }
 
 /* 문제 상세 영역 */

@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 전역 변수
 let selectedCategoryId = null;
 let questions = [];
+let categoriesMap = new Map();
 
 // 카테고리 로드
 async function loadCategories() {
@@ -19,11 +20,24 @@ async function loadCategories() {
         const response = await fetch('/api/categories');
         if (!response.ok) throw new Error('카테고리 로드 실패');
         const categories = await response.json();
+        buildCategoriesMap(categories);
         renderCategoryTree(categories);
     } catch (error) {
         console.error('카테고리 로드 실패:', error);
         showToast('카테고리 목록을 불러오는데 실패했습니다.', 'error');
     }
+}
+
+// 카테고리 맵 구축 함수
+function buildCategoriesMap(categories, parentPath = '') {
+    categories.forEach(category => {
+        const currentPath = parentPath ? `${parentPath} > ${category.name}` : category.name;
+        categoriesMap.set(category.id, currentPath);
+
+        if (category.children && category.children.length > 0) {
+            buildCategoriesMap(category.children, currentPath);
+        }
+    });
 }
 
 // 카테고리 트리 렌더링
@@ -187,8 +201,9 @@ function renderQuestions(questionsToRender = questions) {
             <div class="question-card-header" onclick="toggleQuestion(${question.id})">
                 <div class="question-title">${question.title}</div>
                 <div class="question-meta">
-                    <span>${getQuestionType(question.typeId)}</span>
-                    <span>난이도: ${'★'.repeat(question.difficulty)}</span>
+                    <span class="category-path">${getCategoryPath(question.categoryId)}</span>
+                    <span class="question-type">${getQuestionType(question.typeId)}</span>
+                    <span class="question-difficulty">난이도 ${getQuestionDifficulty(question.difficulty)}</span>
                 </div>
             </div>
             <div id="detail-${question.id}" class="question-detail">
@@ -198,6 +213,19 @@ function renderQuestions(questionsToRender = questions) {
             </div>
         </div>
     `).join('');
+}
+
+// 카테고리 경로 가져오기
+function getCategoryPath(categoryId) {
+    return categoriesMap.get(categoryId) || '미분류';
+}
+
+// 난이도 표시 함수
+function getQuestionDifficulty(difficulty) {
+    const maxDifficulty = 5;
+    const filledStars = '★'.repeat(difficulty);
+    const emptyStars = '☆'.repeat(maxDifficulty - difficulty);
+    return filledStars + emptyStars;
 }
 
 // 문제 유형별 렌더링
