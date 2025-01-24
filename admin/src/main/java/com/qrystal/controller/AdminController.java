@@ -48,6 +48,8 @@ public class AdminController {
             @RequestParam(required = false) String type,
             Model model) {
 
+        model.addAttribute("admin", SecurityUtil.getCurrentAdmin());
+
         UserSearchCondition condition = UserSearchCondition.builder()
                 .search(search)
                 .status(status)
@@ -67,6 +69,7 @@ public class AdminController {
 
     @GetMapping("/category")
     public String categoryList(Model model) {
+        model.addAttribute("admin", SecurityUtil.getCurrentAdmin());
         model.addAttribute("content", "category/list");
         return "admin/index";
     }

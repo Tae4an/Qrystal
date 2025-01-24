@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qrystal - 모의고사 플랫폼</title>
+    <!-- 기본 CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+</head>
+<body>
+<div class="container">
+    <!-- 헤더 포함 -->
+    <div th:replace="~{common/header :: header}"></div>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main-content">
+        <div th:replace="~{${content ?: 'home'} :: content}"></div>
+    </main>
+
+    <!-- 푸터 포함 -->
+    <div th:replace="~{common/footer :: footer}"></div>
+</div>
+
+<!-- 기본 JavaScript -->
+<script th:src="@{/js/index.js}"></script>
+</body>
+</html>

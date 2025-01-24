@@ -14,10 +14,14 @@ spring:
     password: ENC(qZRj27Us+5WqWEaxLwBuZ2by25Mpwf+eF2TsEMIdTys=)
   
   mvc:
-    view:
-      prefix: /WEB-INF/views/
-      suffix: .jsp
     static-path-pattern: /**
+
+  thymeleaf:
+    prefix: classpath:/templates/    # 템플릿 위치
+    suffix: .html                    # 확장자
+    cache: false                     # 개발 환경에서는 false 권장
+    encoding: UTF-8
+    mode: HTML
 
   web:
     resources:

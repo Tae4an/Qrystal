@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<section class="main-banner" th:fragment="content">
+    <h1>Qrystal 모의고사 플랫폼</h1>
+    <p>자격증 취득을 위한 최적의 학습 파트너</p>
+    <div class="main-buttons">
+        <a th:href="@{/questions}" class="main-btn">문제 은행</a>
+        <a th:href="@{/exam/mock}" class="main-btn">모의고사</a>
+        <a th:href="@{/exam/analysis}" class="main-btn">성적 분석</a>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="header" class="header">
+    <div class="header-left">
+        <button id="sidebar-toggle" class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    <div class="header-right">
+        <span class="admin-info">
+            <i class="fas fa-user"></i>
+            <span th:text="${admin.name}">관리자</span>
+        </span>
+        <a th:href="@{/logout}" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i> 로그아웃
+        </a>
+    </div>
+</header>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<header th:fragment="header">
+    <nav>
+        <div class="logo">
+            <a th:href="@{/}">Qrystal</a>
+        </div>
+        <ul class="nav-links">
+            <li class="user-info" sec:authorize="isAuthenticated()">
+                <span th:with="principal=${#authentication.principal}">
+                    <!-- 소셜 로그인 사용자 -->
+                    <th:block th:if="${principal.attributes != null}">
+                        <span th:text="${
+                            principal.attributes['name'] != null ? principal.attributes['name'] + ' 님' :
+                            principal.attributes['login'] != null ? principal.attributes['login'] + ' 님' :
+                            #strings.defaultString(principal.attributes['email'], 'User') + ' 님'
+                        }">사용자님</span>
+                    </th:block>
+                    <!-- 일반 로그인 사용자 -->
+                    <th:block th:unless="${principal.attributes != null}">
+                        <span th:text="${principal.username + ' 님'}">사용자님</span>
+                    </th:block>
+                </span>
+            </li>
+            <li><a th:href="@{/questions}">문제 은행</a></li>
+            <li sec:authorize="isAuthenticated()">
+                <a th:href="@{/user/profile}">프로필</a>
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <form th:action="@{/auth/logout}" method="post">
+                    <button type="submit">로그아웃</button>
+                </form>
+            </li>
+            <li sec:authorize="!isAuthenticated()">
+                <a th:href="@{/auth/login}">로그인</a>
+            </li>
+            <li sec:authorize="!isAuthenticated()">
+                <a th:href="@{/auth/signup}">회원가입</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+</html>

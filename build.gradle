@@ -36,10 +36,10 @@ dependencies {
     // Database
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    // JSP
-    implementation 'javax.servlet:jstl'
-    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
-    implementation 'net.sargue:java-time-jsptags:1.1.4'
+    // Thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' // 레이아웃 기능을 위한 의존성
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE'
 
     // Spring Security 태그 라이브러리 의존성
     implementation 'org.springframework.security:spring-security-taglibs'

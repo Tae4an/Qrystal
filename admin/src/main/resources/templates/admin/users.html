@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="users" th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/admin/users.css}">
+
+    <div class="users-header">
+        <h2>사용자 관리</h2>
+        <form id="searchForm" method="get" th:action="@{/users}" class="users-filters">
+            <div class="filter-group">
+                <select name="status" class="form-control" onchange="this.form.submit()">
+                    <option value="">전체 상태</option>
+                    <option value="ACTIVE" th:selected="${status == 'ACTIVE'}">활성</option>
+                    <option value="INACTIVE" th:selected="${status == 'INACTIVE'}">비활성</option>
+                </select>
+
+                <select name="type" class="form-control" onchange="this.form.submit()">
+                    <option value="">전체 유형</option>
+                    <option value="DEFAULT" th:selected="${type == 'DEFAULT'}">일반</option>
+                    <option value="SOCIAL" th:selected="${type == 'SOCIAL'}">소셜</option>
+                </select>
+
+                <div class="search-box">
+                    <input type="text" name="search" th:value="${search}"
+                           class="form-control" placeholder="이메일 또는 이름으로 검색">
+                    <button type="submit" class="btn btn-icon">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="users-content">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>이메일</th>
+                <th>이름</th>
+                <th>가입유형</th>
+                <th>상태</th>
+                <th>마지막 로그인</th>
+                <th>가입일</th>
+                <th>작업</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users.content}">
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.name}"></td>
+                <td>
+                    <span th:class="'badge ' + (${user.provider == null} ? 'badge-default' : 'badge-social')"
+                          th:text="${user.provider == null ? '일반' : '소셜'}">
+                    </span>
+                </td>
+                <td>
+                    <span th:class="'badge ' + (${user.status == 'ACTIVE'} ? 'badge-success' : 'badge-danger')"
+                          th:text="${user.status == 'ACTIVE' ? '활성' : '비활성'}">
+                    </span>
+                </td>
+                <td th:text="${user.lastLoginAt}"></td>
+                <td th:text="${user.createdAt}"></td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button"
+                                th:class="'btn btn-sm ' + (${user.status == 'ACTIVE'} ? 'btn-outline-danger' : 'btn-outline-success')"
+                                th:onclick="'updateUserStatus(' + ${user.id} + ', \'' + (${user.status == 'ACTIVE'} ? 'INACTIVE' : 'ACTIVE') + '\')'">
+                            [[${user.status == 'ACTIVE' ? '비활성화' : '활성화'}]]
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination">
+        <th:block th:each="i : ${#numbers.sequence(1, users.totalPages)}">
+            <a th:href="@{/users(page=${i-1}, size=${users.size}, search=${search}, status=${status}, type=${type})}"
+               th:class="'btn ' + (${users.number == i-1 ? 'active' : ''})">
+                [[${i}]]
+            </a>
+        </th:block>
+    </div>
+
+    <script th:src="@{/js/admin/users.js}"></script>
+</div>
+</body>
+</html>
