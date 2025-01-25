@@ -34,8 +34,8 @@
                     </span>
                 </td>
                 <td>
-                    <span th:class="'badge ' + (${admin.status == 'ACTIVE'} ? 'badge-success' : 'badge-danger')"
-                          th:text="${admin.status == 'ACTIVE' ? '활성' : '비활성'}">
+                    <span th:class="'badge ' + (${admin.status.name() == 'ACTIVE'} ? 'badge-success' : 'badge-danger')"
+                          th:text="${admin.status.name() == 'ACTIVE'} ? '활성' : '비활성'">
                     </span>
                 </td>
                 <td th:text="${admin.lastLoginAt}"></td>
@@ -47,9 +47,9 @@
                             수정
                         </button>
                         <button th:if="${admin.role != 'SUPER_ADMIN'}"
-                                th:class="'btn btn-sm ' + (${admin.status == 'ACTIVE'} ? 'btn-outline-danger' : 'btn-outline-success')"
-                                th:onclick="'toggleAdminStatus(' + ${admin.id} + ', \'' + (${admin.status == 'ACTIVE'} ? 'INACTIVE' : 'ACTIVE') + '\')'">
-                            [[${admin.status == 'ACTIVE' ? '비활성화' : '활성화'}]]
+                                th:class="'btn btn-sm ' + (${admin.status.name() == 'ACTIVE'} ? 'btn-outline-danger' : 'btn-outline-success')"
+                                th:onclick="'toggleAdminStatus(' + ${admin.id} + ', \'' + (${admin.status.name() == 'ACTIVE'} ? 'INACTIVE' : 'ACTIVE') + '\')'">
+                            [[${admin.status.name() == 'ACTIVE' ? '비활성화' : '활성화'}]]
                         </button>
                     </div>
                 </td>

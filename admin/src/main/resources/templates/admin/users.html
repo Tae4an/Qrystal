@@ -10,8 +10,8 @@
             <div class="filter-group">
                 <select name="status" class="form-control" onchange="this.form.submit()">
                     <option value="">전체 상태</option>
-                    <option value="ACTIVE" th:selected="${status == 'ACTIVE'}">활성</option>
-                    <option value="INACTIVE" th:selected="${status == 'INACTIVE'}">비활성</option>
+                    <option value="ACTIVE" th:selected="${status?.name() == 'ACTIVE'}">활성</option>
+                    <option value="INACTIVE" th:selected="${status?.name() == 'INACTIVE'}">비활성</option>
                 </select>
 
                 <select name="type" class="form-control" onchange="this.form.submit()">
@@ -54,8 +54,8 @@
                     </span>
                 </td>
                 <td>
-                    <span th:class="'badge ' + (${user.status == 'ACTIVE'} ? 'badge-success' : 'badge-danger')"
-                          th:text="${user.status == 'ACTIVE' ? '활성' : '비활성'}">
+                    <span th:class="'badge ' + (${user.status.name() == 'ACTIVE'} ? 'badge-success' : 'badge-danger')"
+                          th:text="${user.status.name() == 'ACTIVE' ? '활성' : '비활성'}">
                     </span>
                 </td>
                 <td th:text="${user.lastLoginAt}"></td>
@@ -63,9 +63,9 @@
                 <td>
                     <div class="btn-group">
                         <button type="button"
-                                th:class="'btn btn-sm ' + (${user.status == 'ACTIVE'} ? 'btn-outline-danger' : 'btn-outline-success')"
-                                th:onclick="'updateUserStatus(' + ${user.id} + ', \'' + (${user.status == 'ACTIVE'} ? 'INACTIVE' : 'ACTIVE') + '\')'">
-                            [[${user.status == 'ACTIVE' ? '비활성화' : '활성화'}]]
+                                th:class="'btn btn-sm ' + (${user.status.name() == 'ACTIVE'} ? 'btn-outline-danger' : 'btn-outline-success')"
+                                th:onclick="'updateUserStatus(' + ${user.id} + ', \'' + (${user.status.name() == 'ACTIVE'} ? 'INACTIVE' : 'ACTIVE') + '\')'">
+                            [[${user.status.name() == 'ACTIVE' ? '비활성화' : '활성화'}]]
                         </button>
                     </div>
                 </td>
