@@ -89,6 +89,7 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
+  type-handlers-package: com.qrystal.app.question.handler
   configuration:
     map-underscore-to-camel-case: true
     default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler

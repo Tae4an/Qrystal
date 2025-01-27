@@ -124,12 +124,19 @@ public class QuestionController {
     // 내 문제 목록
     @GetMapping("/my")
     public ResponseEntity<List<QuestionResponse>> getMyQuestions(Principal principal) {
-        Long userId = getCurrentUserId(principal);
-        List<Question> questions = questionService.getMyQuestions(userId);
-        List<QuestionResponse> response = questions.stream()
-                .map(QuestionResponse::from)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+        try {
+            log.debug("Principal in getMyQuestions: {}", principal);
+            Long userId = getCurrentUserId(principal);
+            log.debug("UserId retrieved: {}", userId);
+            List<Question> questions = questionService.getMyQuestions(userId);
+            List<QuestionResponse> response = questions.stream()
+                    .map(QuestionResponse::from)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("내 문제 목록 조회 실패", e);
+            throw new RuntimeException(e);
+        }
     }
 
     // 카테고리별 문제 목록

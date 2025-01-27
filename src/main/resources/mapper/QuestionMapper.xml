@@ -13,7 +13,8 @@
         <result property="explanation" column="explanation"/>
         <result property="difficulty" column="difficulty"/>
         <result property="isPublic" column="is_public"/>
-        <result property="status" column="status" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="status" column="status"
+                typeHandler="com.qrystal.app.question.handler.QuestionStatusTypeHandler"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
         <result property="categoryName" column="category_name"/>
@@ -62,7 +63,7 @@
                 AND q.type_id = #{typeId}
             </if>
             <if test="status != null">
-                AND q.status = #{status}
+                AND q.status = #{status, javaType=com.qrystal.app.question.domain.QuestionStatus, typeHandler=org.apache.ibatis.type.EnumTypeHandler}
             </if>
             <if test="isPublic != null">
                 AND q.is_public = #{isPublic}
