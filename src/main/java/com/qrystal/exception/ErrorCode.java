@@ -30,7 +30,14 @@ public enum ErrorCode {
     // Question
     QUESTION_NOT_FOUND(404, "Question not found"),
     INVALID_QUESTION_TYPE(400, "Invalid question type"),
-    INVALID_QUESTION_STATUS(400, "Invalid question status");
+    INVALID_QUESTION_STATUS(400, "Invalid question status"),
+
+    // Exam
+    EXAM_NOT_FOUND(404, "Exam not found"),
+    EXAM_ACCESS_DENIED(403, "Access to exam denied"),
+    EXAM_STATUS_INVALID(400, "Invalid exam status"),
+    EXAM_ALREADY_EXISTS(400, "Exam already exists"),
+    EXAM_QUESTIONS_REQUIRED(400, "Exam must have at least one question");
 
     private final int status;
     private final String message;
