@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qrystal.app.exam.mapper.ExamMapper">
+
+    <resultMap id="ExamResultMap" type="com.qrystal.app.exam.model.Exam">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="timeLimit" column="time_limit"/>
+        <result property="totalPoints" column="total_points"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="status" column="status" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="isPublic" column="is_public"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="createdByName" column="created_by_name"/>
+        <collection property="questions" column="id" select="findQuestionsByExamId"/>
+    </resultMap>
+
+    <!-- 시험지 생성 -->
+    <insert id="save" parameterType="com.qrystal.app.exam.model.Exam"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exams (
+            title,
+            description,
+            time_limit,
+            total_points,
+            created_by,
+            category_id,
+            status,
+            is_public
+        ) VALUES (
+                     #{title},
+                     #{description},
+                     #{timeLimit},
+                     #{totalPoints},
+                     #{createdBy},
+                     #{categoryId},
+                     #{status},
+                     #{isPublic}
+                 )
+    </insert>
+
+    <!-- 시험지 목록 조회 -->
+    <select id="findAll" resultMap="ExamResultMap">
+        SELECT
+        e.*,
+        c.name as category_name,
+        u.name as created_by_name
+        FROM exams e
+        LEFT JOIN categories c ON e.category_id = c.id
+        LEFT JOIN users u ON e.created_by = u.id
+        <where>
+            <if test="categoryId != null">
+                AND e.category_id = #{categoryId}
+            </if>
+            <if test="createdBy != null">
+                AND e.created_by = #{createdBy}
+            </if>
+            <if test="status != null">
+                AND e.status = #{status, typeHandler=org.apache.ibatis.type.EnumTypeHandler}
+            </if>
+            <if test="isPublic != null">
+                AND e.is_public = #{isPublic}
+            </if>
+        </where>
+        ORDER BY e.created_at DESC
+    </select>
+
+    <!-- 시험지 상세 조회 -->
+    <select id="findById" resultMap="ExamResultMap">
+        SELECT
+            e.*,
+            c.name as category_name,
+            u.name as created_by_name
+        FROM exams e
+                 LEFT JOIN categories c ON e.category_id = c.id
+                 LEFT JOIN users u ON e.created_by = u.id
+        WHERE e.id = #{id}
+    </select>
+
+    <!-- 시험지 수정 -->
+    <update id="update" parameterType="com.qrystal.app.exam.model.Exam">
+        UPDATE exams
+        SET
+            title = #{title},
+            description = #{description},
+            time_limit = #{timeLimit},
+            total_points = #{totalPoints},
+            category_id = #{categoryId},
+            status = #{status},
+            is_public = #{isPublic},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 시험지 상태 변경 -->
+    <update id="updateStatus">
+        UPDATE exams
+        SET
+            status = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 시험지 삭제 -->
+    <delete id="delete">
+        DELETE FROM exams WHERE id = #{id}
+    </delete>
+
+    <!-- 시험 문제 저장 -->
+    <insert id="saveQuestions">
+        INSERT INTO exam_questions (
+        exam_id,
+        question_id,
+        question_number,
+        point
+        ) VALUES
+        <foreach collection="questions" item="question" separator=",">
+            (
+            #{examId},
+            #{question.questionId},
+            #{question.questionNumber},
+            #{question.point}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 시험 문제 삭제 -->
+    <delete id="deleteQuestions">
+        DELETE FROM exam_questions
+        WHERE exam_id = #{examId}
+    </delete>
+
+    <!-- 시험 문제 목록 조회 -->
+    <select id="findQuestionsByExamId" resultType="com.qrystal.app.exam.model.ExamQuestion">
+        SELECT
+            eq.*,
+            q.title as question_title,
+            q.content as question_content,
+            q.type_id as question_type_id,
+            q.difficulty as question_difficulty
+        FROM exam_questions eq
+                 LEFT JOIN questions q ON eq.question_id = q.id
+        WHERE eq.exam_id = #{examId}
+        ORDER BY eq.question_number
+    </select>
+
+</mapper>
