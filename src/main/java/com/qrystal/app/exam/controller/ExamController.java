@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,10 +28,17 @@ public class ExamController {
     @PostMapping
     public ResponseEntity<Long> createExam(
             @RequestBody ExamCreateRequest request,
-            @AuthenticationPrincipal String email) {
-        Long userId = userService.getUserByEmail(email).getId();
-        Long examId = examService.createExam(request, userId);
-        return ResponseEntity.ok(examId);
+            Principal principal) {
+        try {
+            log.debug("Principal in createExam: {}", principal);
+            String email = userService.extractEmail(principal);
+            Long userId = userService.getUserByEmail(email).getId();
+            Long examId = examService.createExam(request, userId);
+            return ResponseEntity.ok(examId);
+        } catch (Exception e) {
+            log.error("모의고사 생성 실패",e);
+            throw new RuntimeException(e);
+        }
     }
 
     // 내 모의고사 목록

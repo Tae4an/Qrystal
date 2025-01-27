@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,8 +131,10 @@ public class UserService {
             return (String) principal;
         } else if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
-        } else if (principal instanceof DefaultOAuth2User) {
-            Map<String, Object> attributes = ((DefaultOAuth2User) principal).getAttributes();
+        } else if (principal instanceof OAuth2AuthenticationToken) {
+            // OAuth2AuthenticationToken에서 DefaultOAuth2User 가져오기
+            DefaultOAuth2User oauth2User = (DefaultOAuth2User) ((OAuth2AuthenticationToken) principal).getPrincipal();
+            Map<String, Object> attributes = oauth2User.getAttributes();
             log.info("OAuth2User attributes: {}", attributes);
 
             if (attributes.containsKey("email")) {
