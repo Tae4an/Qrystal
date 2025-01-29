@@ -36,15 +36,15 @@ public class ExamController {
             Long examId = examService.createExam(request, userId);
             return ResponseEntity.ok(examId);
         } catch (Exception e) {
-            log.error("모의고사 생성 실패",e);
+            log.error("모의고사 생성 실패", e);
             throw new RuntimeException(e);
         }
     }
 
     // 내 모의고사 목록
     @GetMapping("/my")
-    public ResponseEntity<List<ExamResponse>> getMyExams(
-            @AuthenticationPrincipal String email) {
+    public ResponseEntity<List<ExamResponse>> getMyExams(Principal principal) {
+        String email = userService.extractEmail(principal);
         Long userId = userService.getUserByEmail(email).getId();
         List<Exam> exams = examService.getMyExams(userId);
         List<ExamResponse> response = exams.stream()
@@ -90,7 +90,8 @@ public class ExamController {
     public ResponseEntity<Void> updateExam(
             @PathVariable Long id,
             @RequestBody ExamCreateRequest request,
-            @AuthenticationPrincipal String email) {
+            Principal principal) {
+        String email = userService.extractEmail(principal);
         Long userId = userService.getUserByEmail(email).getId();
         examService.updateExam(id, request, userId);
         return ResponseEntity.ok().build();
@@ -101,7 +102,8 @@ public class ExamController {
     public ResponseEntity<Void> updateExamStatus(
             @PathVariable Long id,
             @RequestParam ExamStatus status,
-            @AuthenticationPrincipal String email) {
+            Principal principal) {
+        String email = userService.extractEmail(principal);
         Long userId = userService.getUserByEmail(email).getId();
         examService.updateExamStatus(id, status, userId);
         return ResponseEntity.ok().build();
@@ -111,7 +113,8 @@ public class ExamController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteExam(
             @PathVariable Long id,
-            @AuthenticationPrincipal String email) {
+            Principal principal) {
+        String email = userService.extractEmail(principal);
         Long userId = userService.getUserByEmail(email).getId();
         examService.deleteExam(id, userId);
         return ResponseEntity.ok().build();
