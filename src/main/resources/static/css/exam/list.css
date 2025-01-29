@@ -1,0 +1,218 @@
+/* exam/list.css */
+.exam-container {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+/* 카테고리 사이드바 */
+.category-sidebar {
+    width: 250px;
+    background: #fff;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.category-tree {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+/* 카테고리 아이템 스타일 */
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-item {
+    padding: 0;
+    margin: 0;
+}
+
+.category-content {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.category-content:hover {
+    background-color: #f5f5f5;
+}
+
+.category-content.selected {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.category-toggle {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    transition: transform 0.2s;
+}
+
+.category-toggle.rotated {
+    transform: rotate(90deg);
+}
+
+.category-icon {
+    width: 16px;
+    margin-right: 8px;
+    color: #666;
+}
+
+.category-name {
+    flex: 1;
+    font-size: 14px;
+}
+
+.category-children {
+    overflow: hidden;
+    transition: height 0.3s ease-in-out;
+}
+
+.category-divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 10px 0;
+}
+
+/* 모의고사 컨텐츠 영역 */
+.exam-content {
+    flex: 1;
+    padding: 20px;
+    background: #f8f9fa;
+    overflow-y: auto;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-filters {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    max-width: 600px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* 모의고사 목록 */
+.exams-list {
+    display: grid;
+    gap: 20px;
+}
+
+.exam-item {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.exam-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.exam-info h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.exam-description {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.exam-meta {
+    display: flex;
+    gap: 15px;
+    color: #666;
+    font-size: 14px;
+}
+
+.exam-meta span {
+    display: flex;
+    align-items: center;
+}
+
+.exam-meta i {
+    margin-right: 5px;
+}
+
+.category-path {
+    color: #1976d2;
+}
+
+/* 토스트 메시지 */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast.success {
+    border-left: 4px solid #4caf50;
+}
+
+.toast.error {
+    border-left: 4px solid #f44336;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .exam-container {
+        flex-direction: column;
+    }
+
+    .category-sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 300px;
+    }
+
+    .exam-meta {
+        flex-wrap: wrap;
+    }
+}

@@ -5,22 +5,25 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
-@Getter @Setter
+@Getter
+@Setter
 public class ExamQuestionResponse {
     private Long questionId;
     private int questionNumber;
     private int point;
     private String title;
     private String content;
-    private String typeName;    // QuestionType 객체 대신 타입 이름만 사용
+    private String typeName;
     private int difficulty;
 
     public static ExamQuestionResponse of(ExamQuestion examQuestion) {
         ExamQuestionResponse response = new ExamQuestionResponse();
-        BeanUtils.copyProperties(examQuestion, response);
-        if (examQuestion.getQuestion() != null) {
-            response.setTypeName(examQuestion.getQuestion().getTypeName());
-        }
+        response.setQuestionId(examQuestion.getQuestionId());
+        response.setQuestionNumber(examQuestion.getQuestionNumber());
+        response.setPoint(examQuestion.getPoint());
+        response.setTitle(examQuestion.getQuestionTitle());
+        response.setContent(examQuestion.getQuestionContent());
+        response.setDifficulty(examQuestion.getQuestionDifficulty());
         return response;
     }
 }

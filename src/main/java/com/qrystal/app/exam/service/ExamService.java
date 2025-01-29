@@ -28,7 +28,6 @@ public class ExamService {
         // 1. 시험지 기본 정보 저장
         Exam exam = request.toEntity();
         exam.setCreatedBy(userId);
-        exam.setStatus(ExamStatus.DRAFT);
         examMapper.save(exam);
 
         // 2. ExamQuestionRequest를 ExamQuestion으로 변환 후 저장

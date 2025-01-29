@@ -80,7 +80,6 @@
                  LEFT JOIN users u ON e.created_by = u.id
         WHERE e.id = #{id}
     </select>
-
     <!-- 시험지 수정 -->
     <update id="update" parameterType="com.qrystal.app.exam.model.Exam">
         UPDATE exams

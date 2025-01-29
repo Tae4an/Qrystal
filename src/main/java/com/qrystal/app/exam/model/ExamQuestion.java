@@ -11,10 +11,11 @@ import java.time.LocalDateTime;
 public class ExamQuestion {
     private Long examId;
     private Long questionId;
-    private int questionNumber;    // 문제 번호
-    private int point;            // 배점
+    private int questionNumber;
+    private int point;
     private LocalDateTime createdAt;
-    
-    // 문제 상세 정보
-    private Question question;    // 기존 Question 모델 활용
+    private String questionTitle;
+    private String questionContent;
+    private Long questionTypeId;
+    private int questionDifficulty;
 }

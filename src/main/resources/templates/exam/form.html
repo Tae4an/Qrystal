@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="content">
+  <!-- CSS -->
+  <link rel="stylesheet" th:href="@{/css/exam/form.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <div class="exam-form-container">
+    <div class="page-header">
+      <h2 th:text="${examId != null ? '모의고사 수정' : '새 모의고사 만들기'}">새 모의고사 만들기</h2>
+    </div>
+
+    <form id="examForm" class="exam-form">
+      <input type="hidden" id="examId" th:value="${examId}">
+      <!-- 기본 정보 -->
+      <div class="form-section">
+        <h3><i class="fas fa-info-circle"></i> 기본 정보</h3>
+        <div class="form-group">
+          <label for="title">제목</label>
+          <input type="text" id="title" name="title" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="description">설명</label>
+          <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="timeLimit">제한시간(분)</label>
+            <input type="number" id="timeLimit" name="timeLimit" class="form-control" required min="1">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="categoryId">카테고리</label>
+            <select id="categoryId" name="categoryId" class="form-control" required>
+              <option value="">카테고리 선택</option>
+            </select>
+          </div>
+        </div>
+        <div class="visibility-selector">
+          <button type="button" id="visibilityBtn" class="btn btn-outline-primary" onclick="toggleVisibilityOptions()">
+            공개 <i class="fas fa-chevron-down"></i>
+          </button>
+          <div id="visibilityOptions" class="visibility-options" style="display: none;">
+            <div class="option" onclick="selectVisibility(true)">공개</div>
+            <div class="option" onclick="selectVisibility(false)">비공개</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 문제 선택 -->
+      <div class="form-section">
+        <h3><i class="fas fa-list-ol"></i> 문제 선택</h3>
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#myQuestions">
+              <i class="fas fa-user"></i> 내 문제
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#publicQuestions">
+              <i class="fas fa-globe"></i> 문제 은행
+            </a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div id="myQuestions" class="tab-pane active">
+            <div class="question-search">
+              <input type="text" class="form-control" placeholder="내 문제 검색...">
+            </div>
+            <div id="myQuestionsList" class="question-list">
+              <!-- 내 문제 목록이 여기에 렌더링됨 -->
+            </div>
+          </div>
+          <div id="publicQuestions" class="tab-pane">
+            <div class="question-search">
+              <input type="text" class="form-control" placeholder="문제 검색...">
+            </div>
+            <div id="publicQuestionsList" class="question-list">
+              <!-- 공개 문제 목록이 여기에 렌더링됨 -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 선택된 문제 -->
+      <div class="form-section">
+        <h3><i class="fas fa-check-circle"></i> 선택된 문제</h3>
+        <div id="selectedQuestions" class="selected-questions">
+          <!-- JavaScript로 선택된 문제 목록 렌더링 -->
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="handleCancel()">
+          <i class="fas fa-times"></i> 취소
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> 저장
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- JavaScript -->
+  <script th:src="@{/js/exam/form.js}"></script>
+</th:block>
+</body>
+</html>
