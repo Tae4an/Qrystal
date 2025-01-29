@@ -132,24 +132,28 @@ public class UserService {
         } else if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
         } else if (principal instanceof OAuth2AuthenticationToken) {
-            // OAuth2AuthenticationToken에서 DefaultOAuth2User 가져오기
             DefaultOAuth2User oauth2User = (DefaultOAuth2User) ((OAuth2AuthenticationToken) principal).getPrincipal();
-            Map<String, Object> attributes = oauth2User.getAttributes();
-            log.info("OAuth2User attributes: {}", attributes);
-
-            if (attributes.containsKey("email")) {
-                return (String) attributes.get("email");
-            } else if (attributes.containsKey("response")) {
-                Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-                return (String) response.get("email");
-            } else {
-                Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-                return (String) kakaoAccount.get("email");
-            }
+            return extractEmailFromOAuth2User(oauth2User);
+        } else if (principal instanceof DefaultOAuth2User) {
+            return extractEmailFromOAuth2User((DefaultOAuth2User) principal);
         }
 
         log.error("Principal type not supported: {}", principal != null ? principal.getClass().getName() : "null");
         throw new CustomException(ErrorCode.USER_NOT_FOUND);
+    }
+    private String extractEmailFromOAuth2User(DefaultOAuth2User oauth2User) {
+        Map<String, Object> attributes = oauth2User.getAttributes();
+        log.info("OAuth2User attributes: {}", attributes);
+
+        if (attributes.containsKey("email")) {
+            return (String) attributes.get("email");
+        } else if (attributes.containsKey("response")) {
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+            return (String) response.get("email");
+        } else {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            return (String) kakaoAccount.get("email");
+        }
     }
     // 이메일로 사용자 찾기
     public User getUserByEmail(String email) {
