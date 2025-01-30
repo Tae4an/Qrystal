@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <header th:fragment="header">
     <nav>
         <div class="logo">
@@ -9,8 +8,8 @@
         <ul class="nav-links">
             <li class="user-info" sec:authorize="isAuthenticated()">
                 <span th:with="principal=${#authentication.principal}">
-                    <!-- 소셜 로그인 사용자 -->
-                    <th:block th:if="${principal.attributes != null}">
+                    <!-- OAuth2 로그인 사용자 -->
+                    <th:block th:if="${principal instanceof T(org.springframework.security.oauth2.core.user.OAuth2User)}">
                         <span th:text="${
                             principal.attributes['name'] != null ? principal.attributes['name'] + ' 님' :
                             principal.attributes['login'] != null ? principal.attributes['login'] + ' 님' :
@@ -18,8 +17,9 @@
                         }">사용자님</span>
                     </th:block>
                     <!-- 일반 로그인 사용자 -->
-                    <th:block th:unless="${principal.attributes != null}">
-                        <span th:text="${principal.username + ' 님'}">사용자님</span>
+                    <th:block th:unless="${principal instanceof T(org.springframework.security.oauth2.core.user.OAuth2User)}">
+                        <span th:with="user=${@userService.findByEmail(principal.username)}"
+                              th:text="${user.name + ' 님'}">사용자님</span>
                     </th:block>
                 </span>
             </li>
