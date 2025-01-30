@@ -11,6 +11,7 @@ import com.qrystal.exception.CustomException;
 import com.qrystal.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -135,6 +136,12 @@ public class UserService {
             return (String) principal;
         } else if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
+        } else if (principal instanceof UsernamePasswordAuthenticationToken) {
+            // 일반 로그인 사용자 처리
+            Object userPrincipal = ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+            if (userPrincipal instanceof UserDetails) {
+                return ((UserDetails) userPrincipal).getUsername();
+            }
         } else if (principal instanceof OAuth2AuthenticationToken) {
             DefaultOAuth2User oauth2User = (DefaultOAuth2User) ((OAuth2AuthenticationToken) principal).getPrincipal();
             return extractEmailFromOAuth2User(oauth2User);
