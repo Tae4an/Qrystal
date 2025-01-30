@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const emailValidation = document.getElementById('emailValidation');
         const emailStatus = document.getElementById('emailStatus');
 
+        // 기본 이메일 입력 검증
         if (!email) {
             emailInput.classList.add('invalid-input');
             emailValidation.textContent = '이메일은 필수입니다';
@@ -128,15 +129,35 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // UI 먼저 업데이트
-        alert('인증코드가 발송되었습니다.');
-        document.getElementById('verificationArea').style.display = 'block';
-        startTimer();
-        emailStatus.textContent = '제한시간: 5분';
-        emailStatus.className = 'status-message';
-
-        // 서버 요청은 UI 업데이트 후에 비동기로 처리
         try {
+            // 1. 이메일 중복 검사
+            const duplicateCheck = await fetch('/auth/check-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email })
+            });
+            const checkResult = await duplicateCheck.json();
+
+            if (!checkResult.success) {
+                emailValidation.textContent = checkResult.message;
+                emailValidation.style.display = 'block';
+                emailInput.classList.add('invalid-input');
+                return;
+            }
+
+            // 2. 이메일 중복 검사 통과 후 인증 코드 발송
+            // UI 먼저 업데이트
+            emailInput.classList.remove('invalid-input');
+            emailValidation.style.display = 'none';
+            alert('인증코드가 발송되었습니다.');
+            document.getElementById('verificationArea').style.display = 'block';
+            startTimer();
+            emailStatus.textContent = '제한시간: 5분';
+            emailStatus.className = 'status-message';
+
+            // 인증 코드 발송 요청
             const response = await fetch('/auth/send-verification', {
                 method: 'POST',
                 headers: {
@@ -154,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInterval(timer);
             }
         } catch (error) {
-            emailStatus.textContent = '인증코드 발송에 실패했습니다.';
+            emailStatus.textContent = '처리 중 오류가 발생했습니다.';
             emailStatus.className = 'status-message error';
             document.getElementById('verificationArea').style.display = 'none';
             clearInterval(timer);

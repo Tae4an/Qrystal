@@ -49,6 +49,10 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public boolean isEmailAvailable(String email) {
+        return userMapper.findByEmail(email).isEmpty();
+    }
 
     public UserResponse findByEmail(String email) {
         User user = userMapper.findByEmail(email)
