@@ -4,6 +4,7 @@
 <th:block th:fragment="content">
   <!-- CSS -->
   <link rel="stylesheet" th:href="@{/css/exam/form.css}">
+  <link rel="stylesheet" th:href="@{/css/exam/question-select-modal.css}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <div class="exam-form-container">
@@ -49,45 +50,14 @@
 
       <!-- 문제 선택 -->
       <div class="form-section">
-        <h3><i class="fas fa-list-ol"></i> 문제 선택</h3>
-        <ul class="nav nav-tabs" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#myQuestions">
-              <i class="fas fa-user"></i> 내 문제
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#publicQuestions">
-              <i class="fas fa-globe"></i> 문제 은행
-            </a>
-          </li>
-        </ul>
-
-        <div class="tab-content">
-          <div id="myQuestions" class="tab-pane active">
-            <div class="question-search">
-              <input type="text" class="form-control" placeholder="내 문제 검색...">
-            </div>
-            <div id="myQuestionsList" class="question-list">
-              <!-- 내 문제 목록이 여기에 렌더링됨 -->
-            </div>
-          </div>
-          <div id="publicQuestions" class="tab-pane">
-            <div class="question-search">
-              <input type="text" class="form-control" placeholder="문제 검색...">
-            </div>
-            <div id="publicQuestionsList" class="question-list">
-              <!-- 공개 문제 목록이 여기에 렌더링됨 -->
-            </div>
-          </div>
+        <div class="section-header">
+          <h3><i class="fas fa-list-ol"></i> 선택된 문제</h3>
+          <button type="button" class="btn btn-primary" onclick="showQuestionModal()">
+            <i class="fas fa-plus"></i> 문제 추가
+          </button>
         </div>
-      </div>
-
-      <!-- 선택된 문제 -->
-      <div class="form-section">
-        <h3><i class="fas fa-check-circle"></i> 선택된 문제</h3>
         <div id="selectedQuestions" class="selected-questions">
-          <!-- JavaScript로 선택된 문제 목록 렌더링 -->
+          <!-- 선택된 문제들이 여기에 표시됨 -->
         </div>
       </div>
 
@@ -102,8 +72,70 @@
     </form>
   </div>
 
+  <!-- 문제 선택 모달 -->
+  <div id="questionSelectModal" class="modal-wrapper">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>문제 선택</h3>
+        <button type="button" class="modal-close" onclick="hideQuestionModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-content">
+        <!-- 좌측: 문제 목록 영역 -->
+        <div class="modal-left">
+          <!-- 카테고리 사이드바 -->
+          <div class="modal-category-sidebar">
+            <div class="sidebar-header">
+              <h4>카테고리</h4>
+            </div>
+            <div id="modalCategoryTree" class="category-tree">
+              <!-- 카테고리 트리가 여기에 렌더링 됨 -->
+            </div>
+          </div>
+
+          <!-- 문제 목록 영역 -->
+          <div class="modal-questions-area">
+            <!-- 검색 영역 -->
+            <div class="search-filter-section">
+              <div class="search-input-group">
+                <input type="text" id="modalSearchInput" class="form-control" placeholder="문제 검색...">
+                <i class="fas fa-search"></i>
+              </div>
+            </div>
+
+            <!-- 문제 목록 -->
+            <div class="questions-container">
+              <div id="modalQuestionsList" class="questions-list">
+                <!-- 문제 목록이 여기에 렌더링 됨 -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측: 선택된 문제 영역 -->
+        <div class="modal-right">
+          <div class="selected-header">
+            <h4>선택된 문제</h4>
+            <span class="selected-count">0개 선택됨</span>
+          </div>
+          <div id="modalSelectedQuestions" class="selected-questions-list">
+            <!-- 선택된 문제들이 여기에 렌더링 됨 -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="hideQuestionModal()">취소</button>
+        <button type="button" class="btn btn-primary" onclick="applySelectedQuestions()">적용</button>
+      </div>
+    </div>
+  </div>
+
   <!-- JavaScript -->
   <script th:src="@{/js/exam/form.js}"></script>
+  <script th:src="@{/js/exam/question-select-modal.js}"></script>
 </th:block>
 </body>
 </html>
