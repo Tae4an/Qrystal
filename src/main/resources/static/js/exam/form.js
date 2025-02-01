@@ -147,26 +147,104 @@ function addQuestion(questionId, title) {
 
 // 선택된 문제 목록 UI 업데이트
 function updateSelectedQuestionsUI() {
-    const container = document.getElementById('selectedQuestions');
-    container.innerHTML = '';
+    const container = document.querySelector('#selectedQuestions .sortable-list');
 
-    selectedQuestions.forEach((question, index) => {
-        const questionElement = document.createElement('div');
-        questionElement.className = 'selected-question-item';
-        questionElement.innerHTML = `
-           <div class="question-info">
-               <span class="question-number">${index + 1}</span>
-               <span class="question-title">${question.title}</span>
-           </div>
-           <div class="question-actions">
-               <input type="number" class="point-input" value="${question.point}"
-                      onchange="updatePoint(${index}, this.value)" min="1">
-               <button type="button" class="btn btn-sm btn-danger"
-                       onclick="removeQuestion(${index})">삭제</button>
-           </div>
-       `;
-        container.appendChild(questionElement);
+    container.innerHTML = selectedQuestions.map((question, index) => `
+        <li class="sortable-item" data-index="${index}">
+            <div class="drag-handle">
+                <i class="fas fa-grip-lines"></i>
+            </div>
+            <div class="question-number">${index + 1}</div>
+            <div class="question-title flex-grow">${question.title}</div>
+            <input type="number" class="point-input" value="${question.point}"
+                   onchange="updatePoint(${index}, this.value)" min="1">
+            <button type="button" class="btn btn-sm btn-danger" onclick="removeQuestion(${index})">
+                <i class="fas fa-times"></i>
+            </button>
+        </li>
+    `).join('');
+
+    initSortable();
+}
+function initSortable() {
+    const sortableList = document.querySelector('.sortable-list');
+    let draggingItem = null;
+    let sortableItems = [];
+
+    document.querySelectorAll('.sortable-item').forEach(item => {
+        item.addEventListener('mousedown', onMouseDown);
     });
+
+    function onMouseDown(e) {
+        if (!e.target.closest('.drag-handle')) return;
+
+        draggingItem = e.target.closest('.sortable-item');
+        const rect = draggingItem.getBoundingClientRect();
+
+        // 드래그 시작 시 스타일 적용
+        draggingItem.classList.add('dragging');
+
+        // 초기 위치 설정
+        sortableItems = [...document.querySelectorAll('.sortable-item:not(.dragging)')];
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+
+    function onMouseMove(e) {
+        if (!draggingItem) return;
+
+        // 마우스 위치에 따라 위치 계산
+        const closestItem = sortableItems.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = e.clientY - box.top - box.height / 2;
+
+            if (offset < 0 && offset > closest.offset) {
+                return { offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+
+        // 실시간으로 위치 변경
+        if (closestItem) {
+            const index = sortableItems.indexOf(closestItem);
+            sortableList.insertBefore(draggingItem, closestItem);
+        } else {
+            sortableList.appendChild(draggingItem);
+        }
+
+        // 번호 업데이트
+        updateQuestionNumbers();
+    }
+
+    function onMouseUp() {
+        if (!draggingItem) return;
+
+        // 드래그 종료 시 스타일 제거
+        draggingItem.classList.remove('dragging');
+
+        // 순서 저장
+        const newOrder = [...document.querySelectorAll('.sortable-item')].map(item =>
+            selectedQuestions[parseInt(item.dataset.index)]
+        );
+        selectedQuestions = newOrder;
+
+        // 이벤트 리스너 제거
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+
+        draggingItem = null;
+    }
+
+    function updateQuestionNumbers() {
+        document.querySelectorAll('.sortable-item').forEach((item, index) => {
+            const numberElement = item.querySelector('.question-number');
+            if (numberElement) {
+                numberElement.textContent = index + 1;
+            }
+        });
+    }
 }
 
 // 문제 삭제
