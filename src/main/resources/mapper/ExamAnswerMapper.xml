@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qrystal.app.exam.mapper.ExamAnswerMapper">
+
+    <resultMap id="ExamAnswerResultMap" type="com.qrystal.app.exam.model.ExamAnswer">
+        <id property="id" column="id"/>
+        <result property="attemptId" column="attempt_id"/>
+        <result property="questionId" column="question_id"/>
+        <result property="questionTypeId" column="question_type_id"/>
+        <result property="submittedAnswer" column="submitted_answer"/>
+        <result property="isCorrect" column="is_correct"/>
+        <result property="score" column="score"/>
+        <result property="gradingComment" column="grading_comment"/>
+        <result property="isGraded" column="is_graded"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="questionTitle" column="question_title"/>
+        <result property="correctAnswer" column="correct_answer"/>
+        <result property="explanation" column="explanation"/>
+    </resultMap>
+
+    <insert id="save" parameterType="com.qrystal.app.exam.model.ExamAnswer">
+        INSERT INTO exam_answers (
+            attempt_id, question_id, question_type_id, submitted_answer,
+            is_correct, score, grading_comment, is_graded
+        ) VALUES (
+                     #{attemptId}, #{questionId}, #{questionTypeId}, #{submittedAnswer},
+                     #{isCorrect}, #{score}, #{gradingComment}, #{isGraded}
+                 )
+    </insert>
+
+    <insert id="saveAll">
+        INSERT INTO exam_answers (
+        attempt_id, question_id, question_type_id, submitted_answer,
+        is_correct, score, is_graded
+        ) VALUES
+        <foreach collection="answers" item="answer" separator=",">
+            (#{attemptId}, #{answer.questionId}, #{answer.questionTypeId},
+            #{answer.submittedAnswer}, #{answer.isCorrect}, #{answer.score},
+            #{answer.isGraded})
+        </foreach>
+    </insert>
+
+    <select id="findByAttemptId" resultMap="ExamAnswerResultMap">
+        SELECT
+            ea.*, q.title as question_title,
+            q.answer as correct_answer, q.explanation
+        FROM exam_answers ea
+                 LEFT JOIN questions q ON ea.question_id = q.id
+        WHERE ea.attempt_id = #{attemptId}
+        ORDER BY q.id
+    </select>
+
+    <update id="updateGrading">
+        UPDATE exam_answers
+        SET is_correct = #{isCorrect},
+            score = #{score},
+            grading_comment = #{gradingComment},
+            is_graded = true,
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+</mapper>

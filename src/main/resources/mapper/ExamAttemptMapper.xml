@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qrystal.app.exam.mapper.ExamAttemptMapper">
+
+    <resultMap id="ExamAttemptResultMap" type="com.qrystal.app.exam.model.ExamAttempt">
+        <id property="id" column="id"/>
+        <result property="examId" column="exam_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="submittedAt" column="submitted_at"/>
+        <result property="timeLimit" column="time_limit"/>
+        <result property="totalScore" column="total_score"/>
+        <result property="status" column="status"
+                typeHandler="com.qrystal.app.exam.handler.ExamAttemptStatusTypeHandler"/>
+        <result property="isTimeExpired" column="is_time_expired"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="examTitle" column="exam_title"/>
+        <result property="userName" column="user_name"/>
+        <collection property="answers" column="id" select="com.qrystal.app.exam.mapper.ExamAnswerMapper.findByAttemptId"/>
+    </resultMap>
+
+    <insert id="save" parameterType="com.qrystal.app.exam.model.ExamAttempt"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exam_attempts (
+            exam_id, user_id, start_time, end_time, time_limit,
+            status, is_time_expired
+        ) VALUES (
+                     #{examId}, #{userId}, #{startTime}, #{endTime}, #{timeLimit},
+                     #{status}, #{isTimeExpired}
+                 )
+    </insert>
+
+    <select id="findById" resultMap="ExamAttemptResultMap">
+        SELECT
+            ea.*, e.title as exam_title, u.name as user_name
+        FROM exam_attempts ea
+                 LEFT JOIN exams e ON ea.exam_id = e.id
+                 LEFT JOIN users u ON ea.user_id = u.id
+        WHERE ea.id = #{id}
+    </select>
+
+    <select id="findByExamIdAndUserId" resultMap="ExamAttemptResultMap">
+        SELECT
+            ea.*, e.title as exam_title, u.name as user_name
+        FROM exam_attempts ea
+                 LEFT JOIN exams e ON ea.exam_id = e.id
+                 LEFT JOIN users u ON ea.user_id = u.id
+        WHERE ea.exam_id = #{examId} AND ea.user_id = #{userId}
+    </select>
+
+    <select id="findByUserId" resultMap="ExamAttemptResultMap">
+        SELECT
+            ea.*, e.title as exam_title, u.name as user_name
+        FROM exam_attempts ea
+                 LEFT JOIN exams e ON ea.exam_id = e.id
+                 LEFT JOIN users u ON ea.user_id = u.id
+        WHERE ea.user_id = #{userId}
+    </select>
+
+    <update id="updateStatus">
+        UPDATE exam_attempts
+        SET status = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateSubmission">
+        UPDATE exam_attempts
+        SET submitted_at = #{submittedAt},
+            total_score = #{totalScore},
+            status = 'SUBMITTED',
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+</mapper>
