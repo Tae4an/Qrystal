@@ -10,7 +10,8 @@
         <result property="totalPoints" column="total_points"/>
         <result property="createdBy" column="created_by"/>
         <result property="categoryId" column="category_id"/>
-        <result property="status" column="status" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="status" column="status"
+                typeHandler="com.qrystal.app.exam.handler.ExamStatusTypeHandler"/>
         <result property="isPublic" column="is_public"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
