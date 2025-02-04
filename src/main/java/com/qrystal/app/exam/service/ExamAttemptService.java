@@ -186,14 +186,15 @@ public class ExamAttemptService {
             throw new CustomException(ErrorCode.EXAM_ATTEMPT_NOT_FOUND);
         }
 
-        // 아직 제출되지 않은 시험 결과는 조회 불가
-        if (attempt.getStatus() == ExamAttemptStatus.IN_PROGRESS) {
-            throw new CustomException(ErrorCode.EXAM_NOT_SUBMITTED);
+        // IN_PROGRESS 상태도 허용 (시험 응시 중일 때)
+        if (attempt.getStatus() != ExamAttemptStatus.IN_PROGRESS &&
+                attempt.getStatus() != ExamAttemptStatus.SUBMITTED &&
+                attempt.getStatus() != ExamAttemptStatus.GRADED) {
+            throw new CustomException(ErrorCode.EXAM_NOT_STARTED);
         }
 
         return ExamAttemptResponseDto.from(attempt);
     }
-
     // 자동 채점 수행
     private int performAutoGrading(Long attemptId) {
         List<ExamAnswer> answers = examAnswerMapper.findByAttemptId(attemptId);
