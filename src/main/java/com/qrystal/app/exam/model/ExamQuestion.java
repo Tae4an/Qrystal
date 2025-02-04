@@ -1,10 +1,12 @@
 package com.qrystal.app.exam.model;
 
 import com.qrystal.app.question.model.Question;
+import com.qrystal.app.question.model.QuestionChoice;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,4 +20,5 @@ public class ExamQuestion {
     private String questionContent;
     private Long questionTypeId;
     private int questionDifficulty;
+    private List<QuestionChoice> choices;
 }

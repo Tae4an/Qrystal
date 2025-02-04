@@ -20,6 +20,20 @@
         <collection property="questions" column="id" select="findQuestionsByExamId"/>
     </resultMap>
 
+    <resultMap id="ExamQuestionResultMap" type="com.qrystal.app.exam.model.ExamQuestion">
+        <id property="examId" column="exam_id"/>
+        <id property="questionId" column="question_id"/>
+        <result property="questionNumber" column="question_number"/>
+        <result property="point" column="point"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="questionTitle" column="question_title"/>
+        <result property="questionContent" column="question_content"/>
+        <result property="questionTypeId" column="question_type_id"/>
+        <result property="questionDifficulty" column="question_difficulty"/>
+        <collection property="choices" column="question_id"
+                    select="com.qrystal.app.question.mapper.QuestionMapper.findChoicesByQuestionId"/>
+    </resultMap>
+
     <!-- 시험지 생성 -->
     <insert id="save" parameterType="com.qrystal.app.exam.model.Exam"
             useGeneratedKeys="true" keyProperty="id">
@@ -135,7 +149,7 @@
     </delete>
 
     <!-- 시험 문제 목록 조회 -->
-    <select id="findQuestionsByExamId" resultType="com.qrystal.app.exam.model.ExamQuestion">
+    <select id="findQuestionsByExamId" resultMap="ExamQuestionResultMap">
         SELECT
             eq.*,
             q.title as question_title,

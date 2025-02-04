@@ -56,13 +56,13 @@
 
           <!-- 문제 내용 -->
           <div class="question-text">
-            <p th:text="${question.content}">문제 내용</p>
+            <p th:text="${question.questionContent}">문제 내용</p>
           </div>
 
           <!-- 답안 입력 영역 -->
           <div class="answer-section">
             <!-- 객관식 -->
-            <div th:if="${question.typeId == 1}" class="multiple-choice">
+            <div th:if="${question.questionTypeId == 1}" class="multiple-choice">
               <div th:each="choice : ${question.choices}" class="choice-item">
                 <input type="radio"
                        th:id="'choice-' + ${question.questionId} + '-' + ${choice.choiceNumber}"
@@ -74,7 +74,7 @@
             </div>
 
             <!-- 주관식 -->
-            <div th:if="${question.typeId == 2}" class="short-answer">
+            <div th:if="${question.questionTypeId == 2}" class="short-answer">
               <input type="text"
                      th:id="'answer-' + ${question.questionId}"
                      class="answer-input"
@@ -82,7 +82,7 @@
             </div>
 
             <!-- 서술형 -->
-            <div th:if="${question.typeId == 3}" class="essay">
+            <div th:if="${question.questionTypeId == 3}" class="essay">
                            <textarea th:id="'answer-' + ${question.questionId}"
                                      class="answer-input"
                                      rows="5"
