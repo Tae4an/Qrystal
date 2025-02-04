@@ -148,4 +148,8 @@
         ORDER BY eq.question_number
     </select>
 
+    <select id="findQuestionByExamQuestionId" resultType="com.qrystal.app.exam.model.ExamQuestion">
+        SELECT * FROM exam_questions
+        WHERE exam_id = #{examId} AND question_id = #{questionId}
+    </select>
 </mapper>

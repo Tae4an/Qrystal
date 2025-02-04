@@ -23,4 +23,7 @@ public interface ExamMapper {
     void saveQuestions(@Param("examId") Long examId, @Param("questions") List<ExamQuestion> questions);
     void deleteQuestions(Long examId);
     List<ExamQuestion> findQuestionsByExamId(Long examId);
+
+    ExamQuestion findQuestionByExamQuestionId(@Param("examId") Long examId,
+                                              @Param("questionId") Long questionId);
 }
