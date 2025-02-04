@@ -1,9 +1,9 @@
 package com.qrystal.app.exam.controller;
 
 import com.qrystal.app.exam.domain.ExamStatus;
-import com.qrystal.app.exam.dto.ExamCreateRequest;
-import com.qrystal.app.exam.dto.ExamResponse;
+import com.qrystal.app.exam.dto.*;
 import com.qrystal.app.exam.model.Exam;
+import com.qrystal.app.exam.service.ExamAttemptService;
 import com.qrystal.app.exam.service.ExamService;
 import com.qrystal.app.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExamController {
     private final ExamService examService;
+    private final ExamAttemptService examAttemptService;
     private final UserService userService;
 
     // 모의고사 생성
@@ -118,5 +119,58 @@ public class ExamController {
         Long userId = userService.getUserByEmail(email).getId();
         examService.deleteExam(id, userId);
         return ResponseEntity.ok().build();
+    }
+    // 시험 시작
+    @PostMapping("/{examId}/start")
+    public ResponseEntity<Long> startExam(@PathVariable Long examId, Principal principal) {
+        String email = userService.extractEmail(principal);
+        Long userId = userService.getUserByEmail(email).getId();
+
+        ExamAttemptCreateDto createDto = new ExamAttemptCreateDto();
+        createDto.setExamId(examId);
+
+        ExamAttemptResponseDto attempt = examAttemptService.startExam(createDto, userId);
+        return ResponseEntity.ok(attempt.getId());
+    }
+
+    // 시험 응시 정보 조회
+    @GetMapping("/{examId}/attempts/{attemptId}")
+    public ResponseEntity<ExamAttemptResponseDto> getAttempt(
+            @PathVariable Long examId,
+            @PathVariable Long attemptId,
+            Principal principal) {
+        String email = userService.extractEmail(principal);
+        Long userId = userService.getUserByEmail(email).getId();
+
+        ExamAttemptResponseDto attempt = examAttemptService.getExamAttempt(attemptId, userId);
+        return ResponseEntity.ok(attempt);
+    }
+
+    // 답안 임시 저장
+    @PostMapping("/{examId}/attempts/{attemptId}/save")
+    public ResponseEntity<Void> saveAnswers(
+            @PathVariable Long examId,
+            @PathVariable Long attemptId,
+            @RequestBody List<ExamAnswerSubmitDto> answers,
+            Principal principal) {
+        String email = userService.extractEmail(principal);
+        Long userId = userService.getUserByEmail(email).getId();
+
+        examAttemptService.saveAnswers(attemptId, answers, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    // 답안 최종 제출
+    @PostMapping("/{examId}/attempts/{attemptId}/submit")
+    public ResponseEntity<ExamAttemptResponseDto> submitExam(
+            @PathVariable Long examId,
+            @PathVariable Long attemptId,
+            @RequestBody List<ExamAnswerSubmitDto> answers,
+            Principal principal) {
+        String email = userService.extractEmail(principal);
+        Long userId = userService.getUserByEmail(email).getId();
+
+        ExamAttemptResponseDto result = examAttemptService.submitExam(attemptId, answers, userId);
+        return ResponseEntity.ok(result);
     }
 }
