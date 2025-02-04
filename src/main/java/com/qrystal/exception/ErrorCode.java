@@ -45,7 +45,9 @@ public enum ErrorCode {
     EXAM_NOT_STARTED(400, "시험이 시작되지 않았습니다"),
     EXAM_ALREADY_SUBMITTED(400, "이미 제출된 시험입니다"),
     INVALID_SUBMISSION(400, "잘못된 제출입니다"),
-    GRADING_ERROR(500, "채점 중 오류가 발생했습니다");
+    GRADING_ERROR(500, "채점 중 오류가 발생했습니다"),
+    EXAM_NOT_SUBMITTED(400, "아직 제출되지 않은 시험입니다"),
+    EXAM_ATTEMPT_NOT_FOUND(404, "시험 응시 정보를 찾을 수 없습니다");
     private final int status;
     private final String message;
 }

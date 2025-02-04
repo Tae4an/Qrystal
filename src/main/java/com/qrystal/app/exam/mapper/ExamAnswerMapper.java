@@ -20,4 +20,5 @@ public interface ExamAnswerMapper {
                       @Param("isCorrect") Boolean isCorrect,
                       @Param("score") Integer score,
                       @Param("gradingComment") String gradingComment);
+    void deleteByAttemptId(Long attemptId);
 }

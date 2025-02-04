@@ -61,4 +61,8 @@
             updated_at = NOW()
         WHERE id = #{id}
     </update>
+    <delete id="deleteByAttemptId">
+        DELETE FROM exam_answers
+        WHERE attempt_id = #{attemptId}
+    </delete>
 </mapper>

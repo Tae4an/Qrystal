@@ -30,104 +30,145 @@ public class ExamAttemptService {
     private final ExamAnswerMapper examAnswerMapper;
     private final ExamService examService;
     private final ExamTimerService examTimerService;
-
-    // 시험 응시 시작
+    private final AutoGradingService autoGradingService;
+    // 시험 시작
     @Transactional
     public ExamAttemptResponseDto startExam(ExamAttemptCreateDto createDto, Long userId) {
         // 1. 시험 정보 조회 및 검증
         Exam exam = examService.getExam(createDto.getExamId());
         validateExamStartable(exam, userId);
 
-        // 2. 이미 진행중인 시험이 있는지 확인
-        ExamAttempt existingAttempt = examAttemptMapper.findByExamIdAndUserId(createDto.getExamId(), userId);
-        if (existingAttempt != null && existingAttempt.getStatus() == ExamAttemptStatus.IN_PROGRESS) {
+        // 2. 진행중인 시험이 있는지 확인
+        ExamAttempt existingAttempt = examAttemptMapper.findByExamIdAndUserId(
+                createDto.getExamId(), userId);
+
+        if (existingAttempt != null &&
+                existingAttempt.getStatus() == ExamAttemptStatus.IN_PROGRESS) {
             throw new CustomException(ErrorCode.EXAM_ALREADY_IN_PROGRESS);
         }
 
-        // 3. 시험 응시 정보 생성
-        ExamAttempt attempt = createDto.toEntity(userId, exam);
+        // 3. 새로운 시험 응시 정보 생성
+        ExamAttempt attempt = ExamAttempt.builder()
+                .examId(exam.getId())
+                .userId(userId)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusMinutes(exam.getTimeLimit()))
+                .timeLimit(exam.getTimeLimit())
+                .status(ExamAttemptStatus.IN_PROGRESS)
+                .isTimeExpired(false)
+                .build();
+
         examAttemptMapper.save(attempt);
 
         // 4. Redis에 시험 타이머 설정
-        try {
-            examTimerService.startExamTimer(attempt.getId(), attempt.getTimeLimit());
-        } catch (Exception e) {
-            log.error("Failed to start exam timer", e);
-            throw new CustomException(ErrorCode.EXAM_TIMER_ERROR);
+        examTimerService.startExamTimer(attempt.getId(), attempt.getTimeLimit());
+
+        return ExamAttemptResponseDto.from(attempt);
+    }
+
+    // 시험 응시 정보 조회
+    public ExamAttemptResponseDto getExamAttempt(Long attemptId, Long userId) {
+        ExamAttempt attempt = examAttemptMapper.findById(attemptId);
+        if (attempt == null) {
+            throw new CustomException(ErrorCode.EXAM_ATTEMPT_NOT_FOUND);
+        }
+
+        // 권한 체크
+        if (!attempt.getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.EXAM_ACCESS_DENIED);
+        }
+
+        // 시간 만료 체크
+        if (attempt.getStatus() == ExamAttemptStatus.IN_PROGRESS &&
+                examTimerService.isExamExpired(attemptId)) {
+            handleExamTimeout(attempt);
         }
 
         return ExamAttemptResponseDto.from(attempt);
     }
 
-    // 진행 중인 시험 조회
-    public ExamAttemptResponseDto getCurrentExam(Long userId) {
-        List<ExamAttempt> attempts = examAttemptMapper.findByUserId(userId);
-        ExamAttempt currentAttempt = attempts.stream()
-                .filter(a -> a.getStatus() == ExamAttemptStatus.IN_PROGRESS)
-                .findFirst()
-                .orElseThrow(() -> new CustomException(ErrorCode.EXAM_NOT_IN_PROGRESS));
+    // 답안 임시 저장
+    @Transactional
+    public void saveAnswers(Long attemptId, List<ExamAnswerSubmitDto> answers, Long userId) {
+        ExamAttempt attempt = validateAndGetAttempt(attemptId, userId);
+
+        // 기존 답안 삭제
+        examAnswerMapper.deleteByAttemptId(attemptId);
+
+        // 새로운 답안 저장
+        List<ExamAnswer> examAnswers = answers.stream()
+                .map(dto -> ExamAnswer.builder()
+                        .attemptId(attemptId)
+                        .questionId(dto.getQuestionId())
+                        .submittedAnswer(dto.getSubmittedAnswer())
+                        .isGraded(false)
+                        .build())
+                .collect(Collectors.toList());
+
+        if (!examAnswers.isEmpty()) {
+            examAnswerMapper.saveAll(attemptId, examAnswers);
+        }
+    }
+
+    // 답안 최종 제출
+    @Transactional
+    public ExamAttemptResponseDto submitExam(Long attemptId,
+                                             List<ExamAnswerSubmitDto> answers,
+                                             Long userId) {
+        ExamAttempt attempt = validateAndGetAttempt(attemptId, userId);
 
         // 시간 만료 체크
-        if (examTimerService.isExamExpired(currentAttempt.getId())) {
-            handleExamTimeout(currentAttempt);
+        if (examTimerService.isExamExpired(attemptId)) {
+            handleExamTimeout(attempt);
             throw new CustomException(ErrorCode.EXAM_TIME_EXPIRED);
         }
 
-        return ExamAttemptResponseDto.from(currentAttempt);
-    }
+        // 답안 저장
+        saveAnswers(attemptId, answers, userId);
 
-    // 답안 제출
-    @Transactional
-    public void submitExam(Long attemptId, List<ExamAnswerSubmitDto> answers) {
-        // 1. 시험 응시 정보 조회 및 검증
-        ExamAttempt attempt = examAttemptMapper.findById(attemptId);
-        validateExamSubmittable(attempt);
+        // 자동 채점 처리
+        int totalScore = performAutoGrading(attemptId);
 
-        // 2. 답안 저장
-        List<ExamAnswer> examAnswers = answers.stream()
-                .map(dto -> {
-                    ExamAnswer answer = new ExamAnswer();
-                    answer.setAttemptId(attemptId);
-                    answer.setQuestionId(dto.getQuestionId());
-                    answer.setSubmittedAnswer(dto.getSubmittedAnswer());
-                    // 추후 채점을 위한 초기값 설정
-                    answer.setIsGraded(false);
-                    return answer;
-                })
-                .collect(Collectors.toList());
-
-        examAnswerMapper.saveAll(attemptId, examAnswers);
-
-        // 3. 시험 상태 업데이트
+        // 시험 상태 업데이트
         attempt.setStatus(ExamAttemptStatus.SUBMITTED);
         attempt.setSubmittedAt(LocalDateTime.now());
-        examAttemptMapper.updateSubmission(attemptId, attempt.getSubmittedAt(), null);
+        attempt.setTotalScore(totalScore);
 
-        // 4. Redis 타이머 제거
+        examAttemptMapper.updateSubmission(attemptId,
+                attempt.getSubmittedAt(),
+                totalScore);
+
+        // Redis 타이머 제거
         examTimerService.stopExamTimer(attemptId);
+
+        return ExamAttemptResponseDto.from(attempt);
     }
 
-    // 시험 응시 가능 여부 검증
+    // 검증 및 attempt 조회 헬퍼 메서드
+    private ExamAttempt validateAndGetAttempt(Long attemptId, Long userId) {
+        ExamAttempt attempt = examAttemptMapper.findById(attemptId);
+        if (attempt == null) {
+            throw new CustomException(ErrorCode.EXAM_ATTEMPT_NOT_FOUND);
+        }
+
+        if (!attempt.getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.EXAM_ACCESS_DENIED);
+        }
+
+        if (attempt.getStatus() != ExamAttemptStatus.IN_PROGRESS) {
+            throw new CustomException(ErrorCode.EXAM_NOT_IN_PROGRESS);
+        }
+
+        return attempt;
+    }
+
+    // 시험 제출 가능 여부 검증
     private void validateExamStartable(Exam exam, Long userId) {
         if (exam.getStatus() != ExamStatus.PUBLISHED) {
             throw new CustomException(ErrorCode.EXAM_NOT_PUBLISHED);
         }
         if (!exam.isPublic() && !exam.getCreatedBy().equals(userId)) {
             throw new CustomException(ErrorCode.EXAM_ACCESS_DENIED);
-        }
-    }
-
-    // 답안 제출 가능 여부 검증
-    private void validateExamSubmittable(ExamAttempt attempt) {
-        if (attempt == null) {
-            throw new CustomException(ErrorCode.EXAM_NOT_FOUND);
-        }
-        if (attempt.getStatus() != ExamAttemptStatus.IN_PROGRESS) {
-            throw new CustomException(ErrorCode.EXAM_NOT_IN_PROGRESS);
-        }
-        if (examTimerService.isExamExpired(attempt.getId())) {
-            handleExamTimeout(attempt);
-            throw new CustomException(ErrorCode.EXAM_TIME_EXPIRED);
         }
     }
 
@@ -139,13 +180,23 @@ public class ExamAttemptService {
         examAttemptMapper.updateStatus(attempt.getId(), ExamAttemptStatus.TIMEOUT);
         examTimerService.stopExamTimer(attempt.getId());
     }
-
-    // 시험 결과 조회
     public ExamAttemptResponseDto getExamResult(Long attemptId) {
         ExamAttempt attempt = examAttemptMapper.findById(attemptId);
         if (attempt == null) {
-            throw new CustomException(ErrorCode.EXAM_NOT_FOUND);
+            throw new CustomException(ErrorCode.EXAM_ATTEMPT_NOT_FOUND);
         }
+
+        // 아직 제출되지 않은 시험 결과는 조회 불가
+        if (attempt.getStatus() == ExamAttemptStatus.IN_PROGRESS) {
+            throw new CustomException(ErrorCode.EXAM_NOT_SUBMITTED);
+        }
+
         return ExamAttemptResponseDto.from(attempt);
+    }
+
+    // 자동 채점 수행
+    private int performAutoGrading(Long attemptId) {
+        List<ExamAnswer> answers = examAnswerMapper.findByAttemptId(attemptId);
+        return autoGradingService.gradeExamAttempt(attemptId, answers);
     }
 }
