@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="content">
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/exam/detail.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <div class="exam-container">
+        <!-- 시험 상세 정보 -->
+        <div class="exam-detail">
+            <!-- 헤더 영역 -->
+            <div class="detail-header">
+                <h2 th:text="${exam.title}">시험 제목</h2>
+                <div class="exam-meta">
+                    <span class="category" th:text="${exam.categoryName}">카테고리</span>
+                    <span class="created-by">출제자: <span th:text="${exam.createdByName}"></span></span>
+                </div>
+            </div>
+
+            <!-- 시험 정보 영역 -->
+            <div class="exam-info">
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <span>제한시간: </span>
+                    <span th:text="${exam.timeLimit + '분'}">0분</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-star"></i>
+                    <span>총점: </span>
+                    <span th:text="${exam.totalPoints + '점'}">0점</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-list-ol"></i>
+                    <span>문제 수: </span>
+                    <span th:text="${exam.questions.size() + '문항'}">0문항</span>
+                </div>
+            </div>
+
+            <!-- 시험 설명 -->
+            <div class="exam-description">
+                <h3>시험 설명</h3>
+                <p th:text="${exam.description}">시험 설명 내용</p>
+            </div>
+
+            <!-- 주의사항 -->
+            <div class="exam-notice">
+                <h3><i class="fas fa-exclamation-triangle"></i> 시험 응시 주의사항</h3>
+                <ul>
+                    <li>시험 시작 후에는 제한시간 동안만 응시가 가능합니다.</li>
+                    <li>답안 제출 후에는 수정이 불가능합니다.</li>
+                    <li>시험 중 페이지를 벗어나면 자동으로 제출됩니다.</li>
+                    <li>네트워크 문제에 대비하여 주기적으로 답안이 저장됩니다.</li>
+                    <li>부정행위가 발견될 경우 시험이 무효 처리됩니다.</li>
+                </ul>
+            </div>
+
+            <!-- 시험 시작 버튼 -->
+            <div class="exam-actions">
+                <button id="startExam" class="btn btn-primary">
+                    <i class="fas fa-play"></i> 시험 시작하기
+                </button>
+                <button onclick="history.back()" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> 뒤로가기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script th:inline="javascript">
+        // Thymeleaf에서 examId 전달
+        const examId = [[${exam.id}]];
+    </script>
+    <script th:src="@{/js/exam/detail.js}"></script></th:block>
+</body>
+</html>

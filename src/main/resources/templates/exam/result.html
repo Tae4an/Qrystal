@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="content">
+  <!-- CSS -->
+  <link rel="stylesheet" th:href="@{/css/exam/result.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <div class="exam-container">
+    <!-- 결과 헤더 -->
+    <div class="result-header">
+      <h2 th:text="${exam.title}">시험 제목</h2>
+      <div class="exam-meta">
+        <span class="category" th:text="${exam.categoryName}">카테고리</span>
+        <span class="submission-time">
+                   제출 시간: <span th:text="${#temporals.format(attempt.submittedAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+               </span>
+      </div>
+    </div>
+
+    <!-- 결과 요약 -->
+    <div class="result-summary">
+      <div class="score-card">
+        <div class="total-score">
+          <div class="score-label">총점</div>
+          <div class="score-value">
+            <span th:text="${attempt.totalScore}">0</span>
+            <span class="score-denominator" th:text="'/ ' + ${exam.totalPoints}">/ 100</span>
+          </div>
+        </div>
+        <div class="score-details">
+          <div class="detail-item">
+            <i class="fas fa-check"></i>
+            <span>정답 수: </span>
+            <span th:text="${correctCount}">0</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-times"></i>
+            <span>오답 수: </span>
+            <span th:text="${wrongCount}">0</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-percent"></i>
+            <span>정답률: </span>
+            <span th:text="${correctRate + '%'}">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 문제별 결과 -->
+    <div class="answers-review">
+      <div th:each="answer : ${attempt.answers}" class="question-result">
+        <!-- 문제 헤더 -->
+        <div class="question-header">
+          <div class="question-info">
+            <span class="question-number" th:text="'문제 ' + ${answer.questionNumber}">문제 1</span>
+            <span class="question-type"
+                  th:text="${answer.questionTypeId == 1 ? '객관식' : (answer.questionTypeId == 2 ? '주관식' : '서술형')}">
+                       </span>
+          </div>
+          <div class="question-score">
+            <span th:text="${answer.score}">0</span>
+            <span class="score-denominator" th:text="'/ ' + ${answer.maxScore}">/ 10</span>
+            <i th:class="${answer.isCorrect ? 'fas fa-check correct' : 'fas fa-times incorrect'}"></i>
+          </div>
+        </div>
+
+        <!-- 문제 내용 -->
+        <div class="question-content">
+          <div class="question-text" th:text="${answer.questionTitle}">문제 내용</div>
+
+          <!-- 객관식인 경우 보기 표시 -->
+          <div th:if="${answer.questionTypeId == 1}" class="choices">
+            <div th:each="choice : ${answer.choices}" class="choice-item"
+                 th:classappend="${choice.isCorrect ? 'correct' : (choice.isSelected ? 'incorrect' : '')}">
+              <span th:text="${choice.content}">선택지</span>
+              <i th:if="${choice.isCorrect}" class="fas fa-check"></i>
+              <i th:if="${choice.isSelected && !choice.isCorrect}" class="fas fa-times"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 답안 비교 -->
+        <div class="answer-comparison">
+          <div class="submitted-answer">
+            <h4>제출한 답안</h4>
+            <p th:text="${answer.submittedAnswer}">제출 답안</p>
+          </div>
+          <div class="correct-answer">
+            <h4>정답</h4>
+            <p th:text="${answer.correctAnswer}">정답</p>
+          </div>
+        </div>
+
+        <!-- 해설 -->
+        <div class="answer-explanation" th:if="${answer.explanation}">
+          <h4>해설</h4>
+          <p th:text="${answer.explanation}">문제 해설</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 버튼 -->
+    <div class="result-actions">
+      <button onclick="location.href='/exams'" class="btn btn-secondary">
+        <i class="fas fa-list"></i> 목록으로
+      </button>
+      <button th:if="${exam.isPublic}" onclick="location.href='/exams'" class="btn btn-primary">
+        <i class="fas fa-redo"></i> 다시 풀기
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script th:src="@{/js/exam/result.js}"></script>
+</th:block>
+</body>
+</html>
