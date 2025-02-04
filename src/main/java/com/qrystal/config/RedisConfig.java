@@ -1,5 +1,8 @@
 package com.qrystal.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
@@ -9,7 +12,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -38,21 +41,32 @@ public class RedisConfig {
         return new LettuceConnectionFactory(configuration);
     }
 
-    // Redis 템플릿 설정
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
+        // ObjectMapper 설정: JSON 직렬화/역직렬화를 위한 객체
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());  // Java 8 날짜/시간 타입 지원
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);  // 날짜를 타임스탬프가 아닌 ISO-8601 형식으로 직렬화
+
+        // RedisTemplate 객체 생성
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        // 연결 팩토리 설정
+
+        // Redis 연결 팩토리 설정
         template.setConnectionFactory(redisConnectionFactory());
 
+        // JSON Serializer 설정
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        serializer.setObjectMapper(objectMapper);  // 위에서 설정한 ObjectMapper 사용
+
         // 키/값 직렬화 설정
-        template.setKeySerializer(new StringRedisSerializer());  // 키: 문자열 직렬화
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());  // 값: JSON 직렬화
+        template.setKeySerializer(new StringRedisSerializer());  // 키: 문자열로 직렬화
+        template.setValueSerializer(serializer);  // 값: JSON으로 직렬화
 
         // 해시 키/값 직렬화 설정
-        template.setHashKeySerializer(new StringRedisSerializer());  // 해시 키: 문자열 직렬화
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());  // 해시 값: JSON 직렬화
+        template.setHashKeySerializer(new StringRedisSerializer());  // 해시 키: 문자열로 직렬화
+        template.setHashValueSerializer(serializer);  // 해시 값: JSON으로 직렬화
 
-        return template;
+        return template;  // 설정이 완료된 RedisTemplate 반환
     }
+
 }
