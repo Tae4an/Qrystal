@@ -57,28 +57,42 @@ document.addEventListener('DOMContentLoaded', function() {
     // 답안 저장
     function saveAnswers() {
         const currentAnswers = collectAnswers();
+        const data = Array.from(currentAnswers.entries()).map(([questionId, answer]) => ({
+            questionId: parseInt(questionId),
+            submittedAnswer: answer
+        }));
+
+        console.log('Request payload:', JSON.stringify({ answers: data }));
 
         fetch(`/api/exams/${examId}/attempts/${attemptId}/save`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                answers: Array.from(currentAnswers.entries()).map(([questionId, answer]) => ({
-                    questionId,
-                    submittedAnswer: answer
-                }))
-            })
-        }).catch(error => console.error('자동 저장 실패:', error));
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    console.error('Server error:', err);
+                    throw new Error(err.message || '답안 저장 실패');
+                });
+            }
+        }).catch(error => {
+            console.error('자동 저장 실패:', error);
+        });
     }
-
     // 현재 답안 수집
     function collectAnswers() {
         const answers = new Map();
 
-        questions.forEach(question => {
+        // 현재 답안 수집 로직에 디버깅 로그 추가
+        console.log('Starting to collect answers...');
+
+        document.querySelectorAll('.question-item').forEach(question => {
             const questionId = question.dataset.questionId;
             const questionType = question.dataset.questionType;
+
+            console.log(`Checking question ${questionId} of type ${questionType}`);
 
             let answer = null;
             if (questionType === '1') { // 객관식
@@ -89,11 +103,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 answer = input ? input.value.trim() : null;
             }
 
+            console.log(`Answer for question ${questionId}: ${answer}`);
+
             if (answer) {
                 answers.set(questionId, answer);
             }
         });
 
+        console.log('Collected answers:', answers);
         return answers;
     }
 
