@@ -44,7 +44,8 @@
         <div th:each="question, questionStat : ${exam.questions}"
              th:id="'question-' + ${question.questionId}"
              th:class="'question-item ' + (${questionStat.first} ? 'active' : '')"
-             th:attr="data-question-type=${question.questionTypeId}">
+             th:attr="data-question-id=${question.questionId},
+                data-question-type=${question.questionTypeId}">
 
           <!-- 문제 헤더 -->
           <div class="question-header">

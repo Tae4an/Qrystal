@@ -57,18 +57,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // 답안 저장
     function saveAnswers() {
         const currentAnswers = collectAnswers();
+        const data = Array.from(currentAnswers.entries()).map(([questionId, answer]) => ({
+            questionId: parseInt(questionId),
+            submittedAnswer: answer
+        }));
+
+        console.log('Request payload:', JSON.stringify(data));
 
         fetch(`/api/exams/${examId}/attempts/${attemptId}/save`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                answers: Array.from(currentAnswers.entries()).map(([questionId, answer]) => ({
-                    questionId,
-                    submittedAnswer: answer
-                }))
-            })
+            body: JSON.stringify(data)  // answers 객체로 감싸지 않고 배열 직접 전송
         }).catch(error => console.error('자동 저장 실패:', error));
     }
 
