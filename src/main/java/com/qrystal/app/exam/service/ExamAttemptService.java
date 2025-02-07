@@ -100,6 +100,7 @@ public class ExamAttemptService {
                 .map(dto -> ExamAnswer.builder()
                         .attemptId(attemptId)
                         .questionId(dto.getQuestionId())
+                        .questionTypeId(dto.getQuestionTypeId())
                         .submittedAnswer(dto.getSubmittedAnswer())
                         .isGraded(false)
                         .build())

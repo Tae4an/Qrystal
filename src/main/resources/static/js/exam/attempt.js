@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 요소 참조
     const prevButton = document.getElementById('prevQuestion');
-    const nextButton = document.getElementById('nextButton');
+    const nextButton = document.getElementById('nextQuestion');
     const submitButton = document.getElementById('submitExam');
     const questions = document.querySelectorAll('.question-item');
     const navItems = document.querySelectorAll('.nav-item');
@@ -57,29 +57,38 @@ document.addEventListener('DOMContentLoaded', function() {
     // 답안 저장
     function saveAnswers() {
         const currentAnswers = collectAnswers();
-        const data = Array.from(currentAnswers.entries()).map(([questionId, answer]) => ({
+        const data = Array.from(currentAnswers.entries()).map(([questionId, data]) => ({
             questionId: parseInt(questionId),
-            submittedAnswer: answer
+            questionTypeId: parseInt(data.questionType),  // 문제 유형 추가
+            submittedAnswer: data.answer.toString()
         }));
 
-        console.log('Request payload:', JSON.stringify(data));
 
         fetch(`/api/exams/${examId}/attempts/${attemptId}/save`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)  // answers 객체로 감싸지 않고 배열 직접 전송
-        }).catch(error => console.error('자동 저장 실패:', error));
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    console.error('상세 서버 에러:', err);
+                    throw new Error(err.message);
+                });
+            }
+        }).catch(error => {
+            console.error('자동 저장 실패 상세:', error);
+        });
     }
 
     // 현재 답안 수집
     function collectAnswers() {
         const answers = new Map();
 
-        questions.forEach(question => {
-            const questionId = question.dataset.questionId;
-            const questionType = question.dataset.questionType;
+        document.querySelectorAll('.question-item').forEach(question => {
+            const questionId = question.getAttribute('data-question-id');
+            const questionType = question.getAttribute('data-question-type');
 
             let answer = null;
             if (questionType === '1') { // 객관식
@@ -91,7 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (answer) {
-                answers.set(questionId, answer);
+                answers.set(questionId, {
+                    answer: answer,
+                    questionType: questionType
+                });
             }
         });
 
