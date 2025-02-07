@@ -146,7 +146,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 시험 제출
     async function submitExam() {
-        const answers = collectAnswers();
+        const currentAnswers = collectAnswers();
+        const data = Array.from(currentAnswers.entries()).map(([questionId, data]) => ({
+            questionId: parseInt(questionId),
+            questionTypeId: parseInt(data.questionType),
+            submittedAnswer: data.answer.toString()
+        }));
+
+        console.log('Submit payload:', data);
 
         try {
             const response = await fetch(`/api/exams/${examId}/attempts/${attemptId}/submit`, {
@@ -154,22 +161,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    answers: Array.from(answers.entries()).map(([questionId, answer]) => ({
-                        questionId,
-                        submittedAnswer: answer
-                    }))
-                })
+                body: JSON.stringify(data)
             });
+
+            const result = await response.json(); // 먼저 응답을 JSON으로 파싱
+            console.log('Server response:', result); // 서버 응답 로그
 
             if (response.ok) {
                 window.location.href = `/exams/${examId}/result/${attemptId}`;
             } else {
-                const error = await response.json();
-                alert(error.message || '제출 중 오류가 발생했습니다.');
+                // 상세 에러 메시지 출력
+                console.error('Submit error:', result);
+                alert(result.message || '제출 중 오류가 발생했습니다.');
             }
         } catch (error) {
-            console.error('Error:', error);
+            // 에러 상세 정보 출력
+            console.error('Submit error details:', error);
             alert('제출 중 오류가 발생했습니다.');
         }
     }
