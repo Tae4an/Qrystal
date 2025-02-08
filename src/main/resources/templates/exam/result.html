@@ -32,17 +32,17 @@
           <div class="detail-item">
             <i class="fas fa-check"></i>
             <span>정답 수: </span>
-            <span th:text="${correctCount}">0</span>
+            <span th:text="${attempt.correctCount != null ? attempt.correctCount : 0}">0</span>
           </div>
           <div class="detail-item">
             <i class="fas fa-times"></i>
             <span>오답 수: </span>
-            <span th:text="${wrongCount}">0</span>
+            <span th:text="${attempt.wrongCount != null ? attempt.wrongCount : 0}">0</span>
           </div>
           <div class="detail-item">
             <i class="fas fa-percent"></i>
             <span>정답률: </span>
-            <span th:text="${correctRate + '%'}">0%</span>
+            <span th:text="${attempt.correctRate != null ? #numbers.formatDecimal(attempt.correctRate, 1, 1) + '%' : '0%'}">0%</span>
           </div>
         </div>
       </div>
@@ -72,11 +72,11 @@
 
           <!-- 객관식인 경우 보기 표시 -->
           <div th:if="${answer.questionTypeId == 1}" class="choices">
-            <div th:each="choice : ${answer.choices}" class="choice-item"
-                 th:classappend="${choice.isCorrect ? 'correct' : (choice.isSelected ? 'incorrect' : '')}">
+            <div th:each="choice : ${answer.choices}"
+                 th:class="'choice-item ' + (${choice.isCorrect != null && choice.isCorrect} ? 'correct' : (${choice.isSelected != null && choice.isSelected} ? 'incorrect' : ''))">
               <span th:text="${choice.content}">선택지</span>
-              <i th:if="${choice.isCorrect}" class="fas fa-check"></i>
-              <i th:if="${choice.isSelected && !choice.isCorrect}" class="fas fa-times"></i>
+              <i th:if="${choice.isCorrect != null && choice.isCorrect}" class="fas fa-check"></i>
+              <i th:if="${choice.isSelected != null && choice.isSelected && !choice.isCorrect}" class="fas fa-times"></i>
             </div>
           </div>
         </div>

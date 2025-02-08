@@ -181,21 +181,44 @@ public class ExamAttemptService {
         examAttemptMapper.updateStatus(attempt.getId(), ExamAttemptStatus.TIMEOUT);
         examTimerService.stopExamTimer(attempt.getId());
     }
+
     public ExamAttemptResponseDto getExamResult(Long attemptId) {
         ExamAttempt attempt = examAttemptMapper.findById(attemptId);
         if (attempt == null) {
             throw new CustomException(ErrorCode.EXAM_ATTEMPT_NOT_FOUND);
         }
 
-        // IN_PROGRESS 상태도 허용 (시험 응시 중일 때)
-        if (attempt.getStatus() != ExamAttemptStatus.IN_PROGRESS &&
-                attempt.getStatus() != ExamAttemptStatus.SUBMITTED &&
-                attempt.getStatus() != ExamAttemptStatus.GRADED) {
-            throw new CustomException(ErrorCode.EXAM_NOT_STARTED);
+        ExamAttemptResponseDto responseDto = ExamAttemptResponseDto.from(attempt);
+
+        if (responseDto.getAnswers() != null && !responseDto.getAnswers().isEmpty()) {
+            // 정답 수 계산
+            long correctCount = responseDto.getAnswers().stream()
+                    .filter(answer -> Boolean.TRUE.equals(answer.getIsCorrect()))
+                    .count();
+
+            log.debug("정답 개수: {}", correctCount);
+
+            // 전체 문제 수
+            int totalQuestions = responseDto.getAnswers().size();
+            log.debug("전체 문제 수: {}", totalQuestions);
+
+            // 정답률 계산
+            double correctRate = ((double) correctCount / totalQuestions) * 100;
+            log.debug("계산된 정답률: {}", correctRate);
+
+            double roundedRate = Math.round(correctRate * 10.0) / 10.0;
+            log.debug("반올림된 정답률: {}", roundedRate);
+
+            responseDto.setCorrectRate(roundedRate);
+            responseDto.setCorrectCount((int) correctCount);
+            responseDto.setWrongCount(totalQuestions - (int) correctCount);
+        } else {
+            log.warn("답안이 없거나 비어있습니다. attemptId: {}", attemptId);
         }
 
-        return ExamAttemptResponseDto.from(attempt);
+        return responseDto;
     }
+
     // 자동 채점 수행
     private int performAutoGrading(Long attemptId) {
         List<ExamAnswer> answers = examAnswerMapper.findByAttemptId(attemptId);

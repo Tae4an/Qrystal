@@ -18,7 +18,21 @@
         <result property="questionTitle" column="question_title"/>
         <result property="correctAnswer" column="correct_answer"/>
         <result property="explanation" column="explanation"/>
+        <collection property="choices" column="question_id"
+                    select="com.qrystal.app.question.mapper.QuestionMapper.findChoicesByQuestionId"/>
+
     </resultMap>
+
+    <resultMap id="QuestionChoiceResultMap" type="com.qrystal.app.question.model.QuestionChoice">
+        <id property="id" column="id"/>
+        <result property="questionId" column="question_id"/>
+        <result property="choiceNumber" column="choice_number"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="isCorrect" column="is_correct"/>
+        <result property="isSelected" column="is_selected"/>
+    </resultMap>
+
 
     <insert id="save" parameterType="com.qrystal.app.exam.model.ExamAnswer">
         INSERT INTO exam_answers (
@@ -44,12 +58,19 @@
 
     <select id="findByAttemptId" resultMap="ExamAnswerResultMap">
         SELECT
-            ea.*, q.title as question_title,
-            q.answer as correct_answer, q.explanation
+        ea.*,
+        eq.question_number,
+        eq.point as max_score,
+        q.title as question_title,
+        q.type_id as question_type_id,
+        q.answer as correct_answer,
+        q.explanation
         FROM exam_answers ea
-                 LEFT JOIN questions q ON ea.question_id = q.id
+        LEFT JOIN exam_questions eq ON ea.question_id = eq.question_id
+        AND eq.exam_id = ea.attempt_id
+        LEFT JOIN questions q ON ea.question_id = q.id
         WHERE ea.attempt_id = #{attemptId}
-        ORDER BY q.id
+        ORDER BY eq.question_number
     </select>
 
     <update id="updateGrading">
@@ -65,4 +86,24 @@
         DELETE FROM exam_answers
         WHERE attempt_id = #{attemptId}
     </delete>
+
+    <!-- 객관식 보기 조회 시 정답 및 선택 여부 처리 -->
+    <select id="findChoicesWithResult" resultMap="QuestionChoiceResultMap">
+        SELECT
+            qc.*,
+            CASE
+                WHEN q.answer = CAST(qc.choice_number AS CHAR) THEN true
+                ELSE false
+                END as is_correct,
+            CASE
+                WHEN ea.submitted_answer = CAST(qc.choice_number AS CHAR) THEN true
+                ELSE false
+                END as is_selected
+        FROM question_choices qc
+                 JOIN questions q ON qc.question_id = q.id
+                 LEFT JOIN exam_answers ea ON q.id = ea.question_id
+            AND ea.attempt_id = #{attemptId}
+        WHERE qc.question_id = #{questionId}
+        ORDER BY qc.choice_number
+    </select>
 </mapper>

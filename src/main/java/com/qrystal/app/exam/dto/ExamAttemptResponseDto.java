@@ -28,7 +28,10 @@ public class ExamAttemptResponseDto {
     private ExamAttemptStatus status;
     private Boolean isTimeExpired;
     private List<ExamAnswerResponseDto> answers;
-    
+    private Double correctRate;   // 정답률
+    private Integer correctCount; // 정답 수
+    private Integer wrongCount;   // 오답 수
+
     public static ExamAttemptResponseDto from(ExamAttempt attempt) {
         ExamAttemptResponseDto dto = new ExamAttemptResponseDto();
         BeanUtils.copyProperties(attempt, dto);
