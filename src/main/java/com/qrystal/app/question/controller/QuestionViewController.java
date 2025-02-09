@@ -1,5 +1,6 @@
 package com.qrystal.app.question.controller;
 
+import com.qrystal.global.annotation.ResourceOwner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +32,7 @@ public class QuestionViewController {
     }
 
     @GetMapping("/{id}/edit")
+    @ResourceOwner(idParameter = "id")
     public String questionEdit(@PathVariable Long id, Model model) {
         model.addAttribute("content", "question/form");
         model.addAttribute("questionId", id);

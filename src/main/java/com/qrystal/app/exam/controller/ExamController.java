@@ -6,10 +6,10 @@ import com.qrystal.app.exam.model.Exam;
 import com.qrystal.app.exam.service.ExamAttemptService;
 import com.qrystal.app.exam.service.ExamService;
 import com.qrystal.app.user.service.UserService;
+import com.qrystal.global.annotation.ResourceOwner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -88,6 +88,7 @@ public class ExamController {
 
     // 시험지 수정
     @PutMapping("/{id}")
+    @ResourceOwner(idParameter = "id")
     public ResponseEntity<Void> updateExam(
             @PathVariable Long id,
             @RequestBody ExamCreateRequest request,
@@ -100,6 +101,7 @@ public class ExamController {
 
     // 시험지 상태 변경
     @PutMapping("/{id}/status")
+    @ResourceOwner(idParameter = "id")
     public ResponseEntity<Void> updateExamStatus(
             @PathVariable Long id,
             @RequestParam ExamStatus status,
@@ -112,6 +114,7 @@ public class ExamController {
 
     // 시험지 삭제
     @DeleteMapping("/{id}")
+    @ResourceOwner(idParameter = "id")
     public ResponseEntity<Void> deleteExam(
             @PathVariable Long id,
             Principal principal) {

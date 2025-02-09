@@ -9,6 +9,7 @@ import com.qrystal.app.question.dto.QuestionCreateRequest;
 import com.qrystal.app.question.dto.QuestionResponse;
 import com.qrystal.app.question.dto.QuestionSearchCondition;
 import com.qrystal.app.question.dto.QuestionUpdateRequest;
+import com.qrystal.global.annotation.ResourceOwner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -87,6 +88,7 @@ public class QuestionController {
 
     // 문제 수정
     @PutMapping("/{id}")
+    @ResourceOwner(idParameter = "id")
     public ResponseEntity<QuestionResponse> updateQuestion(
             @PathVariable Long id,
             @RequestBody @Valid QuestionUpdateRequest request,
@@ -114,6 +116,7 @@ public class QuestionController {
 
     // 문제 삭제
     @DeleteMapping("/{id}")
+    @ResourceOwner(idParameter = "id")
     public ResponseEntity<Void> deleteQuestion(
             @PathVariable Long id,
             Principal principal) {
@@ -151,6 +154,7 @@ public class QuestionController {
     }
 
     @PatchMapping("/{id}/status")
+    @ResourceOwner(idParameter = "id")
     public ResponseEntity<QuestionResponse> updateQuestionStatus(
             @PathVariable Long id,
             @RequestParam QuestionStatus status,

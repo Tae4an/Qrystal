@@ -11,6 +11,7 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "Unauthorized access"),
     NOT_FOUND(404, "Resource not found"),
     INTERNAL_ERROR(500, "Internal server error"),
+    RESOURCE_ACCESS_DENIED(403, "리소스에 대한 접근 권한이 없습니다"),
 
     // User
     DUPLICATE_USERNAME(400, "Username is already in use"),
