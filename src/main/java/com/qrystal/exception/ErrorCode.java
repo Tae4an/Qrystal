@@ -38,7 +38,7 @@ public enum ErrorCode {
     EXAM_ACCESS_DENIED(403, "Access to exam denied"),
     EXAM_STATUS_INVALID(400, "Invalid exam status"),
     EXAM_ALREADY_EXISTS(400, "Exam already exists"),
-    EXAM_NOT_PUBLISHED(400, "시험이 공개되지 않았습니다"),
+    EXAM_NOT_AVAILABLE(400, "시험이 공개되지 않았습니다"),
     EXAM_TIMER_ERROR(500, "시험 타이머 처리 중 오류가 발생했습니다"),
     EXAM_ALREADY_IN_PROGRESS(400, "이미 진행 중인 시험이 있습니다"),
     EXAM_NOT_IN_PROGRESS(400, "진행 중인 시험이 없습니다"),
@@ -48,7 +48,8 @@ public enum ErrorCode {
     INVALID_SUBMISSION(400, "잘못된 제출입니다"),
     GRADING_ERROR(500, "채점 중 오류가 발생했습니다"),
     EXAM_NOT_SUBMITTED(400, "아직 제출되지 않은 시험입니다"),
-    EXAM_ATTEMPT_NOT_FOUND(404, "시험 응시 정보를 찾을 수 없습니다");
+    EXAM_ATTEMPT_NOT_FOUND(404, "시험 응시 정보를 찾을 수 없습니다"),
+    EXAM_DELETE_FAILED(500, "모의고사 삭제 중 오류가 발생했습니다.");
     private final int status;
     private final String message;
 }

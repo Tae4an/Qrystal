@@ -165,8 +165,8 @@ public class ExamAttemptService {
 
     // 시험 제출 가능 여부 검증
     private void validateExamStartable(Exam exam, Long userId) {
-        if (exam.getStatus() != ExamStatus.PUBLISHED) {
-            throw new CustomException(ErrorCode.EXAM_NOT_PUBLISHED);
+        if (exam.getStatus() != ExamStatus.ACTIVE) {
+            throw new CustomException(ErrorCode.EXAM_NOT_AVAILABLE);
         }
         if (!exam.isPublic() && !exam.getCreatedBy().equals(userId)) {
             throw new CustomException(ErrorCode.EXAM_ACCESS_DENIED);

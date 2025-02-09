@@ -28,6 +28,7 @@ public class ExamService {
         // 1. 시험지 기본 정보 저장
         Exam exam = request.toEntity();
         exam.setCreatedBy(userId);
+        exam.setStatus(ExamStatus.ACTIVE);
         examMapper.save(exam);
 
         // 2. ExamQuestionRequest를 ExamQuestion으로 변환 후 저장
@@ -51,6 +52,7 @@ public class ExamService {
     public List<Exam> getMyExams(Long userId) {
         return examMapper.findAll(ExamSearchCondition.builder()
                 .createdBy(userId)
+                .status(ExamStatus.ACTIVE)
                 .build());
     }
     
@@ -58,7 +60,7 @@ public class ExamService {
     public List<Exam> getPublicExams() {
         return examMapper.findAll(ExamSearchCondition.builder()
                 .isPublic(true)
-                .status(ExamStatus.PUBLISHED)
+                .status(ExamStatus.ACTIVE)
                 .build());
     }
     
@@ -67,6 +69,8 @@ public class ExamService {
         Exam exam = examMapper.findById(id);
         if (exam == null) {
             throw new CustomException(ErrorCode.EXAM_NOT_FOUND);
+        }else if (exam.getStatus() == ExamStatus.INACTIVE) {
+            throw new CustomException(ErrorCode.EXAM_NOT_AVAILABLE);
         }
         return exam;
     }
@@ -102,22 +106,6 @@ public class ExamService {
         }
     }
 
-    // 시험지 상태 변경
-    @Transactional
-    public void updateExamStatus(Long id, ExamStatus status, Long userId) {
-        Exam exam = getExam(id);
-
-        // 권한 체크
-        if (!exam.getCreatedBy().equals(userId)) {
-            throw new CustomException(ErrorCode.EXAM_ACCESS_DENIED);
-        }
-
-        // 상태 변경 가능 여부 체크
-        validateStatusChange(exam.getStatus(), status);
-
-        examMapper.updateStatus(id, status);
-    }
-
     // 시험지 삭제
     @Transactional
     public void deleteExam(Long id, Long userId) {
@@ -128,17 +116,7 @@ public class ExamService {
             throw new CustomException(ErrorCode.EXAM_ACCESS_DENIED);
         }
 
-        examMapper.deleteQuestions(id);
-        examMapper.delete(id);
-    }
-
-    // 상태 변경 가능 여부 검증
-    private void validateStatusChange(ExamStatus currentStatus, ExamStatus newStatus) {
-        // DRAFT -> PUBLISHED -> CLOSED 순서로만 변경 가능
-        if (currentStatus == ExamStatus.CLOSED ||
-                (currentStatus == ExamStatus.PUBLISHED && newStatus == ExamStatus.DRAFT)) {
-            throw new CustomException(ErrorCode.EXAM_STATUS_INVALID);
-        }
+        examMapper.updateStatus(id, ExamStatus.INACTIVE);
     }
 
     // 카테고리별 공개된 모의고사 조회
@@ -146,7 +124,7 @@ public class ExamService {
         return examMapper.findAll(ExamSearchCondition.builder()
                 .categoryId(categoryId)
                 .isPublic(true)
-                .status(ExamStatus.PUBLISHED)
+                .status(ExamStatus.ACTIVE)
                 .build());
     }
 }

@@ -83,13 +83,22 @@ async function deleteExam(examId) {
 
     try {
         const response = await fetch(`/api/exams/${examId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
         });
 
-        if (!response.ok) throw new Error('삭제 중 오류가 발생했습니다.');
-
-        alert('모의고사가 삭제되었습니다.');
-        window.location.reload();
+        // 204 No Content나 200 OK 모두 성공으로 처리
+        if (response.status === 204 || response.ok) {
+            // UI에서 해당 모의고사 제거
+            currentExams = currentExams.filter(exam => exam.id !== examId);
+            renderExamList(currentExams);
+            alert('모의고사가 삭제되었습니다.');
+        } else {
+            throw new Error('삭제 중 오류가 발생했습니다.');
+        }
 
     } catch (error) {
         console.error('Error:', error);

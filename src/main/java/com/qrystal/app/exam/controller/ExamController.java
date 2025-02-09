@@ -6,12 +6,13 @@ import com.qrystal.app.exam.model.Exam;
 import com.qrystal.app.exam.service.ExamAttemptService;
 import com.qrystal.app.exam.service.ExamService;
 import com.qrystal.app.user.service.UserService;
+import com.qrystal.exception.CustomException;
 import com.qrystal.global.annotation.ResourceOwner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.qrystal.exception.ErrorCode;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -99,29 +100,21 @@ public class ExamController {
         return ResponseEntity.ok().build();
     }
 
-    // 시험지 상태 변경
-    @PutMapping("/{id}/status")
-    @ResourceOwner(idParameter = "id")
-    public ResponseEntity<Void> updateExamStatus(
-            @PathVariable Long id,
-            @RequestParam ExamStatus status,
-            Principal principal) {
-        String email = userService.extractEmail(principal);
-        Long userId = userService.getUserByEmail(email).getId();
-        examService.updateExamStatus(id, status, userId);
-        return ResponseEntity.ok().build();
-    }
-
     // 시험지 삭제
     @DeleteMapping("/{id}")
     @ResourceOwner(idParameter = "id")
     public ResponseEntity<Void> deleteExam(
             @PathVariable Long id,
             Principal principal) {
-        String email = userService.extractEmail(principal);
-        Long userId = userService.getUserByEmail(email).getId();
-        examService.deleteExam(id, userId);
-        return ResponseEntity.ok().build();
+        try {
+            String email = userService.extractEmail(principal);
+            Long userId = userService.getUserByEmail(email).getId();
+            examService.deleteExam(id, userId);
+            return ResponseEntity.noContent().build();  // 204 No Content
+        } catch (Exception e) {
+            log.error("Failed to delete exam", e);
+            throw new CustomException(ErrorCode.EXAM_DELETE_FAILED);
+        }
     }
     // 시험 시작
     @PostMapping("/{examId}/start")
