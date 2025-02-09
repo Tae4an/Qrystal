@@ -13,6 +13,7 @@
                         <span th:text="${
                             principal.attributes['name'] != null ? principal.attributes['name'] + ' 님' :
                             principal.attributes['login'] != null ? principal.attributes['login'] + ' 님' :
+                            principal.attributes['response'] != null ? principal.attributes['response']['name'] + ' 님' :
                             #strings.defaultString(principal.attributes['email'], 'User') + ' 님'
                         }">사용자님</span>
                     </th:block>
