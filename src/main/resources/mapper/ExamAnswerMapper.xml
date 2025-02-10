@@ -66,8 +66,9 @@
         q.answer as correct_answer,
         q.explanation
         FROM exam_answers ea
+        LEFT JOIN exam_attempts att ON ea.attempt_id = att.id
         LEFT JOIN exam_questions eq ON ea.question_id = eq.question_id
-        AND eq.exam_id = ea.attempt_id
+        AND eq.exam_id = att.exam_id  <!-- attempt_id를 실제 exam_id로 변경 -->
         LEFT JOIN questions q ON ea.question_id = q.id
         WHERE ea.attempt_id = #{attemptId}
         ORDER BY eq.question_number

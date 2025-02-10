@@ -116,33 +116,48 @@ public class ExamAttemptService {
     public ExamAttemptResponseDto submitExam(Long attemptId,
                                              List<ExamAnswerSubmitDto> answers,
                                              Long userId) {
+        log.info("시험 제출 시작 - attemptId: {}, userId: {}", attemptId, userId);
+
         ExamAttempt attempt = validateAndGetAttempt(attemptId, userId);
+        log.info("시험 응시 정보 검증 완료");
 
         // 시간 만료 체크
         if (examTimerService.isExamExpired(attemptId)) {
+            log.warn("시험 시간 만료 - attemptId: {}", attemptId);
             handleExamTimeout(attempt);
             throw new CustomException(ErrorCode.EXAM_TIME_EXPIRED);
         }
 
-        // 답안 저장
-        saveAnswers(attemptId, answers, userId);
+        try {
+            // 답안 저장
+            log.info("답안 저장 시작 - 답안 개수: {}", answers.size());
+            saveAnswers(attemptId, answers, userId);
+            log.info("답안 저장 완료");
 
-        // 자동 채점 처리
-        int totalScore = performAutoGrading(attemptId);
+            // 자동 채점 처리
+            log.info("자동 채점 시작");
+            int totalScore = performAutoGrading(attemptId);
+            log.info("자동 채점 완료 - 총점: {}", totalScore);
 
-        // 시험 상태 업데이트
-        attempt.setStatus(ExamAttemptStatus.SUBMITTED);
-        attempt.setSubmittedAt(LocalDateTime.now());
-        attempt.setTotalScore(totalScore);
+            // 시험 상태 업데이트
+            attempt.setStatus(ExamAttemptStatus.SUBMITTED);
+            attempt.setSubmittedAt(LocalDateTime.now());
+            attempt.setTotalScore(totalScore);
 
-        examAttemptMapper.updateSubmission(attemptId,
-                attempt.getSubmittedAt(),
-                totalScore);
+            examAttemptMapper.updateSubmission(attemptId,
+                    attempt.getSubmittedAt(),
+                    totalScore);
+            log.info("시험 제출 상태 업데이트 완료");
 
-        // Redis 타이머 제거
-        examTimerService.stopExamTimer(attemptId);
+            // Redis 타이머 제거
+            examTimerService.stopExamTimer(attemptId);
+            log.info("시험 타이머 제거 완료");
 
-        return ExamAttemptResponseDto.from(attempt);
+            return ExamAttemptResponseDto.from(attempt);
+        } catch (Exception e) {
+            log.error("시험 제출 중 오류 발생", e);
+            throw e;
+        }
     }
 
     // 검증 및 attempt 조회 헬퍼 메서드
@@ -221,7 +236,8 @@ public class ExamAttemptService {
 
     // 자동 채점 수행
     private int performAutoGrading(Long attemptId) {
+        ExamAttempt attempt = examAttemptMapper.findById(attemptId);
         List<ExamAnswer> answers = examAnswerMapper.findByAttemptId(attemptId);
-        return autoGradingService.gradeExamAttempt(attemptId, answers);
+        return autoGradingService.gradeExamAttempt(attempt.getExamId(), answers);
     }
 }
