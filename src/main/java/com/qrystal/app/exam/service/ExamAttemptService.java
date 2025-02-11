@@ -186,6 +186,13 @@ public class ExamAttemptService {
         if (!exam.isPublic() && !exam.getCreatedBy().equals(userId)) {
             throw new CustomException(ErrorCode.EXAM_ACCESS_DENIED);
         }
+
+        // 진행중인 시험이 있는지 확인
+        ExamAttempt latestAttempt = examAttemptMapper.findByExamIdAndUserId(exam.getId(), userId);
+        if (latestAttempt != null &&
+                latestAttempt.getStatus() == ExamAttemptStatus.IN_PROGRESS) {
+            throw new CustomException(ErrorCode.EXAM_ALREADY_IN_PROGRESS);
+        }
     }
 
     // 시험 시간 초과 처리
@@ -239,5 +246,21 @@ public class ExamAttemptService {
         ExamAttempt attempt = examAttemptMapper.findById(attemptId);
         List<ExamAnswer> answers = examAnswerMapper.findByAttemptId(attemptId);
         return autoGradingService.gradeExamAttempt(attempt.getExamId(), answers);
+    }
+
+    @Transactional
+    public void cancelExamAttempt(Long attemptId, Long userId) {
+        ExamAttempt attempt = validateAndGetAttempt(attemptId, userId);
+
+        // Redis 타이머 제거
+        examTimerService.stopExamTimer(attemptId);
+
+        // 답안 삭제
+        examAnswerMapper.deleteByAttemptId(attemptId);
+
+        // attempt 삭제
+        examAttemptMapper.delete(attemptId);
+
+        log.info("시험 취소 및 삭제 처리 완료 - attemptId: {}", attemptId);
     }
 }

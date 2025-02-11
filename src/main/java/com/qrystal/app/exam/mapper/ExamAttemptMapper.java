@@ -25,4 +25,6 @@ public interface ExamAttemptMapper {
     void updateSubmission(@Param("id") Long id, 
                          @Param("submittedAt") LocalDateTime submittedAt,
                          @Param("totalScore") Integer totalScore);
+
+    void delete(Long id);
 }

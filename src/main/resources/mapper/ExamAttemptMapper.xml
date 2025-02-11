@@ -48,7 +48,10 @@
         FROM exam_attempts ea
                  LEFT JOIN exams e ON ea.exam_id = e.id
                  LEFT JOIN users u ON ea.user_id = u.id
-        WHERE ea.exam_id = #{examId} AND ea.user_id = #{userId}
+        WHERE ea.exam_id = #{examId}
+          AND ea.user_id = #{userId}
+        ORDER BY ea.created_at DESC
+            LIMIT 1
     </select>
 
     <select id="findByUserId" resultMap="ExamAttemptResultMap">
@@ -75,4 +78,9 @@
             updated_at = NOW()
         WHERE id = #{id}
     </update>
+
+    <delete id="delete">
+        DELETE FROM exam_attempts
+        WHERE id = #{id}
+    </delete>
 </mapper>

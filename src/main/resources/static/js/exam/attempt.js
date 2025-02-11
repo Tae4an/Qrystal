@@ -231,9 +231,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 페이지 이탈 방지
     window.addEventListener('beforeunload', (e) => {
+        const message = '시험을 종료하시겠습니까? 현재까지의 진행사항이 모두 취소됩니다.';
         e.preventDefault();
-        e.returnValue = '';
+        e.returnValue = message;
+    });
+
+    window.addEventListener('unload', () => {
+        // 사용자가 실제로 페이지를 떠날 때만 실행
+        navigator.sendBeacon(`/api/exams/${examId}/attempts/${attemptId}/cancel`);
     });
 });

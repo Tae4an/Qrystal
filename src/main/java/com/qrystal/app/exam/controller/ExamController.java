@@ -169,4 +169,17 @@ public class ExamController {
         ExamAttemptResponseDto result = examAttemptService.submitExam(attemptId, answers, userId);
         return ResponseEntity.ok(result);
     }
+
+    // 시험 취소
+    @PostMapping("/{examId}/attempts/{attemptId}/cancel")
+    public ResponseEntity<Void> cancelExam(
+            @PathVariable Long examId,
+            @PathVariable Long attemptId,
+            Principal principal) {
+        String email = userService.extractEmail(principal);
+        Long userId = userService.getUserByEmail(email).getId();
+
+        examAttemptService.cancelExamAttempt(attemptId, userId);
+        return ResponseEntity.ok().build();
+    }
 }
