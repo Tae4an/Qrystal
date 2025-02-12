@@ -1,6 +1,5 @@
 package com.qrystal.app.exam.controller;
 
-import com.qrystal.app.exam.domain.ExamStatus;
 import com.qrystal.app.exam.dto.*;
 import com.qrystal.app.exam.model.Exam;
 import com.qrystal.app.exam.service.ExamAttemptService;
@@ -172,14 +171,14 @@ public class ExamController {
 
     // 시험 취소
     @PostMapping("/{examId}/attempts/{attemptId}/cancel")
-    public ResponseEntity<Void> cancelExam(
-            @PathVariable Long examId,
-            @PathVariable Long attemptId,
-            Principal principal) {
+    public String cancelExam(@PathVariable Long examId,
+                             @PathVariable Long attemptId,
+                             Principal principal) {
         String email = userService.extractEmail(principal);
         Long userId = userService.getUserByEmail(email).getId();
 
         examAttemptService.cancelExamAttempt(attemptId, userId);
-        return ResponseEntity.ok().build();
+
+        return "redirect:/exams";
     }
 }

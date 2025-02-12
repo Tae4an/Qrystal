@@ -231,14 +231,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // 새로고침 감지 및 처리
+    if (performance.navigation.type === 1) {  // 새로고침
+        navigator.sendBeacon(`/api/exams/${examId}/attempts/${attemptId}/cancel`);
+        window.location.href = '/exams';  // 새로고침의 경우에만 목록 페이지로 강제 이동
+    }
+
+    // 일반적인 페이지 이탈 처리
     window.addEventListener('beforeunload', (e) => {
-        const message = '시험을 종료하시겠습니까? 현재까지의 진행사항이 모두 취소됩니다.';
         e.preventDefault();
-        e.returnValue = message;
+        e.returnValue = '시험을 종료하시겠습니까? 현재까지의 진행사항이 모두 취소됩니다.';
     });
 
+    // 실제 페이지 이탈 시
     window.addEventListener('unload', () => {
-        // 사용자가 실제로 페이지를 떠날 때만 실행
         navigator.sendBeacon(`/api/exams/${examId}/attempts/${attemptId}/cancel`);
     });
 });
