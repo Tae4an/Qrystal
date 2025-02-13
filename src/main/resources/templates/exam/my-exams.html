@@ -20,58 +20,52 @@
     <div class="filter-section">
       <div class="search-filters">
         <input type="text" id="searchInput" class="form-control" placeholder="모의고사 검색...">
-        <select id="statusFilter" class="form-control">
-          <option value="">전체 상태</option>
-          <option value="DRAFT">임시저장</option>
-          <option value="PUBLISHED">공개</option>
-          <option value="CLOSED">마감</option>
-        </select>
       </div>
     </div>
 
-    <!-- 모의고사 목록 -->
-    <div class="exam-list" id="examsList">
-      <!-- JavaScript로 목록 렌더링될 공간 -->
-      <div class="exam-item" th:each="exam : ${exams}">
-        <div class="exam-info">
-          <h3 th:text="${exam.title}">모의고사 제목</h3>
-          <p class="exam-description" th:text="${exam.description}">모의고사 설명</p>
-          <div class="exam-meta">
-                        <span>
+      <!-- 모의고사 목록 -->
+      <div id="examsList">
+          <div class="exam-card" th:each="exam : ${exams}">
+              <div class="exam-card-header">
+                  <div class="exam-info">
+                      <h3 class="exam-title" th:text="${exam.title}">모의고사 제목</h3>
+                      <p class="exam-description" th:text="${exam.description}">모의고사 설명</p>
+                      <div class="exam-meta">
+                        <span class="category-path">
+                            <i class="fas fa-folder"></i>
+                            <span th:text="${exam.categoryName ?: '미분류'}">카테고리</span>
+                        </span>
+                          <span class="time-limit">
                             <i class="fas fa-clock"></i>
                             <span th:text="|${exam.timeLimit}분|">60분</span>
                         </span>
-            <span>
+                          <span class="question-count">
                             <i class="fas fa-list-ol"></i>
                             <span th:text="|${exam.questions.size()}문제|">10문제</span>
                         </span>
-            <span>
+                          <span class="total-points">
                             <i class="fas fa-trophy"></i>
                             <span th:text="|${exam.totalPoints}점|">100점</span>
                         </span>
-            <span th:class="'exam-status-' + ${exam.status.name().toLowerCase()}">
+                          <span class="exam-status" th:classappend="${'exam-status-' + exam.status.name().toLowerCase()}">
                             <i class="fas fa-circle"></i>
                             <span th:text="${exam.status.value}">상태</span>
                         </span>
+                      </div>
+                  </div>
+              </div>
+              <div class="exam-actions">
+                  <button type="button" class="btn btn-edit"
+                          th:onclick="|location.href='@{/exams/{id}/edit(id=${exam.id})}'|">
+                      <i class="fas fa-edit"></i> 수정
+                  </button>
+                  <button type="button" class="btn btn-delete"
+                          th:onclick="|deleteExam(${exam.id})|">
+                      <i class="fas fa-trash"></i> 삭제
+                  </button>
+              </div>
           </div>
-        </div>
-        <div class="exam-actions">
-          <button type="button" class="btn btn-secondary btn-sm"
-                  th:onclick="|location.href='@{/exams/{id}/edit(id=${exam.id})}'|">
-            <i class="fas fa-edit"></i> 수정
-          </button>
-          <button type="button" class="btn btn-primary btn-sm"
-                  th:if="${exam.status.name() == 'DRAFT'}"
-                  th:onclick="|publishExam(${exam.id})|">
-            <i class="fas fa-upload"></i> 공개
-          </button>
-          <button type="button" class="btn btn-danger btn-sm"
-                  th:onclick="|deleteExam(${exam.id})|">
-            <i class="fas fa-trash"></i> 삭제
-          </button>
-        </div>
       </div>
-    </div>
   </div>
 
   <!-- JavaScript -->

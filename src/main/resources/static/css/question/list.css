@@ -63,6 +63,20 @@
     transition: all 0.2s;
 }
 
+#searchInput {
+    width: 300px;
+}
+
+#typeFilter, #difficultyFilter {
+    width: 120px;
+}
+
+#typeFilter option, #difficultyFilter option {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .search-input:focus, .form-control:focus {
     outline: none;
     border-color: #6366f1;

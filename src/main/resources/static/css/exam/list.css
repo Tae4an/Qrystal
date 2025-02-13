@@ -63,23 +63,11 @@
     transition: all 0.2s;
 }
 
+#searchInput {
+    width: 300px;
+}
+
 .search-input:focus, .form-control:focus {
-    outline: none;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-}
-
-.filter-select {
-    padding: 8px 12px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: white;
-    color: #1f2937;
-    min-width: 120px;
-    transition: all 0.2s;
-}
-
-.filter-select:focus {
     outline: none;
     border-color: #6366f1;
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
@@ -94,15 +82,19 @@
     overflow: hidden;
     transition: all 0.3s ease;
     border: 1px solid #e5e7eb;
+    cursor: pointer;
+}
+
+.exam-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .exam-card-header {
     padding: 20px;
-    cursor: pointer;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e5e7eb;
+    align-items: flex-start;
     transition: background-color 0.2s;
 }
 
@@ -110,26 +102,57 @@
     background: #f8fafc;
 }
 
+.exam-info {
+    flex: 1;
+}
+
 .exam-title {
     font-weight: 500;
     color: #1f2937;
+    font-size: 16px;
+    margin: 0 0 8px 0;
+}
+
+.exam-description {
+    color: #6b7280;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    line-height: 1.5;
 }
 
 .exam-meta {
     display: flex;
-    gap: 16px;
-    color: #6b7280;
-    font-size: 14px;
+    gap: 12px;
+    flex-wrap: wrap;
     align-items: center;
 }
 
 .exam-meta > span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     padding: 4px 12px;
     border-radius: 6px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     font-size: 13px;
+    white-space: nowrap;
+}
+
+.exam-meta .time-limit {
+    color: #0891b2;
+    background-color: #e0faff;
+    border: 1px solid #bae6fd;
+}
+
+.exam-meta .question-count {
+    color: #059669;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+}
+
+.exam-meta .total-points {
+    color: #ea580c;
+    background-color: #ffedd5;
+    border: 1px solid #fed7aa;
 }
 
 .exam-meta .category-path {
@@ -137,23 +160,12 @@
     background-color: #e0e7ff;
     border: 1px solid #c7d2fe;
     max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.exam-meta .exam-type {
-    color: #0891b2;
-    background-color: #e0faff;
-    border: 1px solid #bae6fd;
-}
-
-.exam-meta .exam-difficulty {
-    color: #ea580c;
-    background-color: #ffedd5;
-    border: 1px solid #fed7aa;
-}
-
-.exam-meta .exam-difficulty:hover {
-    background-color: #fed7aa;
-    transition: background-color 0.2s ease;
+.exam-meta i {
+    font-size: 14px;
 }
 
 /* 카테고리 트리 */
@@ -165,7 +177,7 @@
 .category-content {
     padding: 8px 12px;
     border-radius: 8px;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -247,7 +259,7 @@
 .category-content i.fa-folder {
     color: #6366f1;
     font-size: 14px;
-    width: 12px;  /* 고정 너비 */
+    width: 12px;
 }
 
 .category-icon {
@@ -256,6 +268,47 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* 데이터 없음 표시 */
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+/* 토스트 메시지 */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 16px 24px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.success {
+    border-left: 4px solid #059669;
+}
+
+.toast.error {
+    border-left: 4px solid #dc2626;
 }
 
 /* 버튼 스타일 */
@@ -299,37 +352,6 @@
     gap: 12px;
 }
 
-/* 토스트 메시지 */
-.toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    padding: 16px 24px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 1000;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.3s ease;
-}
-
-.toast.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.toast.success {
-    border-left: 4px solid #059669;
-}
-
-.toast.error {
-    border-left: 4px solid #dc2626;
-}
-
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .exam-container {
@@ -353,8 +375,28 @@
         width: 100%;
     }
 
-    .header-actions {
+    .exam-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .exam-meta > span {
         width: 100%;
-        justify-content: flex-end;
+    }
+}
+
+/* 모바일 최적화 */
+@media (max-width: 480px) {
+    .exam-container {
+        padding: 16px;
+    }
+
+    .content-header {
+        padding: 16px;
+    }
+
+    .exam-card-header {
+        flex-direction: column;
+        gap: 12px;
     }
 }

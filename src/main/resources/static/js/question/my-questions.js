@@ -60,33 +60,41 @@ function renderCategoryOptions(categories, level = 0) {
 function renderQuestions(questionsToRender = myQuestions) {
     const container = document.getElementById('myQuestionsList');
     if (questionsToRender.length === 0) {
-        container.innerHTML = '<div class="no-questions">등록한 문제가 없습니다.</div>';
+        container.innerHTML = '<div class="no-data">등록한 문제가 없습니다.</div>';
         return;
     }
 
     container.innerHTML = questionsToRender.map(question => `
-       <div class="question-card">
-           <div class="question-header">
-               <span class="question-title">${question.title}</span>
-           </div>
-           <div class="question-info">
-               <div class="question-meta">
-                   <span class="badge badge-category">${question.categoryName}</span>
-                   <span class="badge badge-type">${getQuestionType(question.typeId)}</span>
-                   <span>난이도: ${'★'.repeat(question.difficulty)}</span>
-                   <span>작성일: ${formatDate(question.createdAt)}</span>
-               </div>
-               <div class="question-actions">
-                   <button class="btn btn-edit" onclick="editQuestion(${question.id})">
-                       <i class="fas fa-edit"></i> 수정
-                   </button>
-                   <button class="btn btn-delete" onclick="confirmDelete(${question.id})">
-                       <i class="fas fa-trash"></i> 삭제
-                   </button>
-               </div>
-           </div>
-       </div>
-   `).join('');
+        <div class="question-card">
+            <div class="question-card-header">
+                <div class="question-info">
+                    <div class="question-title">${question.title}</div>
+                    <div class="question-meta">
+                        <span class="category-path">
+                            <i class="fas fa-folder"></i> ${question.categoryName}
+                        </span>
+                        <span class="question-type">
+                            <i class="fas fa-list-ul"></i> ${getQuestionType(question.typeId)}
+                        </span>
+                        <span class="question-difficulty">
+                            난이도 ${'★'.repeat(question.difficulty)}${'☆'.repeat(5-question.difficulty)}
+                        </span>
+                        <span>
+                            <i class="fas fa-clock"></i> ${formatDate(question.createdAt)}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="question-actions">
+                <button class="btn btn-edit" onclick="editQuestion(${question.id})">
+                    <i class="fas fa-edit"></i> 수정
+                </button>
+                <button class="btn btn-delete" onclick="confirmDelete(${question.id})">
+                    <i class="fas fa-trash"></i> 삭제
+                </button>
+            </div>
+        </div>
+    `).join('');
 }
 
 // 문제 수정 페이지로 이동

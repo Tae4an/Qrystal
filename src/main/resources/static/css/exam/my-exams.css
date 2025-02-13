@@ -1,5 +1,7 @@
 /* exam/my-exams.css */
 .my-exams-container {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 24px;
     background: #f8f9fa;
     min-height: calc(100vh - 78px);
@@ -11,8 +13,12 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e5e7eb;
 }
-
 .page-header h2 {
     margin: 0;
     color: #1f2937;
@@ -40,7 +46,6 @@
 .search-filters {
     display: flex;
     gap: 12px;
-    max-width: 600px;
 }
 
 .form-control {
@@ -50,6 +55,7 @@
     background: white;
     color: #1f2937;
     transition: all 0.2s;
+    width: 300px;
 }
 
 .form-control:focus {
@@ -58,87 +64,107 @@
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
-/* 모의고사 목록 */
-.exam-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.exam-item {
+/* 모의고사 카드 스타일 */
+.exam-card {
     background: white;
     border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.exam-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.exam-card-header {
     padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border: 1px solid #e5e7eb;
-    transition: all 0.3s ease;
-}
-
-.exam-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.2s;
 }
 
 .exam-info {
     flex: 1;
 }
 
-.exam-info h3 {
-    margin: 0 0 12px 0;
-    font-size: 18px;
-    color: #1f2937;
+.exam-title {
     font-weight: 500;
+    color: #1f2937;
+    font-size: 18px;
+    margin: 0 0 8px 0;
 }
 
 .exam-description {
     color: #6b7280;
-    margin-bottom: 16px;
     font-size: 14px;
+    margin: 0 0 12px 0;
     line-height: 1.5;
 }
 
 .exam-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
-    color: #6b7280;
-    font-size: 13px;
+    gap: 12px;
+    align-items: center;
 }
 
-.exam-meta span {
+.exam-meta > span {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 12px;
-    background: #f3f4f6;
-    border-radius: 6px;
-    white-space: nowrap;
 }
 
-.exam-meta span i {
+.exam-meta .category-path {
+    color: #6366f1;
+    background-color: #e0e7ff;
+    border: 1px solid #c7d2fe;
+}
+
+.exam-meta .time-limit {
+    color: #0891b2;
+    background-color: #e0faff;
+    border: 1px solid #bae6fd;
+}
+
+.exam-meta .question-count {
+    color: #059669;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+}
+
+.exam-meta .total-points {
+    color: #ea580c;
+    background-color: #ffedd5;
+    border: 1px solid #fed7aa;
+}
+
+.exam-meta .exam-status {
+    color: #6366f1;
+    background-color: #e0e7ff;
+    border: 1px solid #c7d2fe;
+}
+
+.exam-meta i {
     font-size: 14px;
 }
 
-/* 상태별 스타일 */
-.exam-status-draft {
-    color: #f59e0b !important;
-    background: #fef3c7 !important;
-    border: 1px solid #fcd34d;
-}
-
-.exam-status-published {
-    color: #059669 !important;
-    background: #d1fae5 !important;
-    border: 1px solid #6ee7b7;
-}
-
-.exam-status-closed {
-    color: #dc2626 !important;
-    background: #fee2e2 !important;
-    border: 1px solid #fca5a5;
+.exam-actions {
+    padding: 12px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
 }
 
 /* 버튼 스타일 */
@@ -170,36 +196,45 @@
     box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
 }
 
-.btn-secondary {
-    background: #4b5563;
+.btn-edit {
+    background: #10b981;
     color: white;
 }
 
-.btn-secondary:hover {
-    background: #374151;
+.btn-edit:hover {
+    background: #059669;
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(75, 85, 99, 0.2);
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
 }
 
-.btn-danger {
+.btn-delete {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-delete:hover {
     background: #dc2626;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #b91c1c;
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
 }
 
-.btn-sm {
-    padding: 6px 12px;
-    font-size: 13px;
+/* 상태별 스타일 */
+.exam-status-draft {
+    color: #f59e0b !important;
+    background: #fef3c7 !important;
+    border: 1px solid #fcd34d !important;
 }
 
-.exam-actions {
-    display: flex;
-    gap: 8px;
+.exam-status-published {
+    color: #059669 !important;
+    background: #d1fae5 !important;
+    border: 1px solid #6ee7b7 !important;
+}
+
+.exam-status-closed {
+    color: #dc2626 !important;
+    background: #fee2e2 !important;
+    border: 1px solid #fca5a5 !important;
 }
 
 /* 반응형 디자인 */
@@ -208,31 +243,34 @@
         padding: 16px;
     }
 
-    .filter-section {
-        padding: 16px;
-    }
-
-    .search-filters {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .exam-item {
+    .page-header {
         flex-direction: column;
         gap: 16px;
     }
 
+    .search-filters {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .form-control {
+        width: 100%;
+    }
+
+    .exam-card-header {
+        flex-direction: column;
+    }
+
     .exam-meta {
         flex-direction: column;
-        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .exam-meta > span {
+        width: 100%;
     }
 
     .exam-actions {
-        width: 100%;
-        justify-content: flex-end;
-    }
-
-    .exam-meta span {
-        width: 100%;
+        flex-wrap: wrap;
     }
 }
