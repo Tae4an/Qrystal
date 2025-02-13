@@ -24,10 +24,8 @@
                     </th:block>
                 </span>
             </li>
-            <li sec:authorize="isAuthenticated()">
-                <a th:href="@{/exams}">모의고사 은행</a>
-            </li>
             <li><a th:href="@{/questions}">문제 은행</a></li>
+            <li><a th:href="@{/exams}">모의고사 은행</a></li>
             <li sec:authorize="isAuthenticated()">
                 <a th:href="@{/user/profile}">프로필</a>
             </li>

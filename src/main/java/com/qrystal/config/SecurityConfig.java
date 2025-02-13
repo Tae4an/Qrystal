@@ -38,6 +38,9 @@ public class SecurityConfig {
                     // 문제 조회/풀이 관련 (누구나 접근 가능)
                     .antMatchers(HttpMethod.GET, "/questions", "/api/questions/**").permitAll()
                     .antMatchers("/api/categories").permitAll()
+                    // 모의고사 관련 접근 제어
+                    .antMatchers(HttpMethod.GET, "/exams").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/exams/public", "/api/exams/{id}", "/api/exams/category/**").permitAll()
                     // 그 외 모든 요청은 인증 필요
                    .anyRequest().authenticated()
                 .and()
