@@ -6,44 +6,62 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/profile.css}">
 
-    <main class="profile-container">
-        <div class="profile-header">
-            <h2>프로필 정보</h2>
-        </div>
-
-        <div class="profile-card">
-            <div class="profile-avatar">
-                <i class="fas fa-user"></i>
+    <div class="profile-layout">
+        <!-- 왼쪽 사이드바 -->
+        <div class="profile-sidebar">
+            <!-- 프로필 카드 -->
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <div class="info-group">
+                        <span class="info-label">이름</span>
+                        <span class="info-value" th:text="${user.name}"></span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">이메일</span>
+                        <span class="info-value" th:text="${user.email}"></span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">가입일</span>
+                        <span class="info-value" th:text="${user.formattedCreatedAt}"></span>
+                    </div>
+                </div>
             </div>
 
-            <div class="profile-info">
-                <div class="info-group">
-                    <span class="info-label">이름</span>
-                    <span class="info-value" th:text="${user.name}"></span>
-                </div>
-                <div class="info-group">
-                    <span class="info-label">이메일</span>
-                    <span class="info-value" th:text="${user.email}"></span>
-                </div>
-                <div class="info-group">
-                    <span class="info-label">가입일</span>
-                    <span class="info-value" th:text="${user.formattedCreatedAt}"></span>
-                </div>
-            </div>
-
-            <div class="profile-actions">
-                <a th:href="@{/user/edit}" class="btn btn-edit">
-                    <i class="fas fa-pen"></i> 프로필 수정
+            <!-- 네비게이션 메뉴 -->
+            <nav class="profile-nav">
+                <a href="#" class="nav-item" data-content="my-questions">
+                    <i class="fas fa-question-circle"></i> 내 문제
                 </a>
-                <a th:href="@{/user/password}" class="btn btn-password">
+                <a href="#" class="nav-item" data-content="my-exams">
+                    <i class="fas fa-file-alt"></i> 내 모의고사
+                </a>
+                <a href="#" class="nav-item" data-content="exam-results">
+                    <i class="fas fa-chart-bar"></i> 응시 결과
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item" data-content="edit-profile">
+                    <i class="fas fa-user-edit"></i> 프로필 수정
+                </a>
+                <a href="#" class="nav-item" data-content="change-password">
                     <i class="fas fa-key"></i> 비밀번호 변경
                 </a>
-                <button type="button" class="btn btn-delete" onclick="confirmDelete()">
+                <a href="#" class="nav-item text-red" onclick="confirmDelete()">
                     <i class="fas fa-user-minus"></i> 회원 탈퇴
-                </button>
+                </a>
+            </nav>
+        </div>
+
+        <!-- 오른쪽 컨텐츠 영역 -->
+        <div class="profile-content" id="profileContent">
+            <!-- 로딩 스피너 -->
+            <div class="loading">
+                <div class="loading-spinner"></div>
             </div>
         </div>
-    </main>
+    </div>
 
     <!-- 회원 탈퇴 모달 -->
     <div id="deactivateModal" class="modal" style="display: none;">
@@ -63,23 +81,8 @@
         </div>
     </div>
 
-    <script th:inline="javascript">
-        function confirmDelete() {
-            document.getElementById('deactivateModal').style.display = 'block';
-        }
-
-        function closeDeactivateModal() {
-            document.getElementById('deactivateModal').style.display = 'none';
-        }
-
-        // 모달 외부 클릭시 닫기
-        window.onclick = function(event) {
-            var modal = document.getElementById('deactivateModal');
-            if (event.target == modal) {
-                closeDeactivateModal();
-            }
-        }
-    </script>
+    <!-- JavaScript -->
+    <script th:src="@{/js/profile.js}"></script>
 </th:block>
 </body>
 </html>

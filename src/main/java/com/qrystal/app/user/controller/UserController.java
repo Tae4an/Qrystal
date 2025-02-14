@@ -1,24 +1,36 @@
 package com.qrystal.app.user.controller;
 
-import com.qrystal.app.user.dto.PasswordUpdateRequest;
-import com.qrystal.app.user.dto.UserResponse;
-import com.qrystal.app.user.dto.UserUpdateRequest;
+import com.qrystal.app.exam.dto.ExamAttemptResponseDto;
+import com.qrystal.app.exam.model.Exam;
+import com.qrystal.app.exam.service.ExamAttemptService;
+import com.qrystal.app.exam.service.ExamService;
+import com.qrystal.app.question.model.Question;
+import com.qrystal.app.question.service.QuestionService;
+import com.qrystal.app.user.dto.*;
 import com.qrystal.app.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -26,7 +38,9 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
+    private final QuestionService questionService;
+    private final ExamService examService;
+    private final ExamAttemptService examAttemptService;
 
     @GetMapping("/profile")
     public String profile(Model model, @org.springframework.security.web.bind.annotation.AuthenticationPrincipal Object principal) {
@@ -39,6 +53,165 @@ public class UserController {
         } catch (Exception e) {
             log.error("Failed to load profile: {}", e.getMessage());
             return "redirect:/auth/login";
+        }
+    }
+    @GetMapping("/profile/{contentType}")
+    public String getProfileContent(@PathVariable String contentType,
+                                    @AuthenticationPrincipal Object principal,
+                                    Model model) {
+        try {
+            String email = userService.extractEmail(principal);
+            UserResponse user = userService.findByEmail(email);
+            model.addAttribute("user", user);
+
+            switch (contentType) {
+                case "my-questions":
+                    List<Question> questions = questionService.getMyQuestions(user.getId());
+                    log.debug("Loaded questions size: {}", questions.size());
+                    model.addAttribute("questions", questions);
+                    return "question/my-questions :: content";
+
+                case "my-exams":
+                    List<Exam> exams = examService.getMyExams(user.getId());
+                    model.addAttribute("exams", exams);
+                    return "exam/my-exams :: content";
+
+                case "exam-results":
+                    List<ExamAttemptResponseDto> attempts = examAttemptService.getMyAttempts(user.getId());
+                    for (ExamAttemptResponseDto attempt : attempts) {
+                        Exam exam = examService.getExam(attempt.getExamId());
+                        model.addAttribute("exam", exam);
+                    }
+                    model.addAttribute("attempts", attempts);
+                    return "exam/result :: content";
+
+                case "edit-profile":
+                    return "user/edit :: content";
+
+                case "change-password":
+                    return "user/password :: content";
+
+                case "statistics":
+                    List<ExamAttemptResponseDto> examAttempts = examAttemptService.getMyAttempts(user.getId());
+
+                    if (examAttempts.isEmpty()) {
+                        model.addAttribute("noData", true);
+                        return "user/statistics :: content";
+                    }
+
+                    // 1. 기본 통계 계산
+                    double averageScore = examAttempts.stream()
+                            .mapToInt(ExamAttemptResponseDto::getTotalScore)
+                            .average()
+                            .orElse(0.0);
+
+                    double averageCorrectRate = examAttempts.stream()
+                            .mapToDouble(ExamAttemptResponseDto::getCorrectRate)
+                            .average()
+                            .orElse(0.0);
+
+                    // 2. 월별 통계 데이터 계산
+                    Map<String, List<ExamAttemptResponseDto>> monthlyGroups = examAttempts.stream()
+                            .collect(Collectors.groupingBy(a ->
+                                    a.getSubmittedAt().format(DateTimeFormatter.ofPattern("yyyy-MM"))));
+
+                    List<MonthlyStatDto> monthlyData = monthlyGroups.entrySet().stream()
+                            .map(entry -> {
+                                List<ExamAttemptResponseDto> monthAttempts = entry.getValue();
+                                return new MonthlyStatDto(
+                                        entry.getKey(),
+                                        monthAttempts.stream()
+                                                .mapToInt(ExamAttemptResponseDto::getTotalScore)
+                                                .average()
+                                                .orElse(0.0),
+                                        monthAttempts.size(),
+                                        monthAttempts.stream()
+                                                .mapToDouble(ExamAttemptResponseDto::getCorrectRate)
+                                                .average()
+                                                .orElse(0.0),
+                                        monthAttempts.stream()
+                                                .mapToInt(ExamAttemptResponseDto::getTotalScore)
+                                                .max()
+                                                .orElse(0),
+                                        monthAttempts.stream()
+                                                .mapToInt(ExamAttemptResponseDto::getTotalScore)
+                                                .min()
+                                                .orElse(0)
+                                );
+                            })
+                            .sorted(Comparator.comparing(MonthlyStatDto::getMonth))
+                            .collect(Collectors.toList());
+
+                    // 3. 카테고리별 통계 데이터 계산
+                    Map<String, List<ExamAttemptResponseDto>> categoryGroups = examAttempts.stream()
+                            .collect(Collectors.groupingBy(ExamAttemptResponseDto::getCategoryName));
+
+                    List<CategoryStatDto> categoryData = categoryGroups.entrySet().stream()
+                            .map(entry -> new CategoryStatDto(
+                                    entry.getKey(),
+                                    entry.getValue().stream()
+                                            .mapToInt(ExamAttemptResponseDto::getTotalScore)
+                                            .average()
+                                            .orElse(0.0),
+                                    entry.getValue().size()
+                            ))
+                            .collect(Collectors.toList());
+
+                    // 4. 정답률 분포 데이터 계산
+                    Map<String, Long> correctRateGroups = examAttempts.stream()
+                            .collect(Collectors.groupingBy(
+                                    examAttempt -> {
+                                        int range = (int) (examAttempt.getCorrectRate() / 10) * 10;
+                                        return range + "-" + (range + 10) + "%";
+                                    },
+                                    Collectors.counting()
+                            ));
+
+                    List<CorrectRateStatDto> correctRateData = correctRateGroups.entrySet().stream()
+                            .map(entry -> new CorrectRateStatDto(
+                                    entry.getKey(),
+                                    entry.getValue().intValue()
+                            ))
+                            .sorted(Comparator.comparing(CorrectRateStatDto::getRange))
+                            .collect(Collectors.toList());
+
+                    // 모델에 데이터 추가
+                    model.addAttribute("attempts", examAttempts);
+                    model.addAttribute("averageScore", averageScore);
+                    model.addAttribute("averageCorrectRate", averageCorrectRate);
+                    model.addAttribute("monthlyData", monthlyData);
+                    model.addAttribute("categoryData", categoryData);
+                    model.addAttribute("correctRateData", correctRateData);
+
+                    return "user/statistics :: content";
+
+                default:
+                    // 프로필 기본 정보
+                    model.addAttribute("content", "user/profile");
+                    return "index";
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to load profile content: {}", e.getMessage());
+            if (RequestUtil.isAjaxRequest()) {
+                // AJAX 요청인 경우 에러 응답
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+            return "redirect:/auth/login";
+        }
+    }
+
+    // AJAX 요청 확인용 유틸리티 클래스
+    @UtilityClass
+    private static class RequestUtil {
+        public static boolean isAjaxRequest() {
+            RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            if (requestAttributes instanceof ServletRequestAttributes) {
+                HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+                String headerValue = request.getHeader("X-Requested-With");
+                return "XMLHttpRequest".equals(headerValue);
+            }
+            return false;
         }
     }
 
