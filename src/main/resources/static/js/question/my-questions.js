@@ -1,7 +1,5 @@
-// my-questions.js
 document.addEventListener('DOMContentLoaded', function() {
     loadCategories();
-    loadMyQuestions();
 
     // 검색 및 필터링 이벤트 리스너
     document.getElementById('searchInput').addEventListener('input', filterQuestions);
@@ -9,8 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('categoryFilter').addEventListener('change', filterQuestions);
 });
 
-// 전역 변수
-let myQuestions = [];
+// 전역 변수 - 초기 렌더링된 문제들을 저장
+let myQuestions = Array.from(document.querySelectorAll('.question-card')).map(card => ({
+    id: card.dataset.id,
+    title: card.querySelector('.question-title').textContent,
+    typeId: card.dataset.typeId,
+    categoryId: card.dataset.categoryId,
+    categoryName: card.querySelector('.category-path').textContent.trim(),
+    difficulty: parseInt(card.dataset.difficulty),
+    createdAt: card.dataset.createdAt
+}));
 
 // 카테고리 로드
 async function loadCategories() {
@@ -22,22 +28,6 @@ async function loadCategories() {
     } catch (error) {
         console.error('카테고리 로드 실패:', error);
         showToast('카테고리 목록을 불러오는데 실패했습니다.', 'error');
-    }
-}
-
-// 내 문제 목록 로드
-async function loadMyQuestions() {
-    try {
-        showLoading();
-        const response = await fetch('/api/questions/my');
-        if (!response.ok) throw new Error('문제 로드 실패');
-        myQuestions = await response.json();
-        renderQuestions(myQuestions);
-    } catch (error) {
-        console.error('문제 로드 실패:', error);
-        showToast('문제 목록을 불러오는데 실패했습니다.', 'error');
-    } finally {
-        hideLoading();
     }
 }
 
@@ -56,50 +46,33 @@ function renderCategoryOptions(categories, level = 0) {
     });
 }
 
-// 문제 목록 렌더링
-function renderQuestions(questionsToRender = myQuestions) {
+// 필터링 함수
+function filterQuestions() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const typeFilter = document.getElementById('typeFilter').value;
+    const categoryFilter = document.getElementById('categoryFilter').value;
+
+    document.querySelectorAll('.question-card').forEach(card => {
+        const matchesSearch = card.querySelector('.question-title').textContent.toLowerCase().includes(searchTerm);
+        const matchesType = !typeFilter || card.dataset.typeId === typeFilter;
+        const matchesCategory = !categoryFilter || card.dataset.categoryId === categoryFilter;
+
+        card.style.display = matchesSearch && matchesType && matchesCategory ? 'block' : 'none';
+    });
+
+    // 필터링 결과가 없는 경우 메시지 표시
+    const visibleCards = document.querySelectorAll('.question-card[style="display: block"]');
     const container = document.getElementById('myQuestionsList');
-    if (questionsToRender.length === 0) {
-        container.innerHTML = '<div class="no-data">등록한 문제가 없습니다.</div>';
-        return;
+
+    if (visibleCards.length === 0) {
+        const noResults = document.querySelector('.no-results') || document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.textContent = '검색 결과가 없습니다.';
+        container.appendChild(noResults);
+    } else {
+        const noResults = document.querySelector('.no-results');
+        if (noResults) noResults.remove();
     }
-
-    container.innerHTML = questionsToRender.map(question => `
-        <div class="question-card">
-            <div class="question-card-header">
-                <div class="question-info">
-                    <div class="question-title">${question.title}</div>
-                    <div class="question-meta">
-                        <span class="category-path">
-                            <i class="fas fa-folder"></i> ${question.categoryName}
-                        </span>
-                        <span class="question-type">
-                            <i class="fas fa-list-ul"></i> ${getQuestionType(question.typeId)}
-                        </span>
-                        <span class="question-difficulty">
-                            난이도 ${'★'.repeat(question.difficulty)}${'☆'.repeat(5-question.difficulty)}
-                        </span>
-                        <span>
-                            <i class="fas fa-clock"></i> ${formatDate(question.createdAt)}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="question-actions">
-                <button class="btn btn-edit" onclick="editQuestion(${question.id})">
-                    <i class="fas fa-edit"></i> 수정
-                </button>
-                <button class="btn btn-delete" onclick="confirmDelete(${question.id})">
-                    <i class="fas fa-trash"></i> 삭제
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// 문제 수정 페이지로 이동
-function editQuestion(questionId) {
-    location.href = `/questions/${questionId}/edit`;
 }
 
 // 삭제 확인
@@ -120,7 +93,9 @@ async function deleteQuestion(questionId) {
         if (!response.ok) throw new Error('문제 삭제 실패');
 
         showToast('문제가 삭제되었습니다.');
-        loadMyQuestions();  // 목록 새로고침
+        // 삭제된 카드 제거
+        const card = document.querySelector(`.question-card[data-id="${questionId}"]`);
+        if (card) card.remove();
     } catch (error) {
         console.error('문제 삭제 실패:', error);
         showToast('문제 삭제에 실패했습니다.', 'error');
@@ -129,42 +104,7 @@ async function deleteQuestion(questionId) {
     }
 }
 
-// 검색 및 필터링
-function filterQuestions() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const typeFilter = document.getElementById('typeFilter').value;
-    const categoryFilter = document.getElementById('categoryFilter').value;
-
-    const filteredQuestions = myQuestions.filter(question => {
-        const matchesSearch = question.title.toLowerCase().includes(searchTerm);
-        const matchesType = !typeFilter || question.typeId.toString() === typeFilter;
-        const matchesCategory = !categoryFilter || question.categoryId.toString() === categoryFilter;
-
-        return matchesSearch && matchesType && matchesCategory;
-    });
-
-    renderQuestions(filteredQuestions);
-}
-
 // 유틸리티 함수들
-function getQuestionType(typeId) {
-    const types = {
-        1: '객관식',
-        2: '주관식',
-        3: '서술형'
-    };
-    return types[typeId] || '알 수 없음';
-}
-
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return new Intl.DateTimeFormat('ko-KR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    }).format(date);
-}
-
 function showLoading() {
     const loading = document.querySelector('.loading') || createLoadingElement();
     loading.style.display = 'block';
