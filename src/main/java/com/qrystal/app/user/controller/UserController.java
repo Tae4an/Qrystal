@@ -8,6 +8,7 @@ import com.qrystal.app.question.model.Question;
 import com.qrystal.app.question.service.QuestionService;
 import com.qrystal.app.user.dto.*;
 import com.qrystal.app.user.service.UserService;
+import com.qrystal.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.qrystal.exception.ErrorCode;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -78,12 +80,8 @@ public class UserController {
 
                 case "exam-results":
                     List<ExamAttemptResponseDto> attempts = examAttemptService.getMyAttempts(user.getId());
-                    for (ExamAttemptResponseDto attempt : attempts) {
-                        Exam exam = examService.getExam(attempt.getExamId());
-                        model.addAttribute("exam", exam);
-                    }
                     model.addAttribute("attempts", attempts);
-                    return "exam/result :: content";
+                    return "exam/results :: content";
 
                 case "edit-profile":
                     return "user/edit :: content";
@@ -212,6 +210,31 @@ public class UserController {
                 return "XMLHttpRequest".equals(headerValue);
             }
             return false;
+        }
+    }
+
+    // 시험 결과 상세
+    @GetMapping("/exam-results/{attemptId}")
+    public String examResultDetail(@PathVariable Long attemptId,
+                                   @AuthenticationPrincipal Object principal,
+                                   Model model) {
+        try {
+            String email = userService.extractEmail(principal);
+            UserResponse user = userService.findByEmail(email);
+
+            ExamAttemptResponseDto attempt = examAttemptService.getExamResult(attemptId);
+
+            // 권한 체크
+            if (!attempt.getUserId().equals(user.getId())) {
+                throw new CustomException(ErrorCode.ACCESS_DENIED);
+            }
+
+            model.addAttribute("attempt", attempt);
+            model.addAttribute("content", "exam/result");
+            return "index";
+        } catch (Exception e) {
+            log.error("Failed to load exam result: {}", e.getMessage());
+            return "redirect:/user/profile/exam-results";
         }
     }
 

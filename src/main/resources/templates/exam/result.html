@@ -9,9 +9,9 @@
   <div class="exam-container">
     <!-- 결과 헤더 -->
     <div class="result-header">
-      <h2 th:text="${exam.title}">시험 제목</h2>
+      <h2 th:text="${attempt.examTitle}">시험 제목</h2>
       <div class="exam-meta">
-        <span class="category" th:text="${exam.categoryName}">카테고리</span>
+        <span class="category" th:text="${attempt.categoryName}">카테고리</span>
         <span class="submission-time">
                    제출 시간: <span th:text="${#temporals.format(attempt.submittedAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
                </span>
@@ -25,7 +25,7 @@
           <div class="score-label">총점</div>
           <div class="score-value">
             <span th:text="${attempt.totalScore}">0</span>
-            <span class="score-denominator" th:text="'/ ' + ${exam.totalPoints}">/ 100</span>
+            <span class="score-denominator" th:text="'/ ' + ${attempt.totalPoints}">/ 100</span>
           </div>
         </div>
         <div class="score-details">
@@ -76,7 +76,8 @@
                  th:class="'choice-item ' + (${choice.isCorrect != null && choice.isCorrect} ? 'correct' : (${choice.isSelected != null && choice.isSelected} ? 'incorrect' : ''))">
               <span th:text="${choice.content}">선택지</span>
               <i th:if="${choice.isCorrect != null && choice.isCorrect}" class="fas fa-check"></i>
-              <i th:if="${choice.isSelected != null && choice.isSelected && !choice.isCorrect}" class="fas fa-times"></i>
+              <i th:if="${choice.isSelected != null && choice.isSelected && !choice.isCorrect}"
+                 class="fas fa-times"></i>
             </div>
           </div>
         </div>
@@ -103,10 +104,10 @@
 
     <!-- 하단 버튼 -->
     <div class="result-actions">
-      <button onclick="location.href='/exams'" class="btn btn-secondary">
+      <button onclick="location.href='/user/profile/exam-results'" class="btn btn-secondary">
         <i class="fas fa-list"></i> 목록으로
       </button>
-      <button th:if="${exam.isPublic}" onclick="location.href='/exams'" class="btn btn-primary">
+      <button th:if="${attempt.isPublic}" th:onclick="|location.href='@{/exams/}${attempt.examId}'|" class="btn btn-primary">
         <i class="fas fa-redo"></i> 다시 풀기
       </button>
     </div>

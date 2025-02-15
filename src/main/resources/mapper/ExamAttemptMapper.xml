@@ -18,7 +18,10 @@
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
         <result property="examTitle" column="exam_title"/>
+        <result property="categoryName" column="category_name"/>
         <result property="userName" column="user_name"/>
+        <result property="totalPoints" column="total_points"/>
+        <result property="isPublic" column="is_public"/>
         <collection property="answers" column="id" select="com.qrystal.app.exam.mapper.ExamAnswerMapper.findByAttemptId"/>
     </resultMap>
 
@@ -56,12 +59,20 @@
 
     <select id="findByUserId" resultMap="ExamAttemptResultMap">
         SELECT
-            ea.*, e.title as exam_title, u.name as user_name
+            ea.*,
+            e.title as exam_title,
+            e.total_points,
+            e.is_public,
+            c.name as category_name,
+            u.name as user_name
         FROM exam_attempts ea
                  LEFT JOIN exams e ON ea.exam_id = e.id
+                 LEFT JOIN categories c ON e.category_id = c.id
                  LEFT JOIN users u ON ea.user_id = u.id
         WHERE ea.user_id = #{userId}
+        ORDER BY ea.created_at DESC
     </select>
+
 
     <update id="updateStatus">
         UPDATE exam_attempts

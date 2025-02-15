@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="content">
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/exam/results.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <div class="exam-results-container">
+        <h2><i class="fas fa-history"></i> 시험 응시 이력</h2>
+
+        <!-- 응시 결과 목록 -->
+        <div class="results-list">
+            <div th:each="attempt : ${attempts}" class="result-card">
+                <div class="result-header">
+                    <h3 th:text="${attempt.examTitle}">시험 제목</h3>
+                    <span class="category" th:text="${attempt.categoryName}">카테고리</span>
+                </div>
+
+                <div class="result-info">
+                    <div class="score-info">
+                        <div class="total-score">
+                            <span th:text="${attempt.totalScore}">0</span>
+                            <span class="denominator" th:text="'/ ' + ${attempt.totalPoints}">/ 100</span>
+                        </div>
+                        <div class="correct-rate">
+                            정답률: <span th:text="${attempt.correctRate != null ? #numbers.formatDecimal(attempt.correctRate, 1, 1) + '%' : '0%'}">0%</span>
+                        </div>
+                    </div>
+                    <div class="attempt-info">
+                        <div class="submission-time">
+                            <i class="fas fa-clock"></i>
+                            <span th:text="${#temporals.format(attempt.submittedAt, 'yyyy-MM-dd HH:mm')}">제출시간</span>
+                        </div>
+                        <button class="btn btn-detail" th:onclick="|location.href='@{/user/exam-results/}${attempt.id}'|">
+                            <i class="fas fa-list-alt"></i> 상세 보기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 응시 결과가 없는 경우 -->
+        <div th:if="${#lists.isEmpty(attempts)}" class="no-results">
+            <i class="fas fa-inbox"></i>
+            <p>아직 응시한 시험이 없습니다.</p>
+            <button onclick="location.href='/exams'" class="btn btn-primary">
+                <i class="fas fa-pencil-alt"></i> 시험 보러가기
+            </button>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

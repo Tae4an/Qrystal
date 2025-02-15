@@ -66,6 +66,28 @@ public class ExamAttemptService {
         return ExamAttemptResponseDto.from(attempt);
     }
 
+    public List<ExamAttemptResponseDto> getMyAttempts(Long userId) {
+        List<ExamAttempt> attempts = examAttemptMapper.findByUserId(userId);
+
+        return attempts.stream()
+                .map(attempt -> {
+                    try {
+                        Exam exam = examService.getExam(attempt.getExamId(), false);
+                        ExamAttemptResponseDto dto = getExamResult(attempt.getId());
+                        dto.setExamTitle(exam.getTitle());
+                        dto.setCategoryName(exam.getCategoryName());
+                        dto.setTotalPoints(exam.getTotalPoints());
+                        dto.setIsPublic(exam.isPublic());
+                        return dto;
+                    } catch (Exception e) {
+                        log.error("Error processing attempt {}: {}", attempt.getId(), e.getMessage(), e);
+                        throw e;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+
     // 시험 응시 정보 조회
     public ExamAttemptResponseDto getExamAttempt(Long attemptId, Long userId) {
         ExamAttempt attempt = examAttemptMapper.findById(attemptId);
@@ -209,7 +231,7 @@ public class ExamAttemptService {
         if (attempt == null) {
             throw new CustomException(ErrorCode.EXAM_ATTEMPT_NOT_FOUND);
         }
-
+        Exam exam = examService.getExam(attempt.getExamId(), false);
         ExamAttemptResponseDto responseDto = ExamAttemptResponseDto.from(attempt);
 
         if (responseDto.getAnswers() != null && !responseDto.getAnswers().isEmpty()) {
@@ -218,22 +240,16 @@ public class ExamAttemptService {
                     .filter(answer -> Boolean.TRUE.equals(answer.getIsCorrect()))
                     .count();
 
-            log.debug("정답 개수: {}", correctCount);
-
             // 전체 문제 수
             int totalQuestions = responseDto.getAnswers().size();
-            log.debug("전체 문제 수: {}", totalQuestions);
-
             // 정답률 계산
             double correctRate = ((double) correctCount / totalQuestions) * 100;
-            log.debug("계산된 정답률: {}", correctRate);
-
             double roundedRate = Math.round(correctRate * 10.0) / 10.0;
-            log.debug("반올림된 정답률: {}", roundedRate);
 
             responseDto.setCorrectRate(roundedRate);
             responseDto.setCorrectCount((int) correctCount);
             responseDto.setWrongCount(totalQuestions - (int) correctCount);
+            responseDto.setTotalPoints(exam.getTotalPoints());
         } else {
             log.warn("답안이 없거나 비어있습니다. attemptId: {}", attemptId);
         }

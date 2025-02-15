@@ -12,6 +12,7 @@ public enum ErrorCode {
     NOT_FOUND(404, "리소스를 찾을 수 없습니다."),
     INTERNAL_ERROR(500, "내부 서버 오류가 발생했습니다."),
     RESOURCE_ACCESS_DENIED(403, "리소스에 대한 접근 권한이 없습니다."),
+    ACCESS_DENIED(403, "접근 권한이 없습니다."),
 
     // User
     DUPLICATE_USERNAME(400, "이미 사용 중인 사용자 이름입니다."),

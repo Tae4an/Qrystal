@@ -9,6 +9,7 @@ import com.qrystal.app.exam.model.ExamQuestion;
 import com.qrystal.app.question.service.QuestionService;
 import com.qrystal.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.qrystal.exception.ErrorCode;
@@ -16,6 +17,7 @@ import com.qrystal.exception.ErrorCode;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -65,14 +67,23 @@ public class ExamService {
     }
     
     // 상세 조회
-    public Exam getExam(Long id) {
+    public Exam getExam(Long id, boolean validateStatus) {
         Exam exam = examMapper.findById(id);
         if (exam == null) {
             throw new CustomException(ErrorCode.EXAM_NOT_FOUND);
-        }else if (exam.getStatus() == ExamStatus.INACTIVE) {
+        }
+
+        if (validateStatus && exam.getStatus() == ExamStatus.INACTIVE) {
+            log.debug("Exam is inactive and validation is required");
             throw new CustomException(ErrorCode.EXAM_NOT_AVAILABLE);
         }
+
         return exam;
+    }
+
+    // 기존 메서드는 validateStatus = true로 호출하도록 오버로딩
+    public Exam getExam(Long id) {
+        return getExam(id, true);
     }
 
     // 시험지 수정
