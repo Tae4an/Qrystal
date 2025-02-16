@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="content">
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/statistics.css}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+    <div class="statistics-container">
+        <!-- 데이터가 없는 경우 -->
+        <div th:if="${noData}" class="no-data">
+            <i class="fas fa-chart-bar"></i>
+            <p>아직 응시한 시험이 없습니다.</p>
+        </div>
+
+        <!-- 데이터가 있는 경우 -->
+        <div th:unless="${noData}">
+            <div class="page-header">
+                <h2><i class="fas fa-chart-line"></i> 학습 통계</h2>
+                <div class="exam-selector">
+                    <select id="examId" class="form-control">
+                        <option value="">전체</option>
+                        <th:block th:each="exam : ${uniqueExams}">
+                            <option th:value="${exam.id}" th:text="${exam.title}">시험 제목</option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 통계 컨텐츠 영역 -->
+            <div id="statsContent">
+                <!-- 여기에 통계 내용이 동적으로 로드됨 -->
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script th:src="@{/js/statistics.js}"></script>
+
+</th:block>
+</body>
+</html>

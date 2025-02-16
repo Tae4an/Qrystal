@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/profile.css}">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
     <div class="profile-layout">
         <!-- 왼쪽 사이드바 -->
         <div class="profile-sidebar">
@@ -32,20 +34,22 @@
 
             <!-- 네비게이션 메뉴 -->
             <nav class="profile-nav">
-                <a href="#" class="nav-item" data-content="my-questions">
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'my-questions' ? 'active' : ''}" data-content="my-questions">
                     <i class="fas fa-question-circle"></i> 내 문제
                 </a>
-                <a href="#" class="nav-item" data-content="my-exams">
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'my-exams' ? 'active' : ''}" data-content="my-exams">
                     <i class="fas fa-file-alt"></i> 내 모의고사
                 </a>
-                <a href="#" class="nav-item" data-content="exam-results">
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'exam-results' ? 'active' : ''}" data-content="exam-results">
                     <i class="fas fa-chart-bar"></i> 응시 결과
                 </a>
-                <div class="nav-divider"></div>
-                <a href="#" class="nav-item" data-content="edit-profile">
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'statistics' ? 'active' : ''}" data-content="statistics">
+                    <i class="fas fa-line-chart"></i> 통계
+                </a>
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'edit-profile' ? 'active' : ''}" data-content="edit-profile">
                     <i class="fas fa-user-edit"></i> 프로필 수정
                 </a>
-                <a href="#" class="nav-item" data-content="change-password">
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'change-password' ? 'active' : ''}" data-content="change-password">
                     <i class="fas fa-key"></i> 비밀번호 변경
                 </a>
                 <a href="#" class="nav-item text-red" onclick="confirmDelete()">

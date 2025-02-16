@@ -65,6 +65,7 @@ public class UserController {
             String email = userService.extractEmail(principal);
             UserResponse user = userService.findByEmail(email);
             model.addAttribute("user", user);
+            model.addAttribute("currentMenu", contentType);
 
             switch (contentType) {
                 case "my-questions":
@@ -97,90 +98,17 @@ public class UserController {
                         return "user/statistics :: content";
                     }
 
-                    // 1. 기본 통계 계산
-                    double averageScore = examAttempts.stream()
-                            .mapToInt(ExamAttemptResponseDto::getTotalScore)
-                            .average()
-                            .orElse(0.0);
-
-                    double averageCorrectRate = examAttempts.stream()
-                            .mapToDouble(ExamAttemptResponseDto::getCorrectRate)
-                            .average()
-                            .orElse(0.0);
-
-                    // 2. 월별 통계 데이터 계산
-                    Map<String, List<ExamAttemptResponseDto>> monthlyGroups = examAttempts.stream()
-                            .collect(Collectors.groupingBy(a ->
-                                    a.getSubmittedAt().format(DateTimeFormatter.ofPattern("yyyy-MM"))));
-
-                    List<MonthlyStatDto> monthlyData = monthlyGroups.entrySet().stream()
-                            .map(entry -> {
-                                List<ExamAttemptResponseDto> monthAttempts = entry.getValue();
-                                return new MonthlyStatDto(
-                                        entry.getKey(),
-                                        monthAttempts.stream()
-                                                .mapToInt(ExamAttemptResponseDto::getTotalScore)
-                                                .average()
-                                                .orElse(0.0),
-                                        monthAttempts.size(),
-                                        monthAttempts.stream()
-                                                .mapToDouble(ExamAttemptResponseDto::getCorrectRate)
-                                                .average()
-                                                .orElse(0.0),
-                                        monthAttempts.stream()
-                                                .mapToInt(ExamAttemptResponseDto::getTotalScore)
-                                                .max()
-                                                .orElse(0),
-                                        monthAttempts.stream()
-                                                .mapToInt(ExamAttemptResponseDto::getTotalScore)
-                                                .min()
-                                                .orElse(0)
-                                );
-                            })
-                            .sorted(Comparator.comparing(MonthlyStatDto::getMonth))
-                            .collect(Collectors.toList());
-
-                    // 3. 카테고리별 통계 데이터 계산
-                    Map<String, List<ExamAttemptResponseDto>> categoryGroups = examAttempts.stream()
-                            .collect(Collectors.groupingBy(ExamAttemptResponseDto::getCategoryName));
-
-                    List<CategoryStatDto> categoryData = categoryGroups.entrySet().stream()
-                            .map(entry -> new CategoryStatDto(
-                                    entry.getKey(),
-                                    entry.getValue().stream()
-                                            .mapToInt(ExamAttemptResponseDto::getTotalScore)
-                                            .average()
-                                            .orElse(0.0),
-                                    entry.getValue().size()
+                    // 중복 제거된 모의고사 목록
+                    List<ExamBasicInfo> uniqueExams = examAttempts.stream()
+                            .map(attempt -> new ExamBasicInfo(
+                                    attempt.getExamId(),
+                                    attempt.getExamTitle(),
+                                    attempt.getCategoryName()
                             ))
+                            .distinct()
                             .collect(Collectors.toList());
 
-                    // 4. 정답률 분포 데이터 계산
-                    Map<String, Long> correctRateGroups = examAttempts.stream()
-                            .collect(Collectors.groupingBy(
-                                    examAttempt -> {
-                                        int range = (int) (examAttempt.getCorrectRate() / 10) * 10;
-                                        return range + "-" + (range + 10) + "%";
-                                    },
-                                    Collectors.counting()
-                            ));
-
-                    List<CorrectRateStatDto> correctRateData = correctRateGroups.entrySet().stream()
-                            .map(entry -> new CorrectRateStatDto(
-                                    entry.getKey(),
-                                    entry.getValue().intValue()
-                            ))
-                            .sorted(Comparator.comparing(CorrectRateStatDto::getRange))
-                            .collect(Collectors.toList());
-
-                    // 모델에 데이터 추가
-                    model.addAttribute("attempts", examAttempts);
-                    model.addAttribute("averageScore", averageScore);
-                    model.addAttribute("averageCorrectRate", averageCorrectRate);
-                    model.addAttribute("monthlyData", monthlyData);
-                    model.addAttribute("categoryData", categoryData);
-                    model.addAttribute("correctRateData", correctRateData);
-
+                    model.addAttribute("uniqueExams", uniqueExams);
                     return "user/statistics :: content";
 
                 default:
