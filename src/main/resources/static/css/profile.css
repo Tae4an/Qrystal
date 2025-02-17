@@ -1,8 +1,8 @@
 /* 기본 스타일 */
 body {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-    background-color: #F5F7FA;
-    color: #2C3E50;
+    background-color: #f8f9fa;
+    color: #1f2937;
     margin: 0;
     padding: 0;
     line-height: 1.6;
@@ -11,39 +11,47 @@ body {
 /* 프로필 레이아웃 */
 .profile-layout {
     display: flex;
-    gap: 2rem;
+    gap: 24px;
     max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+    margin: 24px auto;
+    padding: 40px 24px 24px;
+    min-height: calc(100vh - 140px);
 }
 
 /* 사이드바 스타일 */
 .profile-sidebar {
     position: sticky;
-    top: 2rem;
-    min-width: 300px;
+    top: 24px;
     width: 300px;
-    margin-right: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
 }
 
 /* 프로필 카드 스타일 */
 .profile-card {
-    background: #FFFFFF;
+    background: white;
     border-radius: 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
 }
 
 .profile-avatar {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    margin: 0 auto 1.5rem;
-    background: #4A90E2;
+    margin: 0 auto 24px;
+    background: #6366f1;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
 }
 
 .profile-avatar i {
@@ -52,93 +60,136 @@ body {
 }
 
 .profile-info {
-    margin-bottom: 1rem;
+    margin-bottom: 16px;
 }
 
 .info-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.info-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .info-label {
-    color: #7F8C8D;
+    color: #6b7280;
     font-size: 0.875rem;
-    margin-bottom: 0.25rem;
+    margin-bottom: 4px;
 }
 
 .info-value {
-    color: #2C3E50;
-    font-weight: 600;
+    color: #1f2937;
+    font-weight: 500;
 }
 
-/* 네비게이션 메뉴 스타일 */
+/* 네비게이션 메뉴 스타일 - 슬라이딩 효과 적용 */
 .profile-nav {
     display: flex;
     flex-direction: column;
-    background: #FFFFFF;
+    background: white;
     border-radius: 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    margin-top: 1rem;
+    border: 1px solid #e5e7eb;
     height: auto;
+    width: 300px;
 }
 
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 1rem 1.5rem;
-    color: #2C3E50;
+    gap: 12px;
+    padding: 16px 24px;
+    color: #4b5563;
     text-decoration: none;
-    border-left: 3px solid transparent;
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 8px;
+    width: 0%;
+    height: calc(100% - 8px);  /* 높이 조정 */
+    background-color: #e0e7ff;
+    transition: width 0.3s ease;
+    z-index: -1;
+    border-radius: 8px;  /* 모서리 둥글게 */
+}
+
+.nav-item:hover::before {
+    width: 100%;
+}
+
+.nav-item.active {
+    color: #4f46e5;
+    font-weight: 500;
+}
+
+.nav-item.active::before {
+    width: 100%;
+    background-color: #e0e7ff;
 }
 
 .nav-item i {
     flex-shrink: 0;
     width: 20px;
     text-align: center;
+    color: #6b7280;
+    transition: color 0.3s ease;
 }
 
-.nav-item.active {
-    background-color: #F8FAFC;
-    border-left-color: #4A90E2;
-    color: #4A90E2;
-    font-weight: 600;
-}
-
-.nav-item:hover {
-    background-color: #F8FAFC;
-    border-left-color: #4A90E2;
+.nav-item:hover i,
+.nav-item.active i {
+    color: #6366f1;
 }
 
 .nav-divider {
     height: 1px;
-    background-color: #E2E8F0;
-    margin: 0.5rem 0;
+    background-color: #e5e7eb;
+    margin: 8px 0;
 }
 
 /* 위험 액션 스타일 */
 .text-red {
-    color: #E57373;
+    color: #ef4444;
 }
 
-.text-red:hover {
-    background-color: #FEF2F2;
-    border-left-color: #E57373;
+.text-red:hover::before {
+    background-color: #fef2f2;
+}
+
+.text-red.active::before {
+    background-color: #fef2f2;
+}
+
+.text-red i {
+    color: #ef4444;
 }
 
 /* 컨텐츠 영역 스타일 */
 .profile-content {
-    background: #FFFFFF;
+    flex: 1;
+    background: white;
     border-radius: 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
+    padding: 32px;
     min-height: 500px;
-    width: 100%;
+    border: 1px solid #e5e7eb;
+    overflow: auto;
+    height: fit-content;
+    margin-top: 0;
 }
 
 /* 로딩 인디케이터 */
@@ -152,8 +203,8 @@ body {
 .loading-spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #4A90E2;
+    border: 3px solid #e0e7ff;
+    border-top: 3px solid #6366f1;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -166,13 +217,13 @@ body {
 /* 에러 메시지 스타일 */
 .error-message {
     text-align: center;
-    padding: 2rem;
-    color: #E57373;
+    padding: 32px;
+    color: #ef4444;
 }
 
 .error-message i {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    margin-bottom: 16px;
 }
 
 /* 기본 버튼 스타일 */
@@ -180,54 +231,143 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.8rem 1.5rem;
+    padding: 10px 20px;
     border-radius: 8px;
     border: none;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     text-decoration: none;
-    gap: 0.5rem;
+    gap: 8px;
 }
 
 .btn-primary {
-    background-color: #4A90E2;
+    background-color: #6366f1;
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #357ABD;
+    background-color: #4f46e5;
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
-    background-color: #E2E8F0;
-    color: #4A5568;
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
 }
 
 .btn-secondary:hover {
-    background-color: #CBD5E0;
+    background-color: #e5e7eb;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.modal-content h3 {
+    margin: 0 0 16px 0;
+    color: #1f2937;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #4b5563;
+    font-size: 0.875rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 1024px) {
     .profile-layout {
-        grid-template-columns: 250px 1fr;
-        gap: 1.5rem;
+        gap: 20px;
+        padding: 0 20px;
+    }
+
+    .profile-sidebar {
+        width: 280px;
     }
 }
 
 @media (max-width: 768px) {
     .profile-layout {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+        flex-direction: column;
     }
 
     .profile-sidebar {
         position: static;
+        width: 100%;
+        margin-right: 0;
     }
 
     .profile-card {
-        margin-bottom: 1rem;
+        margin-bottom: 20px;
     }
 
     .info-group {
@@ -243,11 +383,12 @@ body {
 
 @media (max-width: 480px) {
     .profile-layout {
-        margin: 1rem auto;
+        margin: 16px auto;
+        padding: 0 16px;
     }
 
-    .profile-card {
-        padding: 1rem;
+    .profile-card, .profile-content {
+        padding: 20px;
     }
 
     .profile-avatar {
@@ -255,11 +396,12 @@ body {
         height: 80px;
     }
 
-    .profile-avatar i {
-        font-size: 2rem;
+    .nav-item {
+        padding: 12px;
     }
 
-    .nav-item {
-        padding: 0.875rem 1.25rem;
+    .modal-content {
+        width: 90%;
+        padding: 24px;
     }
 }

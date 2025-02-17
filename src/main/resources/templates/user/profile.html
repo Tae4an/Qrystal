@@ -10,78 +10,109 @@
 
     <div class="profile-layout">
         <!-- 왼쪽 사이드바 -->
-        <div class="profile-sidebar">
+        <aside class="profile-sidebar">
             <!-- 프로필 카드 -->
             <div class="profile-card">
-                <div class="profile-avatar">
+                <div class="profile-avatar" role="img" aria-label="프로필 아바타">
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="profile-info">
                     <div class="info-group">
                         <span class="info-label">이름</span>
-                        <span class="info-value" th:text="${user.name}"></span>
+                        <span class="info-value" th:text="${user.name}">사용자</span>
                     </div>
                     <div class="info-group">
                         <span class="info-label">이메일</span>
-                        <span class="info-value" th:text="${user.email}"></span>
+                        <span class="info-value" th:text="${user.email}">example@email.com</span>
                     </div>
                     <div class="info-group">
                         <span class="info-label">가입일</span>
-                        <span class="info-value" th:text="${user.formattedCreatedAt}"></span>
+                        <span class="info-value" th:text="${user.formattedCreatedAt}">2024-02-17</span>
                     </div>
                 </div>
             </div>
 
             <!-- 네비게이션 메뉴 -->
-            <nav class="profile-nav">
-                <a href="#" class="nav-item" th:classappend="${currentMenu == 'my-questions' ? 'active' : ''}" data-content="my-questions">
-                    <i class="fas fa-question-circle"></i> 내 문제
+            <nav class="profile-nav" aria-label="프로필 메뉴">
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'my-questions' ? 'active' : ''}"
+                   data-content="my-questions" role="menuitem">
+                    <i class="fas fa-question-circle" aria-hidden="true"></i>
+                    <span>내 문제</span>
                 </a>
-                <a href="#" class="nav-item" th:classappend="${currentMenu == 'my-exams' ? 'active' : ''}" data-content="my-exams">
-                    <i class="fas fa-file-alt"></i> 내 모의고사
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'my-exams' ? 'active' : ''}"
+                   data-content="my-exams" role="menuitem">
+                    <i class="fas fa-file-alt" aria-hidden="true"></i>
+                    <span>내 모의고사</span>
                 </a>
-                <a href="#" class="nav-item" th:classappend="${currentMenu == 'exam-results' ? 'active' : ''}" data-content="exam-results">
-                    <i class="fas fa-chart-bar"></i> 응시 결과
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'exam-results' ? 'active' : ''}"
+                   data-content="exam-results" role="menuitem">
+                    <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                    <span>응시 결과</span>
                 </a>
-                <a href="#" class="nav-item" th:classappend="${currentMenu == 'statistics' ? 'active' : ''}" data-content="statistics">
-                    <i class="fas fa-line-chart"></i> 통계
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'statistics' ? 'active' : ''}"
+                   data-content="statistics" role="menuitem">
+                    <i class="fas fa-chart-line" aria-hidden="true"></i>
+                    <span>통계</span>
                 </a>
-                <a href="#" class="nav-item" th:classappend="${currentMenu == 'edit-profile' ? 'active' : ''}" data-content="edit-profile">
-                    <i class="fas fa-user-edit"></i> 프로필 수정
+                <div class="nav-divider" role="separator"></div>
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'edit-profile' ? 'active' : ''}"
+                   data-content="edit-profile" role="menuitem">
+                    <i class="fas fa-user-edit" aria-hidden="true"></i>
+                    <span>프로필 수정</span>
                 </a>
-                <a href="#" class="nav-item" th:classappend="${currentMenu == 'change-password' ? 'active' : ''}" data-content="change-password">
-                    <i class="fas fa-key"></i> 비밀번호 변경
+                <a href="#" class="nav-item" th:classappend="${currentMenu == 'change-password' ? 'active' : ''}"
+                   data-content="change-password" role="menuitem">
+                    <i class="fas fa-key" aria-hidden="true"></i>
+                    <span>비밀번호 변경</span>
                 </a>
-                <a href="#" class="nav-item text-red" onclick="confirmDelete()">
-                    <i class="fas fa-user-minus"></i> 회원 탈퇴
+                <a href="#" class="nav-item text-red" onclick="confirmDelete()" role="menuitem">
+                    <i class="fas fa-user-minus" aria-hidden="true"></i>
+                    <span>회원 탈퇴</span>
                 </a>
             </nav>
-        </div>
+        </aside>
 
         <!-- 오른쪽 컨텐츠 영역 -->
-        <div class="profile-content" id="profileContent">
+        <main class="profile-content" id="profileContent">
             <!-- 로딩 스피너 -->
-            <div class="loading">
+            <div class="loading" role="status" aria-label="로딩중">
                 <div class="loading-spinner"></div>
             </div>
-        </div>
+        </main>
     </div>
 
     <!-- 회원 탈퇴 모달 -->
-    <div id="deactivateModal" class="modal" style="display: none;">
+    <div id="deactivateModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true" tabindex="-1">
         <div class="modal-content">
-            <h3>회원 탈퇴</h3>
-            <p>정말 탈퇴하시겠습니까?</p>
-            <form th:action="@{/user/deactivate}" method="post">
-                <div th:if="${user.isLocalUser}" class="form-group">
-                    <label for="password">비밀번호를 입력하세요</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-delete">탈퇴하기</button>
-                    <button type="button" class="btn btn-cancel" onclick="closeDeactivateModal()">취소</button>
-                </div>
-            </form>
+            <h3 id="modalTitle">회원 탈퇴</h3>
+            <div class="modal-body">
+                <p>정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+                <form th:action="@{/user/deactivate}" method="post" class="deactivate-form">
+                    <div th:if="${user.isLocalUser}" class="form-group">
+                        <label for="password">본인 확인을 위해 비밀번호를 입력해주세요</label>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               required
+                               autocomplete="current-password"
+                               placeholder="비밀번호를 입력하세요">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                onclick="closeDeactivateModal()"
+                                aria-label="탈퇴 취소">
+                            취소
+                        </button>
+                        <button type="submit"
+                                class="btn btn-delete"
+                                aria-label="회원 탈퇴 확인">
+                            <i class="fas fa-user-minus" aria-hidden="true"></i>
+                            탈퇴하기
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
