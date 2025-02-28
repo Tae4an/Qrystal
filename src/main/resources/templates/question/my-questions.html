@@ -44,7 +44,7 @@
                  th:data-category-id="${question.categoryId}"
                  th:data-difficulty="${question.difficulty}"
                  th:data-created-at="${question.createdAt}">
-                <div class="question-card-header">
+                <div class="question-card-header" th:onclick="|toggleQuestion(${question.id})|">
                     <div class="question-info">
                         <div class="question-title" th:text="${question.title}">문제 제목</div>
                         <div class="question-meta">
@@ -65,6 +65,16 @@
                                 <i class="fas fa-clock"></i>
                                 <span th:text="${#temporals.format(question.createdAt, 'yyyy년 MM월 dd일')}">작성일</span>
                             </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 상세 영역 (펼쳐질 때 표시) -->
+                <div th:id="${'detail-' + question.id}" class="question-detail">
+                    <div class="detail-content">
+                        <!-- 여기에 문제 내용이 동적으로 로드됩니다 -->
+                        <div class="detail-loader">
+                            <div class="spinner"></div>
+                            <p>문제를 불러오는 중...</p>
                         </div>
                     </div>
                 </div>
