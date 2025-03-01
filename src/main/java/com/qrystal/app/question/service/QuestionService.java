@@ -22,8 +22,10 @@ public class QuestionService {
 
     // 문제 목록 조회
     public List<Question> getQuestions(QuestionSearchCondition condition) {
+        Boolean isPublic = condition.getIsPublic() != null ? condition.getIsPublic() : true;
+
         condition = QuestionSearchCondition.builder()
-                .isPublic(condition.getIsPublic())
+                .isPublic(isPublic)
                 .status(QuestionStatus.ACTIVE)  // 항상 ACTIVE 상태만 조회
                 .build();
 
