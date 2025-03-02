@@ -27,6 +27,17 @@ async function initializeMyExams() {
         alert('모의고사 목록을 불러오는데 실패했습니다.');
     }
 }
+
+// 모의고사 상세 페이지로 이동
+function viewExamDetail(examId) {
+    window.location.href = `/exams/${examId}`;
+}
+
+// 모의고사 수정 페이지로 이동
+function editExam(examId) {
+    window.location.href = `/exams/${examId}/edit`;
+}
+
 // renderExamList 함수 수정
 function renderExamList(exams) {
     const container = document.getElementById('examsList');
@@ -36,7 +47,7 @@ function renderExamList(exams) {
     }
 
     container.innerHTML = exams.map(exam => `
-        <div class="exam-card">
+        <div class="exam-card" onclick="viewExamDetail(${exam.id})">
             <div class="exam-card-header">
                 <div class="exam-info">
                     <h3 class="exam-title">${exam.title}</h3>
@@ -66,21 +77,15 @@ function renderExamList(exams) {
                 </div>
             </div>
             <div class="exam-actions">
-                <button type="button" class="btn btn-edit" onclick="editExam(${exam.id})">
+                <button type="button" class="btn btn-edit" onclick="event.stopPropagation(); editExam(${exam.id})">
                     <i class="fas fa-edit"></i> 수정
                 </button>
-                <button type="button" class="btn btn-delete" onclick="deleteExam(${exam.id})">
+                <button type="button" class="btn btn-delete" onclick="event.stopPropagation(); deleteExam(${exam.id})">
                     <i class="fas fa-trash"></i> 삭제
                 </button>
             </div>
         </div>
     `).join('');
-}
-
-
-// 모의고사 수정 페이지로 이동
-function editExam(examId) {
-    window.location.href = `/exams/${examId}/edit`;
 }
 
 // 모의고사 삭제

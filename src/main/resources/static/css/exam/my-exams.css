@@ -73,6 +73,7 @@
     overflow: hidden;
     transition: all 0.3s ease;
     border: 1px solid #e5e7eb;
+    cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능함을 표시 */
 }
 
 .exam-card:hover {
@@ -87,6 +88,10 @@
     align-items: flex-start;
     border-bottom: 1px solid #e5e7eb;
     transition: background-color 0.2s;
+}
+
+.exam-card:hover .exam-card-header {
+    background-color: #f9fafb; /* 호버 시 배경색 변경 */
 }
 
 .exam-info {
@@ -167,6 +172,12 @@
     justify-content: flex-end;
 }
 
+/* 버튼이 카드 클릭 이벤트를 방해하지 않도록 설정 */
+.exam-actions button {
+    position: relative;
+    z-index: 2;
+}
+
 /* 버튼 스타일 */
 .btn {
     padding: 8px 16px;
@@ -235,6 +246,17 @@
     color: #dc2626 !important;
     background: #fee2e2 !important;
     border: 1px solid #fca5a5 !important;
+}
+
+/* 데이터 없음 표시 */
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+    font-size: 16px;
+    background: white;
+    border-radius: 12px;
+    border: 1px dashed #e5e7eb;
 }
 
 /* 반응형 디자인 */
