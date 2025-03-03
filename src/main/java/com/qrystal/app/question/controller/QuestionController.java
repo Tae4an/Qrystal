@@ -22,20 +22,30 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 
 @RestController
 @RequestMapping("/api/questions")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "문제 관리", description = "문제 관련 API")
 public class QuestionController {
 
     private final QuestionService questionService;
     private final UserService userService;
 
-    // 문제 목록 조회
     @GetMapping
+    @Operation(summary = "문제 목록 조회", description = "조건에 맞는 문제 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "성공적으로 문제 목록을 반환함",
+            content = @Content(schema = @Schema(implementation = QuestionResponse.class)))
     public ResponseEntity<List<QuestionResponse>> getQuestions(
-            @ModelAttribute QuestionSearchCondition condition) {
+            @Parameter(description = "문제 검색 조건") @ModelAttribute QuestionSearchCondition condition) {
         List<Question> questions = questionService.getQuestions(condition);
         List<QuestionResponse> response = questions.stream()
                 .map(QuestionResponse::from)
@@ -43,15 +53,20 @@ public class QuestionController {
         return ResponseEntity.ok(response);
     }
 
-    // 문제 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<QuestionResponse> getQuestion(@PathVariable Long id) {
+    @Operation(summary = "문제 상세 조회", description = "특정 문제의 상세 정보를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "성공적으로 문제 정보를 반환함",
+            content = @Content(schema = @Schema(implementation = QuestionResponse.class)))
+    public ResponseEntity<QuestionResponse> getQuestion(
+            @Parameter(description = "문제 ID") @PathVariable Long id) {
         Question question = questionService.getQuestion(id);
         return ResponseEntity.ok(QuestionResponse.from(question));
     }
 
-    // 문제 생성
     @PostMapping
+    @Operation(summary = "문제 생성", description = "새로운 문제를 생성합니다.")
+    @ApiResponse(responseCode = "201", description = "성공적으로 문제를 생성함",
+            content = @Content(schema = @Schema(implementation = QuestionResponse.class)))
     public ResponseEntity<QuestionResponse> createQuestion(
             @RequestBody @Valid QuestionCreateRequest request,
             Principal principal) {
@@ -83,11 +98,13 @@ public class QuestionController {
                 .body(QuestionResponse.from(created));
     }
 
-    // 문제 수정
     @PutMapping("/{id}")
+    @Operation(summary = "문제 수정", description = "특정 문제의 정보를 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "성공적으로 문제를 수정함",
+            content = @Content(schema = @Schema(implementation = QuestionResponse.class)))
     @ResourceOwner(idParameter = "id")
     public ResponseEntity<QuestionResponse> updateQuestion(
-            @PathVariable Long id,
+            @Parameter(description = "문제 ID") @PathVariable Long id,
             @RequestBody @Valid QuestionUpdateRequest request,
             Principal principal) {
         Question question = Question.builder()
@@ -111,18 +128,21 @@ public class QuestionController {
         return ResponseEntity.ok(QuestionResponse.from(updated));
     }
 
-    // 문제 삭제
     @DeleteMapping("/{id}")
+    @Operation(summary = "문제 삭제", description = "특정 문제를 삭제합니다.")
+    @ApiResponse(responseCode = "204", description = "성공적으로 문제를 삭제함")
     @ResourceOwner(idParameter = "id")
     public ResponseEntity<Void> deleteQuestion(
-            @PathVariable Long id,
+            @Parameter(description = "문제 ID") @PathVariable Long id,
             Principal principal) {
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
     }
 
-    // 내 문제 목록
     @GetMapping("/my")
+    @Operation(summary = "내 문제 목록 조회", description = "사용자의 문제 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "성공적으로 내 문제 목록을 반환함",
+            content = @Content(schema = @Schema(implementation = QuestionResponse.class)))
     public ResponseEntity<List<QuestionResponse>> getMyQuestions(Principal principal) {
         try {
             log.debug("Principal in getMyQuestions: {}", principal);
@@ -140,10 +160,12 @@ public class QuestionController {
         }
     }
 
-    // 카테고리별 문제 목록
     @GetMapping("/category/{categoryId}")
+    @Operation(summary = "카테고리별 문제 목록 조회", description = "특정 카테고리의 문제 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "성공적으로 카테고리별 문제 목록을 반환함",
+            content = @Content(schema = @Schema(implementation = QuestionResponse.class)))
     public ResponseEntity<List<QuestionResponse>> getQuestionsByCategory(
-            @PathVariable Long categoryId) {
+            @Parameter(description = "카테고리 ID") @PathVariable Long categoryId) {
         List<Question> questions = questionService.getQuestionsByCategory(categoryId);
         List<QuestionResponse> response = questions.stream()
                 .map(QuestionResponse::from)
@@ -152,10 +174,13 @@ public class QuestionController {
     }
 
     @PatchMapping("/{id}/status")
+    @Operation(summary = "문제 상태 업데이트", description = "특정 문제의 상태를 업데이트합니다.")
+    @ApiResponse(responseCode = "200", description = "성공적으로 문제 상태를 업데이트함",
+            content = @Content(schema = @Schema(implementation = QuestionResponse.class)))
     @ResourceOwner(idParameter = "id")
     public ResponseEntity<QuestionResponse> updateQuestionStatus(
-            @PathVariable Long id,
-            @RequestParam QuestionStatus status,
+            @Parameter(description = "문제 ID") @PathVariable Long id,
+            @Parameter(description = "문제 상태") @RequestParam QuestionStatus status,
             Principal principal) {
         questionService.updateQuestionStatus(id, status);
         Question updated = questionService.getQuestion(id);

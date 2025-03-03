@@ -20,16 +20,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @RestController
 @RequestMapping("/api/statistics")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "통계", description = "사용자 통계 관련 API")
 public class StatisticsApiController {
     private final ExamAttemptService examAttemptService;
     private final UserService userService;
 
     @GetMapping("/overall")
-    public StatisticsResponse getOverallStatistics(@AuthenticationPrincipal Object principal) {
+    @Operation(summary = "전체 통계 조회", description = "사용자의 전체 시험 통계를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "성공적으로 통계를 반환함",
+            content = @Content(schema = @Schema(implementation = StatisticsResponse.class)))
+    public StatisticsResponse getOverallStatistics(@Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         String email = userService.extractEmail(principal);
         UserResponse user = userService.findByEmail(email);
 
@@ -38,8 +49,12 @@ public class StatisticsApiController {
     }
 
     @GetMapping("/exam/{examId}")
-    public StatisticsResponse getExamStatistics(@PathVariable Long examId,
-                                              @AuthenticationPrincipal Object principal) {
+    @Operation(summary = "특정 시험 통계 조회", description = "사용자의 특정 시험에 대한 통계를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "성공적으로 통계를 반환함",
+            content = @Content(schema = @Schema(implementation = StatisticsResponse.class)))
+    public StatisticsResponse getExamStatistics(
+            @Parameter(description = "조회할 시험 ID") @PathVariable Long examId,
+            @Parameter(hidden = true) @AuthenticationPrincipal Object principal) {
         String email = userService.extractEmail(principal);
         UserResponse user = userService.findByEmail(email);
 

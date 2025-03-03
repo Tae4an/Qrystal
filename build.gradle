@@ -61,6 +61,9 @@ dependencies {
     // Apache Commons Pool - Redis 연결 풀 관리용
     implementation 'org.apache.commons:commons-pool2:2.11.1'
 
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
