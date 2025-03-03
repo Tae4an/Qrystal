@@ -141,6 +141,166 @@ git clone https://github.com/Tae4an/qrystal.git
 2. 데이터베이스 설정
 ```sql
 CREATE DATABASE qrystal;
+
+-- 유저 테이블
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'USER',
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+    provider VARCHAR(20),
+    provider_id VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 관리자 테이블
+CREATE TABLE admins (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    admin_id VARCHAR(50) NOT NULL UNIQUE,       -- 관리자 아이디
+    password VARCHAR(100) NOT NULL,             -- 암호화된 비밀번호
+    name VARCHAR(50) NOT NULL,                  -- 관리자 이름
+    role VARCHAR(20) NOT NULL,                  -- SUPER_ADMIN, ADMIN
+    status VARCHAR(20) NOT NULL,                -- ACTIVE, INACTIVE
+    last_login_at TIMESTAMP,                    -- 마지막 로그인 시간
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 카테고리 테이블 (계층형)
+CREATE TABLE categories (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    parent_id BIGINT,                  -- 상위 카테고리 (null이면 최상위)
+    name VARCHAR(100) NOT NULL,        -- 카테고리명 
+    description TEXT,                  -- 설명
+    level INT NOT NULL,               -- 계층 레벨 (1: 대분류, 2: 중분류, 3: 소분류)
+    ordering INT DEFAULT 0,           -- 정렬 순서
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',  -- ACTIVE, INACTIVE
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (parent_id) REFERENCES categories(id)
+);
+
+-- 문제 유형 테이블
+CREATE TABLE question_types (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,          -- 객관식, 주관식, 서술형
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 문제 테이블
+CREATE TABLE questions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    category_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    type_id BIGINT NOT NULL,
+    title VARCHAR(200) NOT NULL,        -- 문제 제목
+    content TEXT NOT NULL,              -- 문제 내용
+    answer TEXT NOT NULL,               -- 정답
+    explanation TEXT,                   -- 해설
+    difficulty INT NOT NULL,            -- 난이도 (1-5)
+    is_public BOOLEAN DEFAULT true,     -- 공개/비공개
+    status VARCHAR(20) NOT NULL,        -- ACTIVE, INACTIVE, REPORTED
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (type_id) REFERENCES question_types(id)
+);
+
+-- 객관식 보기 테이블
+CREATE TABLE question_choices (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    question_id BIGINT NOT NULL,
+    choice_number INT NOT NULL,         -- 보기 번호
+    content TEXT NOT NULL,              -- 보기 내용
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (question_id) REFERENCES questions(id)
+);
+
+-- 태그 테이블
+CREATE TABLE tags (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 문제-태그 매핑 테이블
+CREATE TABLE question_tags (
+    question_id BIGINT NOT NULL,
+    tag_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (question_id, tag_id),
+    FOREIGN KEY (question_id) REFERENCES questions(id),
+    FOREIGN KEY (tag_id) REFERENCES tags(id)
+);
+
+-- 시험지 테이블
+CREATE TABLE exams (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,       -- 시험지명
+    description TEXT,                  -- 시험 설명
+    time_limit INT NOT NULL,          -- 제한시간(분)
+    total_points INT NOT NULL,        -- 총점
+    created_by BIGINT NOT NULL,       -- 작성자
+    category_id BIGINT NOT NULL,      -- 카테고리
+    status VARCHAR(20) NOT NULL,      -- DRAFT, PUBLISHED, CLOSED
+    is_public BOOLEAN DEFAULT TRUE,    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id),
+    FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+-- 시험지-문제 매핑 테이블
+CREATE TABLE exam_questions (
+    exam_id BIGINT NOT NULL,
+    question_id BIGINT NOT NULL,
+    question_number INT NOT NULL,      -- 문제 번호
+    point INT NOT NULL,               -- 배점
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (exam_id, question_id),
+    FOREIGN KEY (exam_id) REFERENCES exams(id),
+    FOREIGN KEY (question_id) REFERENCES questions(id)
+);
+
+-- 시험 응시 테이블 수정
+CREATE TABLE exam_attempts (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    exam_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    start_time TIMESTAMP NOT NULL,     -- 시작 시간
+    end_time TIMESTAMP,               -- 종료 시간
+    submitted_at TIMESTAMP,           -- 제출 시간
+    time_limit INT NOT NULL,          -- 시험 제한시간(분)
+    total_score INT,                  -- 획득 점수
+    status VARCHAR(20) NOT NULL,      -- READY, IN_PROGRESS, SUBMITTED, GRADED, TIMEOUT
+    is_time_expired BOOLEAN DEFAULT FALSE, -- 시간 초과 여부
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (exam_id) REFERENCES exams(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- 답안 제출 테이블
+CREATE TABLE exam_answers (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    attempt_id BIGINT NOT NULL,
+    question_id BIGINT NOT NULL,
+    question_type_id BIGINT NOT NULL,    -- 문제 유형 (객관식/주관식/서술형)
+    submitted_answer TEXT NOT NULL,       -- 제출한 답안
+    is_correct BOOLEAN,                   -- 정답 여부
+    score INT,                           -- 획득 점수
+    grading_comment TEXT,                -- 채점 코멘트 (서술형용)
+    is_graded BOOLEAN DEFAULT FALSE,     -- 채점 완료 여부
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (attempt_id) REFERENCES exam_attempts(id),
+    FOREIGN KEY (question_id) REFERENCES questions(id),
+    FOREIGN KEY (question_type_id) REFERENCES question_types(id)
+);
 ```
 
 3. 애플리케이션 설정
