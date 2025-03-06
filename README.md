@@ -21,6 +21,7 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 - **HTML/CSS/JavaScript**
 - **Bootstrap**
 - **jQuery**
+- **Docker**
 
 
 ## 💡 주요 기능
@@ -69,10 +70,10 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 <img width="1511" alt="image" src="https://github.com/user-attachments/assets/a4542524-4596-4b43-86c6-8264f67d6250" />
 
 ### 로그인 화면
-<img width="1510" alt="스크린샷 2025-03-03 오후 9 23 00" src="https://github.com/user-attachments/assets/e3ca02a5-1d96-4fb9-a408-2e017a6ea764" />
+<img width="1510" alt="스크린샷 2025-03-03 오후 9 23 00" src="https://github.com/user-attachments/assets/e3ca02a5-1d96-4fb9-a408-2e017a6ea764" />
 
 ### 회원가입 화면
-<img width="1512" alt="스크린샷 2025-03-03 오후 9 23 29" src="https://github.com/user-attachments/assets/591df47a-b420-467c-9b0b-cfebfb526999" />
+<img width="1512" alt="스크린샷 2025-03-03 오후 9 23 29" src="https://github.com/user-attachments/assets/591df47a-b420-467c-9b0b-cfebfb526999" />
 
 ### 문제 목록 화면
 <img width="1511" alt="image" src="https://github.com/user-attachments/assets/aba96120-6842-4d77-b132-d948283e90a7" />
@@ -81,35 +82,35 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 <img width="1510" alt="스크린샷 2025-03-03 오후 8 52 36" src="https://github.com/user-attachments/assets/f5cfecb9-778b-493d-871d-78392bdf7a6f" />
 
 ### 내 문제 화면
-<img width="1511" alt="스크린샷 2025-03-03 오후 8 53 56" src="https://github.com/user-attachments/assets/1270bf01-f0a4-41e8-9169-d0cfc76c970e" />
+<img width="1511" alt="스크린샷 2025-03-03 오후 8 53 56" src="https://github.com/user-attachments/assets/1270bf01-f0a4-41e8-9169-d0cfc76c970e" />
 
 ### 새 문제 등록 화면
-<img width="1511" alt="스크린샷 2025-03-03 오후 8 55 31" src="https://github.com/user-attachments/assets/adebf3af-3494-41a9-9e03-d1d52db21cad" />
+<img width="1511" alt="스크린샷 2025-03-03 오후 8 55 31" src="https://github.com/user-attachments/assets/adebf3af-3494-41a9-9e03-d1d52db21cad" />
 
 ### 새 모의고사 등록 화면
-<img width="1510" alt="스크린샷 2025-03-03 오후 9 04 35" src="https://github.com/user-attachments/assets/dc9ab6c6-486a-4860-ad61-18a85299ba87" />
+<img width="1510" alt="스크린샷 2025-03-03 오후 9 04 35" src="https://github.com/user-attachments/assets/dc9ab6c6-486a-4860-ad61-18a85299ba87" />
 
 ### 모의고사에 문제 추가
 <img width="1511" alt="스크린샷 2025-03-03 오후 9 06 19" src="https://github.com/user-attachments/assets/c9c4fe18-1540-4e48-afdf-e63aedced804" />
 
 ### 모의고사 목록 화면
-<img width="1511" alt="스크린샷 2025-03-03 오후 9 10 22" src="https://github.com/user-attachments/assets/4515e00f-d294-456d-9c58-74b33ee190fa" />
+<img width="1511" alt="스크린샷 2025-03-03 오후 9 10 22" src="https://github.com/user-attachments/assets/4515e00f-d294-456d-9c58-74b33ee190fa" />
 
 ### 내 모의고사 화면
-<img width="1511" alt="스크린샷 2025-03-03 오후 9 11 02" src="https://github.com/user-attachments/assets/7bfb1856-9d7c-4a13-adcb-97fb0cf597b9" />
+<img width="1511" alt="스크린샷 2025-03-03 오후 9 11 02" src="https://github.com/user-attachments/assets/7bfb1856-9d7c-4a13-adcb-97fb0cf597b9" />
 
 ### 모의고사 응시 화면
-<img width="1511" alt="스크린샷 2025-03-03 오후 9 11 45" src="https://github.com/user-attachments/assets/abad7c10-b5cb-4a9d-bf00-19021165f18a" />
+<img width="1511" alt="스크린샷 2025-03-03 오후 9 11 45" src="https://github.com/user-attachments/assets/abad7c10-b5cb-4a9d-bf00-19021165f18a" />
 <img width="1511" alt="스크린샷 2025-03-03 오후 9 12 44" src="https://github.com/user-attachments/assets/ba9715c9-a16a-4593-8887-8c3822795e72" />
 
 ### 결과 화면
-<img width="1511" alt="스크린샷 2025-03-03 오후 9 13 53" src="https://github.com/user-attachments/assets/ddf8b8be-338c-4fef-9bf1-0434fa6a9b40" />
+<img width="1511" alt="스크린샷 2025-03-03 오후 9 13 53" src="https://github.com/user-attachments/assets/ddf8b8be-338c-4fef-9bf1-0434fa6a9b40" />
 
 ### 내 프로필 및 통계 화면
 <img width="1512" alt="스크린샷 2025-03-03 오후 9 15 01" src="https://github.com/user-attachments/assets/3e740161-74ab-4a4a-991d-faa3e2e32beb" />
 
 ### 관리자 로그인 화면
-<img width="1510" alt="스크린샷 2025-03-03 오후 9 27 33" src="https://github.com/user-attachments/assets/dc7fa876-c0ae-4a36-9964-bb10c9f59806" />
+<img width="1510" alt="스크린샷 2025-03-03 오후 9 27 33" src="https://github.com/user-attachments/assets/dc7fa876-c0ae-4a36-9964-bb10c9f59806" />
 
 ### 관리자 대시보드 화면
 <img width="1511" alt="image" src="https://github.com/user-attachments/assets/669a00b8-e5d3-4060-92a1-aed3cb64b635" />
@@ -118,7 +119,7 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 <img width="1511" alt="image" src="https://github.com/user-attachments/assets/1834e963-ae4b-4139-a2df-837bdd9dd1df" />
 
 ### 사용자 관리 화면
-<img width="1510" alt="스크린샷 2025-03-03 오후 9 44 37" src="https://github.com/user-attachments/assets/c7ca3b5c-3618-4cd8-a760-c9084025def2" />
+<img width="1510" alt="스크린샷 2025-03-03 오후 9 44 37" src="https://github.com/user-attachments/assets/c7ca3b5c-3618-4cd8-a760-c9084025def2" />
 
 ### 카테고리 관리 화면
 <img width="1509" alt="image" src="https://github.com/user-attachments/assets/3b033186-b4b3-4c47-92f2-3a16d5c68900" />
@@ -130,15 +131,16 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 - MySQL 8.0
 - Redis
 - Gradle 7.6 이상
+- Docker(도커 방식으로 실행하는 경우)
 
 ### 설치 방법
 
-1. 저장소 클론
+#### 1. 저장소 클론
 ```bash
 git clone https://github.com/Tae4an/qrystal.git
 ```
 
-2. 데이터베이스 설정
+#### 2. 데이터베이스 설정
 ```sql
 CREATE DATABASE qrystal;
 
@@ -303,13 +305,62 @@ CREATE TABLE exam_answers (
 );
 ```
 
-3. 애플리케이션 설정
+#### 3. 애플리케이션 설정
 `application.properties` 파일에서 데이터베이스 및 Redis 연결 정보 설정
 
-4. 빌드 및 실행
+또한 다음 환경 변수를 설정해야 합니다:
+
+```
+# Redis 연결 설정
+REDIS_SERVER_URL=your_redis_server_url
+REDIS_PASSWORD=your_redis_password
+
+# Jasypt 암호화 설정
+JASYPT_ENCRYPTOR_PASSWORD=your_jasypt_encryption_password
+```
+
+위 환경 변수는 프로덕션 환경이나 개발 환경에 맞게 설정해야 합니다.
+
+#### 4. 빌드 및 실행
+
+##### 일반 실행 방법
 ```bash
 ./gradlew clean build
 java -jar build/libs/qrystal-1.0.0.jar
+```
+
+##### Docker를 사용한 실행 방법
+
+프로젝트 루트 디렉토리에 다음과 같은 Dockerfile을 생성합니다:
+
+```dockerfile
+# Build stage
+FROM gradle:7.6-jdk11 AS build
+WORKDIR /app
+COPY build.gradle settings.gradle ./
+COPY src ./src
+RUN gradle build --no-daemon -x test
+
+# Run stage
+FROM openjdk:11-jre-slim
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
+EXPOSE 80
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+Docker 이미지 빌드 및 실행:
+
+```bash
+# 이미지 빌드
+docker build -t qrystal:latest .
+
+# 컨테이너 실행 (환경 변수 설정)
+docker run -d -p 80:80 \
+  -e REDIS_SERVER_URL=your_redis_server_url \
+  -e REDIS_PASSWORD=your_redis_password \
+  -e JASYPT_ENCRYPTOR_PASSWORD=your_jasypt_encryption_password \
+  --name qrystal-app qrystal:latest
 ```
 
 ## 📘 API 문서
@@ -318,4 +369,4 @@ API 문서는 Swagger UI를 통해 확인할 수 있습니다:
 ```
 http://localhost:80/swagger-ui/index.html
 ```
-<img width="1512" alt="스크린샷 2025-03-03 오후 9 25 01" src="https://github.com/user-attachments/assets/aead20b7-5295-4615-ade9-931b8c3e6e2e" />
+<img width="1512" alt="스크린샷 2025-03-03 오후 9 25 01" src="https://github.com/user-attachments/assets/aead20b7-5295-4615-ade9-931b8c3e6e2e" />
