@@ -3,6 +3,7 @@ package com.qrystal.app.exam.controller;
 import com.qrystal.app.exam.service.ExamAttemptService;
 import com.qrystal.app.exam.service.ExamService;
 import com.qrystal.app.user.service.UserService;
+import com.qrystal.global.annotation.ResourceOwner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +38,7 @@ public class ExamViewController {
     }
     
     @GetMapping("/{id}/edit")
+    @ResourceOwner(idParameter = "id")
     public String examEdit(@PathVariable Long id, Model model) {
         model.addAttribute("content", "exam/form");
         model.addAttribute("examId", id);
@@ -63,6 +65,7 @@ public class ExamViewController {
     }
 
     @GetMapping("/{id}/result/{attemptId}")
+    @ResourceOwner(idParameter = "id")
     public String examResult(@PathVariable Long id,
                              @PathVariable Long attemptId,
                              Model model) {

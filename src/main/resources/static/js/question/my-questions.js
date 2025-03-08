@@ -1,7 +1,5 @@
-// my-questions.js
 document.addEventListener('DOMContentLoaded', function() {
     loadCategories();
-    loadMyQuestions();
 
     // 검색 및 필터링 이벤트 리스너
     document.getElementById('searchInput').addEventListener('input', filterQuestions);
@@ -9,8 +7,19 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('categoryFilter').addEventListener('change', filterQuestions);
 });
 
-// 전역 변수
-let myQuestions = [];
+// 전역 변수 - 초기 렌더링된 문제들을 저장
+let myQuestions = Array.from(document.querySelectorAll('.question-card')).map(card => ({
+    id: card.dataset.id,
+    title: card.querySelector('.question-title').textContent,
+    typeId: card.dataset.typeId,
+    categoryId: card.dataset.categoryId,
+    categoryName: card.querySelector('.category-path span').textContent.trim(),
+    difficulty: parseInt(card.dataset.difficulty),
+    createdAt: card.dataset.createdAt
+}));
+
+// 상세 문제 데이터를 저장할 맵
+let questionsDetailMap = new Map();
 
 // 카테고리 로드
 async function loadCategories() {
@@ -22,22 +31,6 @@ async function loadCategories() {
     } catch (error) {
         console.error('카테고리 로드 실패:', error);
         showToast('카테고리 목록을 불러오는데 실패했습니다.', 'error');
-    }
-}
-
-// 내 문제 목록 로드
-async function loadMyQuestions() {
-    try {
-        showLoading();
-        const response = await fetch('/api/questions/my');
-        if (!response.ok) throw new Error('문제 로드 실패');
-        myQuestions = await response.json();
-        renderQuestions(myQuestions);
-    } catch (error) {
-        console.error('문제 로드 실패:', error);
-        showToast('문제 목록을 불러오는데 실패했습니다.', 'error');
-    } finally {
-        hideLoading();
     }
 }
 
@@ -56,42 +49,217 @@ function renderCategoryOptions(categories, level = 0) {
     });
 }
 
-// 문제 목록 렌더링
-function renderQuestions(questionsToRender = myQuestions) {
+// 필터링 함수
+function filterQuestions() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const typeFilter = document.getElementById('typeFilter').value;
+    const categoryFilter = document.getElementById('categoryFilter').value;
+
+    document.querySelectorAll('.question-card').forEach(card => {
+        const matchesSearch = card.querySelector('.question-title').textContent.toLowerCase().includes(searchTerm);
+        const matchesType = !typeFilter || card.dataset.typeId === typeFilter;
+        const matchesCategory = !categoryFilter || card.dataset.categoryId === categoryFilter;
+
+        card.style.display = matchesSearch && matchesType && matchesCategory ? 'block' : 'none';
+    });
+
+    // 필터링 결과가 없는 경우 메시지 표시
+    const visibleCards = document.querySelectorAll('.question-card[style="display: block"]');
     const container = document.getElementById('myQuestionsList');
-    if (questionsToRender.length === 0) {
-        container.innerHTML = '<div class="no-questions">등록한 문제가 없습니다.</div>';
+
+    if (visibleCards.length === 0) {
+        const noResults = document.querySelector('.no-results') || document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.textContent = '검색 결과가 없습니다.';
+        container.appendChild(noResults);
+    } else {
+        const noResults = document.querySelector('.no-results');
+        if (noResults) noResults.remove();
+    }
+}
+
+// 문제 토글 기능
+function toggleQuestion(questionId) {
+    const detailElement = document.getElementById(`detail-${questionId}`);
+
+    // 이미 펼쳐진 다른 문제들을 접기
+    document.querySelectorAll('.question-detail.expanded').forEach(el => {
+        if (el.id !== `detail-${questionId}`) {
+            el.classList.remove('expanded');
+        }
+    });
+
+    // 현재 문제 토글
+    const isExpanding = !detailElement.classList.contains('expanded');
+    detailElement.classList.toggle('expanded');
+
+    // 문제 상세 정보 로드 (펼칠 때만)
+    if (isExpanding) {
+        loadQuestionDetail(questionId);
+    }
+}
+
+// 문제 상세 정보 로드
+async function loadQuestionDetail(questionId) {
+    const detailElement = document.getElementById(`detail-${questionId}`);
+    const detailContent = detailElement.querySelector('.detail-content');
+
+    // 이미 로드된 데이터가 있으면 재사용
+    if (questionsDetailMap.has(questionId)) {
+        renderQuestionDetail(questionsDetailMap.get(questionId), detailContent);
         return;
     }
 
-    container.innerHTML = questionsToRender.map(question => `
-       <div class="question-card">
-           <div class="question-header">
-               <span class="question-title">${question.title}</span>
-           </div>
-           <div class="question-info">
-               <div class="question-meta">
-                   <span class="badge badge-category">${question.categoryName}</span>
-                   <span class="badge badge-type">${getQuestionType(question.typeId)}</span>
-                   <span>난이도: ${'★'.repeat(question.difficulty)}</span>
-                   <span>작성일: ${formatDate(question.createdAt)}</span>
-               </div>
-               <div class="question-actions">
-                   <button class="btn btn-edit" onclick="editQuestion(${question.id})">
-                       <i class="fas fa-edit"></i> 수정
-                   </button>
-                   <button class="btn btn-delete" onclick="confirmDelete(${question.id})">
-                       <i class="fas fa-trash"></i> 삭제
-                   </button>
-               </div>
-           </div>
-       </div>
-   `).join('');
+    try {
+        // 로딩 표시
+        detailContent.innerHTML = `
+            <div class="detail-loader">
+                <div class="spinner"></div>
+                <p>문제를 불러오는 중...</p>
+            </div>
+        `;
+
+        const response = await fetch(`/api/questions/${questionId}`);
+        if (!response.ok) throw new Error('문제 상세 정보 로드 실패');
+
+        const questionDetail = await response.json();
+        questionsDetailMap.set(questionId, questionDetail);
+
+        renderQuestionDetail(questionDetail, detailContent);
+    } catch (error) {
+        console.error('문제 상세 정보 로드 실패:', error);
+        detailContent.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>문제를 불러오는데 실패했습니다. 다시 시도해주세요.</p>
+            </div>
+        `;
+    }
 }
 
-// 문제 수정 페이지로 이동
-function editQuestion(questionId) {
-    location.href = `/questions/${questionId}/edit`;
+// 문제 상세 정보 렌더링
+function renderQuestionDetail(question, container) {
+    let content = `
+        <div class="question-content">
+            ${question.content}
+        </div>
+    `;
+
+    const typeId = parseInt(question.typeId);
+
+    // 문제 유형별 입력 영역
+    switch(typeId) {
+        case 1: // 객관식
+            content += renderMultipleChoice(question);
+            break;
+        case 2: // 주관식
+            content += renderShortAnswer();
+            break;
+        case 3: // 서술형
+            content += renderLongAnswer();
+            break;
+    }
+
+    content += `
+        <button class="check-answer-btn" onclick="checkAnswer(${question.id})">
+            정답 확인
+        </button>
+        <div id="result-${question.id}" class="answer-result"></div>
+        <div id="explanation-${question.id}" class="explanation">
+            <h4>해설</h4>
+            ${question.explanation || '해설이 없습니다.'}
+        </div>
+    `;
+
+    container.innerHTML = content;
+}
+
+// 객관식 문제 렌더링
+function renderMultipleChoice(question) {
+    return `
+        <div class="multiple-choice-list">
+            ${question.choices.sort((a, b) => a.choiceNumber - b.choiceNumber)
+        .map(choice => `
+                <label class="choice-item">
+                    <input type="radio" name="question-${question.id}" value="${choice.choiceNumber}">
+                    <span>${choice.content}</span>
+                </label>
+            `).join('')}
+        </div>
+    `;
+}
+
+// 주관식 문제 렌더링
+function renderShortAnswer() {
+    return `
+        <input type="text" class="text-answer-input short" placeholder="답안을 입력하세요">
+    `;
+}
+
+// 서술형 문제 렌더링
+function renderLongAnswer() {
+    return `
+        <textarea class="text-answer-input long" placeholder="답안을 입력하세요"></textarea>
+    `;
+}
+
+// 정답 확인
+function checkAnswer(questionId) {
+    const question = questionsDetailMap.get(questionId);
+    const resultElement = document.getElementById(`result-${questionId}`);
+    const explanationElement = document.getElementById(`explanation-${questionId}`);
+    let userAnswer;
+
+    // 문제 유형별 답안 가져오기
+    switch(parseInt(question.typeId)) {
+        case 1: // 객관식
+            userAnswer = document.querySelector(`input[name="question-${questionId}"]:checked`)?.value;
+            break;
+        case 2: // 주관식
+        case 3: // 서술형
+            userAnswer = document.querySelector(`#detail-${questionId} .text-answer-input`).value;
+            break;
+    }
+
+    if (!userAnswer) {
+        alert('답안을 입력해주세요.');
+        return;
+    }
+
+    // 정답 체크
+    let isCorrect = false;
+    switch(parseInt(question.typeId)) {
+        case 1: // 객관식
+            isCorrect = userAnswer === question.answer;
+            break;
+        case 2: // 주관식
+            isCorrect = userAnswer.trim().toLowerCase() === question.answer.trim().toLowerCase();
+            break;
+        case 3: // 서술형
+            // 서술형은 모범답안만 표시
+            isCorrect = true;
+            break;
+    }
+
+    // 결과 표시
+    resultElement.className = `answer-result ${isCorrect ? 'correct' : 'incorrect'}`;
+    resultElement.innerHTML = isCorrect ?
+        '<strong>정답입니다!</strong>' :
+        `<strong>틀렸습니다.</strong><br>정답: ${question.answer}`;
+    resultElement.style.display = 'block';
+
+    // 해설 표시
+    explanationElement.style.display = 'block';
+
+    // 입력 비활성화
+    disableAnswerInput(questionId);
+}
+
+// 답안 입력 비활성화
+function disableAnswerInput(questionId) {
+    const detailElement = document.getElementById(`detail-${questionId}`);
+    const inputs = detailElement.querySelectorAll('input, textarea');
+    inputs.forEach(input => input.disabled = true);
 }
 
 // 삭제 확인
@@ -112,7 +280,12 @@ async function deleteQuestion(questionId) {
         if (!response.ok) throw new Error('문제 삭제 실패');
 
         showToast('문제가 삭제되었습니다.');
-        loadMyQuestions();  // 목록 새로고침
+        // 삭제된 카드 제거
+        const card = document.querySelector(`.question-card[data-id="${questionId}"]`);
+        if (card) card.remove();
+
+        // 맵에서도 삭제
+        questionsDetailMap.delete(questionId);
     } catch (error) {
         console.error('문제 삭제 실패:', error);
         showToast('문제 삭제에 실패했습니다.', 'error');
@@ -121,42 +294,7 @@ async function deleteQuestion(questionId) {
     }
 }
 
-// 검색 및 필터링
-function filterQuestions() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const typeFilter = document.getElementById('typeFilter').value;
-    const categoryFilter = document.getElementById('categoryFilter').value;
-
-    const filteredQuestions = myQuestions.filter(question => {
-        const matchesSearch = question.title.toLowerCase().includes(searchTerm);
-        const matchesType = !typeFilter || question.typeId.toString() === typeFilter;
-        const matchesCategory = !categoryFilter || question.categoryId.toString() === categoryFilter;
-
-        return matchesSearch && matchesType && matchesCategory;
-    });
-
-    renderQuestions(filteredQuestions);
-}
-
 // 유틸리티 함수들
-function getQuestionType(typeId) {
-    const types = {
-        1: '객관식',
-        2: '주관식',
-        3: '서술형'
-    };
-    return types[typeId] || '알 수 없음';
-}
-
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return new Intl.DateTimeFormat('ko-KR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    }).format(date);
-}
-
 function showLoading() {
     const loading = document.querySelector('.loading') || createLoadingElement();
     loading.style.display = 'block';

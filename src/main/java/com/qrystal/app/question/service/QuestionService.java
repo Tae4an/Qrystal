@@ -22,6 +22,13 @@ public class QuestionService {
 
     // 문제 목록 조회
     public List<Question> getQuestions(QuestionSearchCondition condition) {
+        Boolean isPublic = condition.getIsPublic() != null ? condition.getIsPublic() : true;
+
+        condition = QuestionSearchCondition.builder()
+                .isPublic(isPublic)
+                .status(QuestionStatus.ACTIVE)  // 항상 ACTIVE 상태만 조회
+                .build();
+
         return questionMapper.findAll(condition);
     }
 
@@ -87,14 +94,7 @@ public class QuestionService {
     // 문제 삭제
     @Transactional
     public void deleteQuestion(Long id) {
-        Question question = getQuestion(id);
-        
-        // 연관 데이터 삭제
-        questionMapper.deleteChoices(id);
-        questionMapper.deleteTags(id);
-        
-        // 문제 삭제
-        questionMapper.delete(id);
+        questionMapper.updateStatus(id, QuestionStatus.INACTIVE);
     }
 
     // 문제 상태 변경
@@ -108,6 +108,7 @@ public class QuestionService {
     public List<Question> getMyQuestions(Long userId) {
         return questionMapper.findAll(QuestionSearchCondition.builder()
                 .userId(userId)
+                .status(QuestionStatus.ACTIVE)  // ACTIVE 상태만 조회
                 .build());
     }
 

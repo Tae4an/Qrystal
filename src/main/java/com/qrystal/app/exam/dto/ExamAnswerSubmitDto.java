@@ -11,5 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ExamAnswerSubmitDto {
     private Long questionId;
+    private Long questionTypeId;
     private String submittedAnswer;
 }

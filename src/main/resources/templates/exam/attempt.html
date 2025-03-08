@@ -2,141 +2,145 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <th:block th:fragment="content">
-  <!-- CSS -->
-  <link rel="stylesheet" th:href="@{/css/exam/attempt.css}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/exam/attempt.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-  <div class="exam-container">
-    <!-- 시험 상단 영역 -->
-    <div class="exam-header">
-      <div class="exam-info">
-        <h2 th:text="${exam.title}">시험 제목</h2>
-        <div class="exam-meta">
-          <span class="total-points">총점: <span th:text="${exam.totalPoints}">0</span>점</span>
+    <div class="exam-container">
+        <!-- 시험 상단 영역 -->
+        <div class="exam-header">
+            <div class="exam-info">
+                <h2 th:text="${exam.title}">시험 제목</h2>
+                <div class="exam-meta">
+                    <span class="total-points">총점: <span th:text="${exam.totalPoints}">0</span>점</span>
+                </div>
+            </div>
+            <div class="exam-timer">
+                <i class="fas fa-clock"></i>
+                <span id="remainingTime">00:00:00</span>
+            </div>
         </div>
-      </div>
-      <div class="exam-timer">
-        <i class="fas fa-clock"></i>
-        <span id="remainingTime">00:00:00</span>
-      </div>
-    </div>
 
-    <!-- 문제 영역 -->
-    <div class="questions-container">
-      <!-- 좌측: 문제 네비게이션 -->
-      <div class="question-nav">
-        <div class="nav-header">
-          <h3>문제 목록</h3>
-        </div>
-        <div class="nav-items">
-          <div th:each="question, questionStat : ${exam.questions}"
-               th:class="'nav-item ' + (${questionStat.first} ? 'active' : '')"
-               th:attr="data-question-id=${question.questionId}">
-            <span class="question-number" th:text="${question.questionNumber}">1</span>
-            <span class="question-points" th:text="${question.point + '점'}">0점</span>
-            <i class="fas fa-check answer-status" style="display: none;"></i>
-          </div>
-        </div>
-      </div>
-
-      <!-- 우측: 문제 풀이 영역 -->
-      <div class="question-content">
-        <div th:each="question, questionStat : ${exam.questions}"
-             th:id="'question-' + ${question.questionId}"
-             th:class="'question-item ' + (${questionStat.first} ? 'active' : '')"
-             th:attr="data-question-id=${question.questionId},
-                data-question-type=${question.questionTypeId}">
-
-          <!-- 문제 헤더 -->
-          <div class="question-header">
-                       <span class="question-number">
-                           문제 <span th:text="${question.questionNumber}"></span>
-                       </span>
-            <span class="question-points" th:text="${question.point + '점'}">0점</span>
-          </div>
-
-          <!-- 문제 내용 -->
-          <div class="question-text">
-            <p th:text="${question.questionContent}">문제 내용</p>
-          </div>
-
-          <!-- 답안 입력 영역 -->
-          <div class="answer-section">
-            <!-- 객관식 -->
-            <div th:if="${question.questionTypeId == 1}" class="multiple-choice">
-              <div th:each="choice : ${question.choices}" class="choice-item">
-                <input type="radio"
-                       th:id="'choice-' + ${question.questionId} + '-' + ${choice.choiceNumber}"
-                       th:name="'question-' + ${question.questionId}"
-                       th:value="${choice.choiceNumber}">
-                <label th:for="'choice-' + ${question.questionId} + '-' + ${choice.choiceNumber}"
-                       th:text="${choice.content}">선택지</label>
-              </div>
+        <!-- 문제 영역 -->
+        <div class="questions-container">
+            <!-- 좌측: 문제 네비게이션 -->
+            <div class="question-nav">
+                <div class="nav-header">
+                    <h3>문제 목록</h3>
+                </div>
+                <div class="nav-items">
+                    <div th:each="question, questionStat : ${exam.questions}"
+                         th:class="'nav-item ' + (${questionStat.first} ? 'active' : '')"
+                         th:attr="data-question-id=${question.questionId}">
+                        <div class="nav-item-info">
+                            <span class="question-number" th:text="'문제 ' + ${question.questionNumber}">문제 1</span>
+                            <span class="question-points" th:text="${question.point + '점'}">0점</span>
+                        </div>
+                        <i class="fas fa-check answer-status"></i>
+                    </div>
+                </div>
             </div>
 
-            <!-- 주관식 -->
-            <div th:if="${question.questionTypeId == 2}" class="short-answer">
-              <input type="text"
-                     th:id="'answer-' + ${question.questionId}"
-                     class="answer-input"
-                     placeholder="답안을 입력하세요">
-            </div>
+            <!-- 우측: 문제 풀이 영역 -->
+            <div class="question-content">
+                <div th:each="question, questionStat : ${exam.questions}"
+                     th:id="'question-' + ${question.questionId}"
+                     th:class="'question-item ' + (${questionStat.first} ? 'active' : '')"
+                     th:attr="data-question-id=${question.questionId},
+                    data-question-type=${question.questionTypeId}">
 
-            <!-- 서술형 -->
-            <div th:if="${question.questionTypeId == 3}" class="essay">
-                           <textarea th:id="'answer-' + ${question.questionId}"
-                                     class="answer-input"
-                                     rows="5"
-                                     placeholder="답안을 입력하세요"></textarea>
+                    <!-- 문제 헤더 -->
+                    <div class="question-header">
+                        <div class="question-info">
+              <span class="question-number">
+                문제 <span th:text="${question.questionNumber}">1</span>
+              </span>
+                            <span class="question-points" th:text="${question.point + '점'}">0점</span>
+                        </div>
+                    </div>
+
+                    <!-- 문제 내용 -->
+                    <div class="question-text">
+                        <p th:text="${question.questionContent}">문제 내용</p>
+                    </div>
+
+                    <!-- 답안 입력 영역 -->
+                    <div class="answer-section">
+                        <!-- 객관식 -->
+                        <div th:if="${question.questionTypeId == 1}" class="multiple-choice">
+                            <div th:each="choice : ${question.choices}" class="choice-item">
+                                <input type="radio"
+                                       th:id="'choice-' + ${question.questionId} + '-' + ${choice.choiceNumber}"
+                                       th:name="'question-' + ${question.questionId}"
+                                       th:value="${choice.choiceNumber}">
+                                <label th:for="'choice-' + ${question.questionId} + '-' + ${choice.choiceNumber}"
+                                       th:text="${choice.content}">선택지</label>
+                            </div>
+                        </div>
+
+                        <!-- 주관식 -->
+                        <div th:if="${question.questionTypeId == 2}" class="short-answer">
+                            <input type="text"
+                                   th:id="'answer-' + ${question.questionId}"
+                                   class="answer-input"
+                                   placeholder="답안을 입력하세요">
+                        </div>
+
+                        <!-- 서술형 -->
+                        <div th:if="${question.questionTypeId == 3}" class="essay">
+              <textarea th:id="'answer-' + ${question.questionId}"
+                        class="answer-input"
+                        rows="5"
+                        placeholder="답안을 입력하세요"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 문제 네비게이션 버튼 -->
+                <div class="question-navigation">
+                    <button id="prevQuestion" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> 이전
+                    </button>
+                    <button id="nextQuestion" class="btn btn-secondary">
+                        다음 <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
             </div>
-          </div>
         </div>
 
-        <!-- 문제 네비게이션 버튼 -->
-        <div class="question-navigation">
-          <button id="prevQuestion" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> 이전
-          </button>
-          <button id="nextQuestion" class="btn btn-secondary">
-            다음 <i class="fas fa-arrow-right"></i>
-          </button>
+        <!-- 하단 제출 영역 -->
+        <div class="exam-footer">
+            <div class="progress-info">
+                답안 작성: <span id="answeredCount">0</span> / <span th:text="${exam.questions.size()}"></span>
+            </div>
+            <div class="action-buttons">
+                <button id="submitExam" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> 제출하기
+                </button>
+            </div>
         </div>
-      </div>
     </div>
 
-    <!-- 하단 제출 영역 -->
-    <div class="exam-footer">
-      <div class="progress-info">
-        답안 작성: <span id="answeredCount">0</span> / <span th:text="${exam.questions.size()}"></span>
-      </div>
-      <div class="action-buttons">
-        <button id="submitExam" class="btn btn-primary">
-          <i class="fas fa-paper-plane"></i> 제출하기
-        </button>
-      </div>
+    <!-- 제출 확인 모달 -->
+    <div id="submitModal" class="modal">
+        <div class="modal-content">
+            <h3>시험 제출</h3>
+            <p>정말 제출하시겠습니까? 제출 후에는 수정이 불가능합니다.</p>
+            <div class="modal-actions">
+                <button id="confirmSubmit" class="btn btn-primary">제출</button>
+                <button id="cancelSubmit" class="btn btn-secondary">취소</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- 제출 확인 모달 -->
-  <div id="submitModal" class="modal">
-    <div class="modal-content">
-      <h3>시험 제출</h3>
-      <p>정말 제출하시겠습니까? 제출 후에는 수정이 불가능합니다.</p>
-      <div class="modal-actions">
-        <button id="confirmSubmit" class="btn btn-primary">제출</button>
-        <button id="cancelSubmit" class="btn btn-secondary">취소</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- JavaScript -->
-  <script th:inline="javascript">
-    // 시험 정보
-    const examId = [[${exam.id}]];
-    const attemptId = [[${attempt?.id}]];
-    const timeLimit = [[${exam.timeLimit}]];
-  </script>
-  <script th:src="@{/js/exam/attempt.js}"></script>
+    <!-- JavaScript -->
+    <script th:inline="javascript">
+        // 시험 정보
+        const examId = [[${exam.id}]];
+        const attemptId = [[${attempt?.id}]];
+        const timeLimit = [[${exam.timeLimit}]];
+    </script>
+    <script th:src="@{/js/exam/attempt.js}"></script>
 </th:block>
 </body>
 </html>

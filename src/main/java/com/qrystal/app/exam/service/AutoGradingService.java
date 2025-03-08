@@ -20,14 +20,14 @@ public class AutoGradingService {
     private final ExamAnswerMapper examAnswerMapper;
     private final ExamMapper examMapper; // ExamMapper 추가
 
-    public int gradeExamAttempt(Long attemptId, List<ExamAnswer> answers) {
+    public int gradeExamAttempt(Long examId, List<ExamAnswer> answers) {
         int totalScore = 0;
 
         for (ExamAnswer answer : answers) {
             Question question = questionService.getQuestion(answer.getQuestionId());
             // exam_questions 테이블에서 해당 문제의 배점 조회
             ExamQuestion examQuestion = examMapper.findQuestionByExamQuestionId(
-                    answer.getAttemptId(),
+                    examId,
                     answer.getQuestionId()
             );
 

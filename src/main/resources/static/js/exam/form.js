@@ -283,7 +283,7 @@ async function handleSubmit(e) {
         timeLimit: parseInt(document.getElementById('timeLimit').value),
         categoryId: document.getElementById('categoryId').value,
         isPublic: isPublic,
-        status: 'PUBLISHED',
+        status: 'ACTIVE',
         questions: selectedQuestions
     };
 

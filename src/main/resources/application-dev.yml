@@ -105,3 +105,10 @@ jasypt:
   encryptor:
     password: ${JASYPT_ENCRYPTOR_PASSWORD}
     algorithm: PBEWithMD5AndDES
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method

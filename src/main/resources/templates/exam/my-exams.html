@@ -2,80 +2,35 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <th:block th:fragment="content">
-  <!-- CSS -->
-  <link rel="stylesheet" th:href="@{/css/exam/my-exams.css}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/exam/my-exams.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-  <div class="my-exams-container">
-    <div class="page-header">
-      <h2><i class="fas fa-file-alt"></i> 내 모의고사</h2>
-      <div class="header-actions">
-        <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/exams/new}'|">
-          <i class="fas fa-plus"></i> 새 모의고사
-        </button>
-      </div>
-    </div>
-
-    <!-- 필터 영역 -->
-    <div class="filter-section">
-      <div class="search-filters">
-        <input type="text" id="searchInput" class="form-control" placeholder="모의고사 검색...">
-        <select id="statusFilter" class="form-control">
-          <option value="">전체 상태</option>
-          <option value="DRAFT">임시저장</option>
-          <option value="PUBLISHED">공개</option>
-          <option value="CLOSED">마감</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- 모의고사 목록 -->
-    <div class="exam-list" id="examsList">
-      <!-- JavaScript로 목록 렌더링될 공간 -->
-      <div class="exam-item" th:each="exam : ${exams}">
-        <div class="exam-info">
-          <h3 th:text="${exam.title}">모의고사 제목</h3>
-          <p class="exam-description" th:text="${exam.description}">모의고사 설명</p>
-          <div class="exam-meta">
-                        <span>
-                            <i class="fas fa-clock"></i>
-                            <span th:text="|${exam.timeLimit}분|">60분</span>
-                        </span>
-            <span>
-                            <i class="fas fa-list-ol"></i>
-                            <span th:text="|${exam.questions.size()}문제|">10문제</span>
-                        </span>
-            <span>
-                            <i class="fas fa-trophy"></i>
-                            <span th:text="|${exam.totalPoints}점|">100점</span>
-                        </span>
-            <span th:class="'exam-status-' + ${exam.status.name().toLowerCase()}">
-                            <i class="fas fa-circle"></i>
-                            <span th:text="${exam.status.value}">상태</span>
-                        </span>
-          </div>
+    <div class="my-exams-container">
+        <div class="page-header">
+            <h2><i class="fas fa-file-alt"></i> 내 모의고사</h2>
+            <div class="header-actions">
+                <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/exams/new}'|">
+                    <i class="fas fa-plus"></i> 새 모의고사
+                </button>
+            </div>
         </div>
-        <div class="exam-actions">
-          <button type="button" class="btn btn-secondary btn-sm"
-                  th:onclick="|location.href='@{/exams/{id}/edit(id=${exam.id})}'|">
-            <i class="fas fa-edit"></i> 수정
-          </button>
-          <button type="button" class="btn btn-primary btn-sm"
-                  th:if="${exam.status.name() == 'DRAFT'}"
-                  th:onclick="|publishExam(${exam.id})|">
-            <i class="fas fa-upload"></i> 공개
-          </button>
-          <button type="button" class="btn btn-danger btn-sm"
-                  th:onclick="|deleteExam(${exam.id})|">
-            <i class="fas fa-trash"></i> 삭제
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- JavaScript -->
-  <script th:src="@{/js/exam/my-exams.js}"></script>
+        <!-- 필터 영역 -->
+        <div class="filter-section">
+            <div class="search-filters">
+                <input type="text" id="searchInput" class="form-control" placeholder="모의고사 검색...">
+            </div>
+        </div>
+
+        <!-- 모의고사 목록 -->
+        <div id="examsList">
+            <!-- JavaScript로 렌더링됨 -->
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/exam/my-exams.js}"></script>
 </th:block>
 </body>
 </html>

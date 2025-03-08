@@ -1,9 +1,11 @@
 package com.qrystal.app.exam.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum ExamStatus {
-    DRAFT("임시저장"),
-    PUBLISHED("공개"),
-    CLOSED("마감");
+    ACTIVE("활성화"),
+    INACTIVE("비활성화");
 
     private final String value;
 

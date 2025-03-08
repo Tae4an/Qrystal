@@ -191,21 +191,26 @@ function renderExams(examsToRender) {
     }
 
     container.innerHTML = examsToRender.map(exam => `
-        <div class="exam-item">
-            <div class="exam-info">
-                <h3>${exam.title}</h3>
-                <p class="exam-description">${exam.description || ''}</p>
-                <div class="exam-meta">
-                    <span><i class="fas fa-clock"></i> ${exam.timeLimit}분</span>
-                    <span><i class="fas fa-list-ol"></i> ${exam.questions.length}문제</span>
-                    <span><i class="fas fa-trophy"></i> ${exam.totalPoints}점</span>
-                    <span class="category-path">${getCategoryPath(exam.categoryId)}</span>
+        <div class="exam-card" onclick="location.href='/exams/${exam.id}'">
+            <div class="exam-card-header">
+                <div class="exam-info">
+                    <h3 class="exam-title">${exam.title}</h3>
+                    <p class="exam-description">${exam.description || ''}</p>
+                    <div class="exam-meta">
+                        <span class="category-path">
+                            <i class="fas fa-folder"></i>${getCategoryPath(exam.categoryId)}
+                        </span>
+                        <span class="question-count">
+                            <i class="fas fa-list-ol"></i>${exam.questions.length}문제
+                        </span>
+                        <span class="total-points">
+                            <i class="fas fa-trophy"></i>${exam.totalPoints}점
+                        </span>
+                        <span class="time-limit">
+                            <i class="fas fa-clock"></i>${exam.timeLimit}분
+                        </span>
+                    </div>
                 </div>
-            </div>
-            <div class="exam-actions">
-                <button class="btn btn-primary btn-sm" onclick="location.href='/exams/${exam.id}'">
-                    상세보기
-                </button>
             </div>
         </div>
     `).join('');

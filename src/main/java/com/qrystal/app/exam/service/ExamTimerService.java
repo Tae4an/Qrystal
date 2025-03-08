@@ -15,15 +15,15 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Slf4j
 public class ExamTimerService {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;  // Object 대신 String 사용
     private static final String KEY_PREFIX = "exam:attempt:";
     
     // 시험 시작 시 타이머 설정
     public void startExamTimer(Long attemptId, Integer timeLimit) {
         String key = KEY_PREFIX + attemptId;
-        LocalDateTime endTime = LocalDateTime.now().plusMinutes(timeLimit);
         try {
-            redisTemplate.opsForValue().set(key, endTime, timeLimit, TimeUnit.MINUTES);
+            LocalDateTime endTime = LocalDateTime.now().plusMinutes(timeLimit);
+            redisTemplate.opsForValue().set(key, endTime.toString(), timeLimit, TimeUnit.MINUTES);
             log.info("Exam timer started for attemptId: {}, endTime: {}", attemptId, endTime);
         } catch (Exception e) {
             log.error("Failed to start exam timer for attemptId: {}", attemptId, e);
@@ -35,14 +35,15 @@ public class ExamTimerService {
     public Long getRemainingTime(Long attemptId) {
         String key = KEY_PREFIX + attemptId;
         try {
-            LocalDateTime endTime = (LocalDateTime) redisTemplate.opsForValue().get(key);
-            if (endTime == null) {
+            String endTimeStr = redisTemplate.opsForValue().get(key);
+            if (endTimeStr == null) {
                 return 0L;
             }
+            LocalDateTime endTime = LocalDateTime.parse(endTimeStr);
             return ChronoUnit.SECONDS.between(LocalDateTime.now(), endTime);
         } catch (Exception e) {
             log.error("Failed to get remaining time for attemptId: {}", attemptId, e);
-            throw new CustomException(ErrorCode.EXAM_TIMER_ERROR);
+            return 0L; // 에러 발생 시 0 반환
         }
     }
     
@@ -50,16 +51,24 @@ public class ExamTimerService {
     public void stopExamTimer(Long attemptId) {
         String key = KEY_PREFIX + attemptId;
         try {
-            redisTemplate.delete(key);
-            log.info("Exam timer stopped for attemptId: {}", attemptId);
+            Boolean deleted = redisTemplate.delete(key);
+            if (deleted == null || !deleted) {
+                log.warn("Timer key not found for attemptId: {}", attemptId);
+            } else {
+                log.info("Successfully removed timer for attemptId: {}", attemptId);
+            }
         } catch (Exception e) {
             log.error("Failed to stop exam timer for attemptId: {}", attemptId, e);
-            throw new CustomException(ErrorCode.EXAM_TIMER_ERROR);
         }
     }
-    
+
     // 시험 시간 만료 여부 확인
     public boolean isExamExpired(Long attemptId) {
-        return getRemainingTime(attemptId) <= 0;
+        try {
+            return getRemainingTime(attemptId) <= 0;
+        } catch (Exception e) {
+            log.error("Failed to check exam expiration for attemptId: {}", attemptId, e);
+            return true; // 에러 발생 시 만료된 것으로 처리
+        }
     }
 }

@@ -1,6 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <header th:fragment="header">
+    <!-- 현재 경로 가져오기 -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // 현재 페이지 경로 확인
+            const currentPath = window.location.pathname;
+
+            // 각 메뉴 항목에 대응하는 링크 선택자와 경로 접두사 설정
+            const menuItems = [
+                { selector: '.nav-questions', pathPrefix: '/questions' },
+                { selector: '.nav-exams', pathPrefix: '/exams' },
+                { selector: '.nav-profile', pathPrefix: '/user/profile' }
+            ];
+
+            // 각 메뉴 항목에 대해 현재 페이지 확인 및 처리
+            menuItems.forEach(item => {
+                const element = document.querySelector(item.selector);
+                if (element && currentPath.startsWith(item.pathPrefix)) {
+                    element.classList.add('active');
+                    element.addEventListener('click', function(e) {
+                        // 현재 페이지와 일치하는 경우 클릭 이벤트 방지
+                        if (currentPath.startsWith(item.pathPrefix)) {
+                            e.preventDefault();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
     <nav>
         <div class="logo">
             <a th:href="@{/}">Qrystal</a>
@@ -13,6 +42,7 @@
                         <span th:text="${
                             principal.attributes['name'] != null ? principal.attributes['name'] + ' 님' :
                             principal.attributes['login'] != null ? principal.attributes['login'] + ' 님' :
+                            principal.attributes['response'] != null ? principal.attributes['response']['name'] + ' 님' :
                             #strings.defaultString(principal.attributes['email'], 'User') + ' 님'
                         }">사용자님</span>
                     </th:block>
@@ -23,12 +53,10 @@
                     </th:block>
                 </span>
             </li>
+            <li><a class="nav-questions" th:href="@{/questions}">문제 은행</a></li>
+            <li><a class="nav-exams" th:href="@{/exams}">모의고사 은행</a></li>
             <li sec:authorize="isAuthenticated()">
-                <a th:href="@{/exams}">모의고사 은행</a>
-            </li>
-            <li><a th:href="@{/questions}">문제 은행</a></li>
-            <li sec:authorize="isAuthenticated()">
-                <a th:href="@{/user/profile}">프로필</a>
+                <a class="nav-profile" th:href="@{/user/profile}">프로필</a>
             </li>
             <li sec:authorize="isAuthenticated()">
                 <form th:action="@{/auth/logout}" method="post">
@@ -43,5 +71,15 @@
             </li>
         </ul>
     </nav>
+
+    <!-- CSS 스타일 추가 -->
+    <style>
+        .nav-links a.active {
+            color: #6366f1; /* 현재 페이지 링크 색상 변경 */
+            font-weight: bold;
+            cursor: default; /* 커서를 기본값으로 변경하여 클릭할 수 없음을 표시 */
+            pointer-events: none; /* 클릭 이벤트 비활성화 (CSS로도 처리) */
+        }
+    </style>
 </header>
 </html>

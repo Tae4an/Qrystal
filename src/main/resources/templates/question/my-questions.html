@@ -4,6 +4,7 @@
 <th:block th:fragment="content">
     <!-- CSS -->
     <link rel="stylesheet" th:href="@{/css/question/my-questions.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <div class="my-questions-container">
         <!-- 상단 헤더 -->
@@ -33,7 +34,59 @@
 
         <!-- 문제 목록 -->
         <div class="questions-list" id="myQuestionsList">
-            <!-- JavaScript로 동적 렌더링 -->
+            <div th:if="${#lists.isEmpty(questions)}" class="no-data">
+                등록한 문제가 없습니다.
+            </div>
+            <div class="question-card"
+                 th:each="question : ${questions}"
+                 th:data-id="${question.id}"
+                 th:data-type-id="${question.typeId}"
+                 th:data-category-id="${question.categoryId}"
+                 th:data-difficulty="${question.difficulty}"
+                 th:data-created-at="${question.createdAt}">
+                <div class="question-card-header" th:onclick="|toggleQuestion(${question.id})|">
+                    <div class="question-info">
+                        <div class="question-title" th:text="${question.title}">문제 제목</div>
+                        <div class="question-meta">
+                            <span class="category-path">
+                                <i class="fas fa-folder"></i>
+                                <span th:text="${question.categoryName ?: '미분류'}">카테고리</span>
+                            </span>
+                            <span class="question-type">
+                                <i class="fas fa-list-ul"></i>
+                                <span th:text="${question.typeId == 1 ? '객관식' : (question.typeId == 2 ? '주관식' : '서술형')}">유형</span>
+                            </span>
+                            <span class="question-difficulty">
+                                난이도
+                                <th:block th:each="i : ${#numbers.sequence(1, question.difficulty)}">★</th:block>
+                                <th:block th:each="i : ${#numbers.sequence(1, 5 - question.difficulty)}">☆</th:block>
+                            </span>
+                            <span>
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${#temporals.format(question.createdAt, 'yyyy년 MM월 dd일')}">작성일</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 상세 영역 (펼쳐질 때 표시) -->
+                <div th:id="${'detail-' + question.id}" class="question-detail">
+                    <div class="detail-content">
+                        <!-- 여기에 문제 내용이 동적으로 로드됩니다 -->
+                        <div class="detail-loader">
+                            <div class="spinner"></div>
+                            <p>문제를 불러오는 중...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="question-actions">
+                    <button class="btn btn-edit" th:onclick="|location.href='@{/questions/{id}/edit(id=${question.id})}'|">
+                        <i class="fas fa-edit"></i> 수정
+                    </button>
+                    <button class="btn btn-delete" th:onclick="|confirmDelete(${question.id})|">
+                        <i class="fas fa-trash"></i> 삭제
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

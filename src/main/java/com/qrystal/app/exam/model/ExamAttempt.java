@@ -29,4 +29,7 @@ public class ExamAttempt {
     private String examTitle;
     private String userName;
     private List<ExamAnswer> answers;
+    private String categoryName;
+    private Integer totalPoints;
+    private Boolean isPublic;
 }

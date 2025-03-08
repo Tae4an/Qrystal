@@ -9,6 +9,7 @@ import com.qrystal.app.exam.model.ExamQuestion;
 import com.qrystal.app.question.service.QuestionService;
 import com.qrystal.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.qrystal.exception.ErrorCode;
@@ -16,6 +17,7 @@ import com.qrystal.exception.ErrorCode;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -28,6 +30,7 @@ public class ExamService {
         // 1. 시험지 기본 정보 저장
         Exam exam = request.toEntity();
         exam.setCreatedBy(userId);
+        exam.setStatus(ExamStatus.ACTIVE);
         examMapper.save(exam);
 
         // 2. ExamQuestionRequest를 ExamQuestion으로 변환 후 저장
@@ -51,6 +54,7 @@ public class ExamService {
     public List<Exam> getMyExams(Long userId) {
         return examMapper.findAll(ExamSearchCondition.builder()
                 .createdBy(userId)
+                .status(ExamStatus.ACTIVE)
                 .build());
     }
     
@@ -58,17 +62,28 @@ public class ExamService {
     public List<Exam> getPublicExams() {
         return examMapper.findAll(ExamSearchCondition.builder()
                 .isPublic(true)
-                .status(ExamStatus.PUBLISHED)
+                .status(ExamStatus.ACTIVE)
                 .build());
     }
     
     // 상세 조회
-    public Exam getExam(Long id) {
+    public Exam getExam(Long id, boolean validateStatus) {
         Exam exam = examMapper.findById(id);
         if (exam == null) {
             throw new CustomException(ErrorCode.EXAM_NOT_FOUND);
         }
+
+        if (validateStatus && exam.getStatus() == ExamStatus.INACTIVE) {
+            log.debug("Exam is inactive and validation is required");
+            throw new CustomException(ErrorCode.EXAM_NOT_AVAILABLE);
+        }
+
         return exam;
+    }
+
+    // 기존 메서드는 validateStatus = true로 호출하도록 오버로딩
+    public Exam getExam(Long id) {
+        return getExam(id, true);
     }
 
     // 시험지 수정
@@ -102,22 +117,6 @@ public class ExamService {
         }
     }
 
-    // 시험지 상태 변경
-    @Transactional
-    public void updateExamStatus(Long id, ExamStatus status, Long userId) {
-        Exam exam = getExam(id);
-
-        // 권한 체크
-        if (!exam.getCreatedBy().equals(userId)) {
-            throw new CustomException(ErrorCode.EXAM_ACCESS_DENIED);
-        }
-
-        // 상태 변경 가능 여부 체크
-        validateStatusChange(exam.getStatus(), status);
-
-        examMapper.updateStatus(id, status);
-    }
-
     // 시험지 삭제
     @Transactional
     public void deleteExam(Long id, Long userId) {
@@ -128,17 +127,7 @@ public class ExamService {
             throw new CustomException(ErrorCode.EXAM_ACCESS_DENIED);
         }
 
-        examMapper.deleteQuestions(id);
-        examMapper.delete(id);
-    }
-
-    // 상태 변경 가능 여부 검증
-    private void validateStatusChange(ExamStatus currentStatus, ExamStatus newStatus) {
-        // DRAFT -> PUBLISHED -> CLOSED 순서로만 변경 가능
-        if (currentStatus == ExamStatus.CLOSED ||
-                (currentStatus == ExamStatus.PUBLISHED && newStatus == ExamStatus.DRAFT)) {
-            throw new CustomException(ErrorCode.EXAM_STATUS_INVALID);
-        }
+        examMapper.updateStatus(id, ExamStatus.INACTIVE);
     }
 
     // 카테고리별 공개된 모의고사 조회
@@ -146,7 +135,7 @@ public class ExamService {
         return examMapper.findAll(ExamSearchCondition.builder()
                 .categoryId(categoryId)
                 .isPublic(true)
-                .status(ExamStatus.PUBLISHED)
+                .status(ExamStatus.ACTIVE)
                 .build());
     }
 }
