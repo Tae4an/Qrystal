@@ -61,7 +61,7 @@
 
                     <!-- 문제 내용 -->
                     <div class="question-text">
-                        <p th:text="${question.questionContent}">문제 내용</p>
+                        <p th:utext="${question.questionContent}">문제 내용</p>
                     </div>
 
                     <!-- 답안 입력 영역 -->
@@ -74,7 +74,7 @@
                                        th:name="'question-' + ${question.questionId}"
                                        th:value="${choice.choiceNumber}">
                                 <label th:for="'choice-' + ${question.questionId} + '-' + ${choice.choiceNumber}"
-                                       th:text="${choice.content}">선택지</label>
+                                       th:utext="${choice.content}">선택지</label>
                             </div>
                         </div>
 

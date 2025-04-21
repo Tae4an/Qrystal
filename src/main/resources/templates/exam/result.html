@@ -68,13 +68,13 @@
 
         <!-- 문제 내용 -->
         <div class="question-content">
-          <div class="question-text" th:text="${answer.questionTitle}">문제 내용</div>
+          <div class="question-text" th:utext="${answer.questionTitle}">문제 내용</div>
 
           <!-- 객관식인 경우 보기 표시 -->
           <div th:if="${answer.questionTypeId == 1}" class="choices">
             <div th:each="choice : ${answer.choices}"
                  th:class="'choice-item ' + (${choice.isCorrect != null && choice.isCorrect} ? 'correct' : (${choice.isSelected != null && choice.isSelected} ? 'incorrect' : ''))">
-              <span th:text="${choice.content}">선택지</span>
+              <span th:utext="${choice.content}">선택지</span>
               <i th:if="${choice.isCorrect != null && choice.isCorrect}" class="fas fa-check"></i>
               <i th:if="${choice.isSelected != null && choice.isSelected && !choice.isCorrect}"
                  class="fas fa-times"></i>
@@ -86,18 +86,18 @@
         <div class="answer-comparison">
           <div class="submitted-answer">
             <h4>제출한 답안</h4>
-            <p th:text="${answer.submittedAnswer}">제출 답안</p>
+            <p th:utext="${answer.submittedAnswer}">제출 답안</p>
           </div>
           <div class="correct-answer">
             <h4>정답</h4>
-            <p th:text="${answer.correctAnswer}">정답</p>
+            <p th:utext="${answer.correctAnswer}">정답</p>
           </div>
         </div>
 
         <!-- 해설 -->
         <div class="answer-explanation" th:if="${answer.explanation}">
           <h4>해설</h4>
-          <p th:text="${answer.explanation}">문제 해설</p>
+          <p th:utext="${answer.explanation}">문제 해설</p>
         </div>
       </div>
     </div>
