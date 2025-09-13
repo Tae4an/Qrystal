@@ -1,16 +1,16 @@
-# 🌟 Qrystal 모의고사 플랫폼
+# Qrystal 모의고사 플랫폼
 
 > 사용자 맞춤형 모의고사를 생성하고 응시할 수 있는 온라인 학습 플랫폼입니다.
 
 
-## 🚀 프로젝트 소개
+## 프로젝트 소개
 
 Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하여 다른 사용자들과 공유할 수 있는 학습 플랫폼입니다. 객관식, 주관식, 서술형 등 다양한 유형의 문제를 지원하며, 자동 채점 기능을 통해 즉각적인 피드백을 제공합니다.
 
 <img width="1511" alt="image" src="https://github.com/user-attachments/assets/a4542524-4596-4b43-86c6-8264f67d6250" />
 
 
-## 🛠 기술 스택
+## 기술 스택
 
 - **Spring Boot 2.7.13**
 - **Java 11**
@@ -24,7 +24,7 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 - **Docker**
 
 
-## 💡 주요 기능
+## 주요 기능
 
 ### 1. 사용자 관리
 - 이메일 회원가입 및 로그인
@@ -61,10 +61,7 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 - 문제 및 모의고사 승인
 - 시스템 모니터링
 
-## 📱 화면 구성
-### 접속 정보
-- 서비스: http://localhost:80
-- 관리자: http://localhost:81
+## 화면 구성
 
 ### 메인 화면
 <img width="1511" alt="image" src="https://github.com/user-attachments/assets/a4542524-4596-4b43-86c6-8264f67d6250" />
@@ -124,10 +121,6 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 ### 카테고리 관리 화면
 <img width="1509" alt="image" src="https://github.com/user-attachments/assets/3b033186-b4b3-4c47-92f2-3a16d5c68900" />
 
-## 📘 API 문서
+## API 문서
 
-API 문서는 Swagger UI를 통해 확인할 수 있습니다:
-```
-http://localhost:80/swagger-ui/index.html
-```
 <img width="1512" alt="스크린샷 2025-03-03 오후 9 25 01" src="https://github.com/user-attachments/assets/aead20b7-5295-4615-ade9-931b8c3e6e2e" />
