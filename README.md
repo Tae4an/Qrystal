@@ -2,12 +2,12 @@
 
 > 사용자 맞춤형 모의고사를 생성하고 응시할 수 있는 온라인 학습 플랫폼입니다.
 
+<img width="1511" alt="image" src="https://github.com/user-attachments/assets/a4542524-4596-4b43-86c6-8264f67d6250" />
 
 ## 프로젝트 소개
 
 Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하여 다른 사용자들과 공유할 수 있는 학습 플랫폼입니다. 객관식, 주관식, 서술형 등 다양한 유형의 문제를 지원하며, 자동 채점 기능을 통해 즉각적인 피드백을 제공합니다.
 
-<img width="1511" alt="image" src="https://github.com/user-attachments/assets/a4542524-4596-4b43-86c6-8264f67d6250" />
 
 ## 시스템 아키텍처
 <img width="1285" height="705" alt="image" src="https://github.com/user-attachments/assets/2d04dfdc-7ce1-49fd-9b13-77ef3500c22f" />
