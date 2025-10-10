@@ -18,9 +18,9 @@ spring:
   # 데이터베이스 설정
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL 드라이버
-    url: ENC(KgM8OzzgPpdhF9G5XzzNIMR7xmVAERFPrphxa3X/MvX5TO4AHY6GsVFw2Cs9U1NQjTnNIHkjcAU8eWdz9C0HrbIEhL65fqU6)  # 암호화된 DB URL
-    username: ENC(6R/c31GTSL0h+tEDEJr8pA==)      # 암호화된 DB 사용자명
-    password: ENC(qZRj27Us+5WqWEaxLwBuZ2by25Mpwf+eF2TsEMIdTys=)  # 암호화된 DB 비밀번호
+    url: jdbc:mysql://${DB_HOST}:3306/qrystal?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:  # HikariCP 커넥션 풀 설정 (프로덕션 최적화)
       maximum-pool-size: 10   # 최대 커넥션 수
       minimum-idle: 5         # 최소 유휴 커넥션 수
@@ -46,11 +46,16 @@ spring:
       cache:
         period: 3600  # 정적 리소스 캐싱 기간 (초) - 프로덕션에서 활성화
 
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+
   # Redis 설정
   redis:
-    host: ${REDIS_SERVER_URL}  # Redis 서버 URL (환경 변수에서 가져옴)
+    host: ${REDIS_SERVER_URL:}  # Redis 서버 URL (환경 변수에서 가져옴, 기본값 공백)
     port: 6379                # Redis 포트
-    password: ${REDIS_PASSWORD}  # Redis 비밀번호 (환경 변수에서 가져옴)
+    password: ${REDIS_PASSWORD:}  # Redis 비밀번호 (환경 변수에서 가져옴, 기본값 공백)
     timeout: 3000             # Redis 작업 타임아웃 (ms)
     lettuce:  # Lettuce 클라이언트 풀 설정 (프로덕션 최적화)
       pool:
@@ -162,3 +167,10 @@ springdoc:
     enabled: false  # 프로덕션에서는 API 문서 비활성화
   swagger-ui:
     enabled: false  # 프로덕션에서는 Swagger UI 비활성화
+
+# Micrometer/Actuator 메트릭 설정 (컨테이너 환경 호환성 이슈 회피)
+management:
+  metrics:
+    binders:
+      processor:
+        enabled: false

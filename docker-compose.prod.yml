@@ -7,15 +7,11 @@ services:
     ports:
       - "${APP_PORT:-80}:80"
     environment:
-      - SPRING_PROFILES_ACTIVE=freetier
+      - SPRING_PROFILES_ACTIVE=prod
       - DB_HOST=${DB_HOST}
       - DB_USERNAME=${DB_USERNAME}  
       - DB_PASSWORD=${DB_PASSWORD}
-      - REDIS_SERVER_URL=redis
-      - REDIS_PASSWORD=
       - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_PASSWORD}
-    depends_on:
-      - redis
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -23,18 +19,3 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # Redis (ElastiCache 대신 로컬 Redis)
-  redis:
-    image: redis:6-alpine
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    command: redis-server --maxmemory ${REDIS_MEMORY:-100mb} --maxmemory-policy allkeys-lru
-    restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "5m"
-        max-file: "2"
-
-volumes:
-  redis_data:

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -19,29 +20,33 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableCaching
 @RequiredArgsConstructor
 public class RedisConfig {
-    @Value("${spring.redis.host}")
+    @Value("${spring.redis.host:}")
     private String host;
 
-    @Value("${spring.redis.port}")
+    @Value("${spring.redis.port:6379}")
     private int port;
 
-    @Value("${spring.redis.password}")
+    @Value("${spring.redis.password:}")
     private String password;
 
-    // Redis 연결 팩토리 설정
+    // Redis 연결 팩토리 설정 (조건부 - Redis 호스트가 설정된 경우에만)
     @Bean
+    @ConditionalOnExpression("'${spring.redis.host:}'.length() > 0")
     public RedisConnectionFactory redisConnectionFactory() {
         // Redis 단독 서버 설정
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
         configuration.setHostName(host);
         configuration.setPort(port);
-        configuration.setPassword(password);
+        if (!password.isEmpty()) {
+            configuration.setPassword(password);
+        }
 
         // Lettuce 연결 팩토리 생성
         return new LettuceConnectionFactory(configuration);
     }
 
     @Bean
+    @ConditionalOnExpression("'${spring.redis.host:}'.length() > 0")
     public RedisTemplate<String, Object> redisTemplate() {
         // ObjectMapper 설정: JSON 직렬화/역직렬화를 위한 객체
         ObjectMapper objectMapper = new ObjectMapper();
