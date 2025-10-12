@@ -26,7 +26,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -Djava.security.egd=file:/dev/./urandom"
 
 # Spring Boot 프로파일 설정
-ENV SPRING_PROFILES_ACTIVE=freetier
+ENV SPRING_PROFILES_ACTIVE=aws
 
 # 애플리케이션 실행
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

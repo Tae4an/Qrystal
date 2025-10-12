@@ -7,7 +7,7 @@ services:
     ports:
       - "${APP_PORT:-80}:80"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=aws
       - DB_HOST=${DB_HOST}
       - DB_USERNAME=${DB_USERNAME}  
       - DB_PASSWORD=${DB_PASSWORD}
