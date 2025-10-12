@@ -14,17 +14,18 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 
 
 ## 기술 스택
-
-- **Spring Boot 2.7.13**
-- **Java 11**
-- **MyBatis**
-- **Thymeleaf**
-- **MySQL 8.0.33**
-- **Redis**
-- **HTML/CSS/JavaScript**
-- **Bootstrap**
-- **jQuery**
-- **Docker**
+![Docker](https://img.shields.io/badge/Docker-24.0-2496ED?logo=docker)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-2.7.13-6DB33F?logo=springboot)
+![Java](https://img.shields.io/badge/Java-11-007396?logo=java)
+![MyBatis](https://img.shields.io/badge/MyBatis-3.5.13-b5894a?logo=mybatis)
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-3.1.1-005F0F?logo=thymeleaf)
+![MySQL](https://img.shields.io/badge/MySQL-8.0.33-4479A1?logo=mysql)
+![Redis](https://img.shields.io/badge/Redis-7.2.3-DC382D?logo=redis)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?logo=javascript&logoColor=black)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?logo=bootstrap)
+![jQuery](https://img.shields.io/badge/jQuery-3.7.1-0769AD?logo=jquery)
 
 
 ## 주요 기능
