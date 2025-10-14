@@ -10,7 +10,7 @@ Qrystal은 사용자들이 직접 문제를 만들고, 모의고사를 구성하
 
 
 ## 시스템 아키텍처
-<img width="1285" height="705" alt="image" src="https://github.com/user-attachments/assets/2d04dfdc-7ce1-49fd-9b13-77ef3500c22f" />
+<img width="1256" height="724" alt="image" src="https://github.com/user-attachments/assets/6241104f-6d3b-423f-be28-0f05cc8e6b54" />
 
 
 ## 기술 스택
