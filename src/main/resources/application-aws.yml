@@ -158,6 +158,10 @@ management:
     db:
       enabled: true
 
+# CDN 설정
+cdn:
+  url: https://di4y2rcyxanl9.cloudfront.net
+  
 # JVM 최적화 설정 (application.yml에서는 설정할 수 없지만 참고용)
 # Docker run 시 다음 옵션 추가 권장:
 # -Xms256m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
