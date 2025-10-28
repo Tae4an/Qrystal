@@ -4,7 +4,9 @@
 <th:block th:fragment="content">
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/profile.css}">
+    <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+        <link rel="stylesheet" type="text/css" th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/profile.css' : @{/css/profile.css}}">
+    </th:block>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 
@@ -117,7 +119,9 @@
     </div>
 
     <!-- JavaScript -->
-    <script th:src="@{/js/profile.js}"></script>
+    <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+        <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/profile.js' : @{/js/profile.js}}"></script>
+    </th:block>
 </th:block>
 </body>
 </html>

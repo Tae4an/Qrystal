@@ -3,7 +3,9 @@
 <body>
 <th:block th:fragment="content">
     <!-- CSS -->
-    <link rel="stylesheet" th:href="@{/css/exam/attempt.css}">
+    <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+        <link rel="stylesheet" th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/exam/attempt.css' : @{/css/exam/attempt.css}}">
+    </th:block>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <div class="exam-container">
@@ -140,7 +142,9 @@
         const attemptId = [[${attempt?.id}]];
         const timeLimit = [[${exam.timeLimit}]];
     </script>
-    <script th:src="@{/js/exam/attempt.js}"></script>
+    <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+        <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/exam/attempt.js' : @{/js/exam/attempt.js}}"></script>
+    </th:block>
 </th:block>
 </body>
 </html>

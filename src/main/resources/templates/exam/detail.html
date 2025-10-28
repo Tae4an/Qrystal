@@ -3,7 +3,9 @@
 <body>
 <th:block th:fragment="content">
     <!-- CSS -->
-    <link rel="stylesheet" th:href="@{/css/exam/detail.css}">
+    <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+        <link rel="stylesheet" th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/exam/detail.css' : @{/css/exam/detail.css}}">
+    </th:block>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <div class="exam-container">
@@ -72,6 +74,8 @@
         // Thymeleaf에서 examId 전달
         const examId = [[${exam.id}]];
     </script>
-    <script th:src="@{/js/exam/detail.js}"></script></th:block>
+    <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+        <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/exam/detail.js' : @{/js/exam/detail.js}}"></script>
+    </th:block></th:block>
 </body>
 </html>

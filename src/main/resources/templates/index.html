@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qrystal - 모의고사 플랫폼</title>
     <!-- 기본 CSS -->
-    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+    <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+        <link rel="stylesheet" type="text/css"
+              th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/index.css' : @{/css/index.css}}">
+    </th:block>
 </head>
 <body>
 <div class="container">
@@ -22,6 +25,8 @@
 </div>
 
 <!-- 기본 JavaScript -->
-<script th:src="@{/js/index.js}"></script>
+<th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+    <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/index.js' : @{/js/index.js}}"></script>
+</th:block>
 </body>
 </html>

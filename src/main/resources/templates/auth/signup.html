@@ -3,7 +3,10 @@
 <body>
 <th:block th:fragment="content">
     <!-- CSS -->
-    <link rel="stylesheet" type="text/css" th:href="@{/css/signup.css}">
+    <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+        <link rel="stylesheet" type="text/css"
+              th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/signup.css' : @{/css/signup.css}}">
+    </th:block>
 
     <main class="signup-container">
         <h2>회원가입</h2>
@@ -47,7 +50,9 @@
     </main>
 
     <!-- JavaScript -->
-    <script th:src="@{/js/signup.js}"></script>
+    <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
+        <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/signup.js' : @{/js/signup.js}}"></script>
+    </th:block>
 </th:block>
 </body>
 </html>
