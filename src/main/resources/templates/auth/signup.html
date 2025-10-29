@@ -5,7 +5,7 @@
     <!-- CSS -->
     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
         <link rel="stylesheet" type="text/css"
-              th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/signup.css' : @{/css/signup.css}}">
+              th:href="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/css/signup.css'} : @{/css/signup.css}">
     </th:block>
 
     <main class="signup-container">
@@ -51,7 +51,7 @@
 
     <!-- JavaScript -->
     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-        <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/signup.js' : @{/js/signup.js}}"></script>
+        <script th:src="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/js/signup.js'} : @{/js/signup.js}"></script>
     </th:block>
 </th:block>
 </body>

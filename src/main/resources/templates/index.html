@@ -7,7 +7,7 @@
     <!-- 기본 CSS -->
     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
         <link rel="stylesheet" type="text/css"
-              th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/index.css' : @{/css/index.css}}">
+              th:href="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/css/index.css'} : @{/css/index.css}">
     </th:block>
 </head>
 <body>
@@ -26,7 +26,7 @@
 
 <!-- 기본 JavaScript -->
 <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-    <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/index.js' : @{/js/index.js}}"></script>
+    <script th:src="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/js/index.js'} : @{/js/index.js}"></script>
 </th:block>
 </body>
 </html>

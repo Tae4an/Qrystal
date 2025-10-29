@@ -5,7 +5,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-        <link rel="stylesheet" th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/statistics.css' : @{/css/statistics.css}}">
+        <link rel="stylesheet" th:href="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/css/statistics.css'} : @{/css/statistics.css}">
     </th:block>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
@@ -44,7 +44,7 @@
     <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-        <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/statistics.js' : @{/js/statistics.js}}"></script>
+        <script th:src="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/js/statistics.js'} : @{/js/statistics.js}"></script>
     </th:block>
 
 </th:block>

@@ -5,7 +5,7 @@
     <!-- CSS -->
     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
         <link rel="stylesheet" type="text/css"
-              th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/login.css' : @{/css/login.css}}">
+              th:href="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/css/login.css'} : @{/css/login.css}">
     </th:block>
 
     <main class="login-container">
@@ -32,19 +32,19 @@
             <div class="social-buttons">
                 <a th:href="@{/oauth2/authorization/google}">
                     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-                        <img th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/img/google.png' : @{/img/google.png}}"
+                        <img th:src="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/img/google.png'} : @{/img/google.png}"
                              alt="Google 로그인" class="social-login-btn">
                     </th:block>
                 </a>
                 <a th:href="@{/oauth2/authorization/github}">
                     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-                        <img th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/img/github.png' : @{/img/github.png}}"
+                        <img th:src="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/img/github.png'} : @{/img/github.png}"
                              alt="GitHub 로그인" class="social-login-btn">
                     </th:block>
                 </a>
                 <a th:href="@{/oauth2/authorization/naver}">
                     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-                        <img th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/img/naver.png' : @{/img/naver.png}}"
+                        <img th:src="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/img/naver.png'} : @{/img/naver.png}"
                              alt="Naver 로그인" class="social-login-btn">
                     </th:block>
                 </a>
@@ -58,7 +58,7 @@
 
     <!-- JavaScript -->
     <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-        <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/login.js' : @{/js/login.js}}"></script>
+        <script th:src="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/js/login.js'} : @{/js/login.js}"></script>
     </th:block>
 </th:block>
 </body>

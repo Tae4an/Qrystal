@@ -4,7 +4,7 @@
 <th:block th:fragment="content">
   <!-- CSS -->
   <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-      <link rel="stylesheet" th:href="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/css/exam/result.css' : @{/css/exam/result.css}}">
+      <link rel="stylesheet" th:href="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/css/exam/result.css'} : @{/css/exam/result.css}">
   </th:block>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -117,7 +117,7 @@
 
   <!-- JavaScript -->
   <th:block th:with="cdnUrl=${@environment.getProperty('cdn.url')}">
-      <script th:src="${(cdnUrl != null and cdnUrl != '') ? cdnUrl + '/js/exam/result.js' : @{/js/exam/result.js}}"></script>
+      <script th:src="${(cdnUrl != null and cdnUrl != '')} ? ${cdnUrl + '/js/exam/result.js'} : @{/js/exam/result.js}"></script>
   </th:block>
 </th:block>
 </body>
